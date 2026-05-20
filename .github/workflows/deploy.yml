@@ -1,0 +1,23 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+      - name: Deploy
+        run: railway up --ci
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: Health check
+        run: |
+          sleep 30
+          curl --fail https://${{ secrets.RAILWAY_PUBLIC_URL }}/actuator/health
+        env:
+          RAILWAY_PUBLIC_URL: ${{ secrets.RAILWAY_PUBLIC_URL }}
