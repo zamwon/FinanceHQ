@@ -8,13 +8,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-      - name: Deploy
-        run: railway up --ci --service FinanceHQ
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: Wait for Railway to deploy
+        run: sleep 60
       - name: Health check
         run: |
           echo "Waiting for app to be ready..."
