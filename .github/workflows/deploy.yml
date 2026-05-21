@@ -12,7 +12,7 @@ jobs:
       - name: Install Railway CLI
         run: npm install -g @railway/cli
       - name: Deploy
-        run: railway up --ci
+        run: railway up --ci --service FinanceHQ
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       - name: Health check
