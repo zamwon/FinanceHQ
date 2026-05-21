@@ -17,7 +17,17 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       - name: Health check
         run: |
-          sleep 30
-          curl --fail https://${{ secrets.RAILWAY_PUBLIC_URL }}/actuator/health
+          echo "Waiting for app to be ready..."
+          for i in $(seq 1 20); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://${{ secrets.RAILWAY_PUBLIC_URL }}/actuator/health || echo "000")
+            echo "Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then
+              echo "Health check passed"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Health check failed after 5 minutes"
+          exit 1
         env:
           RAILWAY_PUBLIC_URL: ${{ secrets.RAILWAY_PUBLIC_URL }}

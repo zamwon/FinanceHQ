@@ -2,119 +2,112 @@
 project: finance-hq
 researched_at: 2026-05-20
 recommended_platform: Railway
-runner_up: Fly.io
+runner_up: Render
 context_type: mvp
 tech_stack:
   language: Java 21
   framework: Spring Boot 4.0.6
-  runtime: JVM (Maven, fat JAR / Docker)
-  database: PostgreSQL (external provider)
-  frontend: Angular (served as static assets by Spring Boot)
+  runtime: JVM (Docker container)
+  database: PostgreSQL via Supabase (external)
+  frontend: Angular (SPA, served as static assets)
 ---
 
 ## Recommendation
 
 **Deploy on Railway.**
 
-Railway is the strongest fit for a solo Java/Spring Boot developer who wants an agent-friendly platform with minimal operational overhead.
-It wins on three axes that matter for this project: a GA MCP server with Claude Code OAuth integration (the strongest agent story of the three candidates),
-GitHub-hosted markdown docs that agents can fetch and parse directly, and a $5/month Hobby plan that covers all estimated usage for a 1-user MVP. 
-The interview indicated no strong platform familiarity and a balanced cost/DX preference — Railway's Railpack auto-detection of Maven/Java 21
-and one-click Postgres provisioning deliver DX without a premium.
+Railway runs always-on Docker containers (persistent JVM process), which is required for Spring Boot's `@Scheduled` email notification jobs. At $5/month flat (Hobby plan includes $5 usage credit), it is the most cost-effective viable option for this single-user MVP. The platform ships a functional MCP server with Claude Code OAuth integration — an asset for an AI-assisted solo development workflow. Two pre-deploy steps are mandatory before first launch: write an explicit Dockerfile (Railpack has a Boot 4.x validation gap) and configure Supabase via the Session Pooler URL (Railway is IPv4-only; Supabase direct connections resolve to IPv6 only).
 
 ## Platform Comparison
 
-Cloudflare Workers, Vercel, and Netlify were hard-filtered: none support the JVM runtime required by Spring Boot.
-The three scored candidates all run always-on containers (correct model for Spring `@Scheduled` jobs) and are managed PaaS platforms.
+**Hard filters applied first** — three platforms were eliminated before scoring:
 
-| Platform | CLI-first | Managed/Serverless | Agent docs | Stable deploy API | MCP/Integration | **Score** |
+- **Cloudflare Workers**: Java/JVM cannot run on V8 isolates. 128MB RAM cap, 10MB bundle size limit, and 1-second startup limit are all hard architectural mismatches with Spring Boot (~60–100MB JAR, 2–10s startup). No configuration workaround exists. (Angular SPA could separately use Cloudflare Pages as CDN, but splitting frontend/backend across platforms adds complexity with no cohesive deployment story.)
+- **Vercel**: No Java/JVM runtime at any tier. Compute model is exclusively serverless microVM functions — no persistent process support. `@Scheduled` background jobs are impossible.
+- **Netlify**: Java runtime explicitly unsupported (JS/TS/Go only). Same structural mismatch as Vercel for persistent JVM processes.
+
+| Platform | CLI-first | Managed | Agent docs | Deploy API | MCP/Integration | Score |
 |---|---|---|---|---|---|---|
-| **Railway** | Partial | Pass | Pass | Pass | Pass | **4.5 / 5** |
-| **Fly.io** | Pass | Pass | Partial | Pass | Partial | **3.5 / 5** |
-| **Render** | Partial | Pass | Pass | Pass | Partial | **3.5 / 5** |
+| **Railway** | Partial | Pass | Pass | Pass | Pass (WIP) | 4/5 |
+| **Render** | Pass | Pass | Pass | Pass | Pass (GA) | 5/5 |
+| **Fly.io** | Pass | Pass | Partial | Pass | Partial (experimental) | 3.5/5 |
+| Cloudflare | — | — | — | — | — | DROPPED (JVM incompatible) |
+| Vercel | — | — | — | — | — | DROPPED (no JVM runtime) |
+| Netlify | — | — | — | — | — | DROPPED (no JVM runtime) |
 
-**CLI-first notes**: Railway and Render both lack a CLI `rollback` command — rollback requires the dashboard or REST API.
-Fly.io handles rollback by redeploying an earlier image tag (`fly deploy --image registry.fly.io/app:<old-tag>`), which gives it a Pass here.
+**Scoring notes:**
 
-**Agent docs notes**: Railway docs are open-source on GitHub as raw Markdown (`github.com/railwayapp/docs`) — agents can fetch them directly.
-Render publishes `llms.txt` / `llms-full.txt` and per-page "Copy as Markdown" — also a Pass.
-Fly.io's docs are Markdown-source behind a rendered site with partial `llms.txt` support — Partial.
-
-**MCP notes**: Railway ships a GA first-party MCP server with OAuth and a dedicated Claude Code integration page (`railway.com/agents/claude`).
-Render's MCP server is GA but limited — it cannot trigger deploys or modify scaling settings. Fly.io's MCP server is labelled Experimental.
+- Railway CLI-first scored Partial: `railway rollback` does not exist — reverting a bad deploy requires a dashboard click or API scripting with a manual deploy ID.
+- Railway MCP scored Pass with caveat: the Claude Code integration page is production-quality with OAuth, but Railway's own docs flag the server as "work in progress."
+- Render scored 5/5 on agent-friendly criteria: GA MCP server (launched August 2025), `llms.txt` + `llms-full.txt`, first-party Claude Code skills (`render-deploy`, `render-debug`, `render-monitor`). Render was the initial top scorer but dropped to runner-up after the anti-bias cross-check surfaced that 512MB Starter RAM is tight for Spring Boot 4.x JVM (Standard at $25/month may be needed), and the user opted for Railway's $5/month pricing.
+- Fly.io docs are GitHub-hosted Markdown (`.html.markerb` format, accessible via raw URLs) but have no `llms.txt` and no dedicated Java language guide — Partial. MCP server (`fly mcp server`) is explicitly marked experimental as of 2026-05-20.
 
 ### Shortlisted Platforms
 
 #### 1. Railway (Recommended)
 
-Strongest agent integration story: GA MCP server (`@railway/mcp-server`) with OAuth authentication and a Claude Code agent page. GitHub-hosted markdown docs.
-Railpack auto-detects Maven/Java 21 without a Dockerfile (with a Dockerfile fallback). Cheapest at $5/month flat for this usage level.
-The main weakness is no CLI rollback — but for a 1-user MVP, dashboard rollback is an acceptable manual gate.
+Always-on Docker containers with `@Scheduled` support, $5/month flat, functional OAuth-backed MCP server with Claude Code integration, public GitHub docs as raw Markdown. Two mandatory pre-deploy steps (Dockerfile + Supabase pooler URL) mitigate the Boot 4.x and IPv6 risks before first deploy. Total expected cost at MVP scale: $5/month with no overage if JVM heap is capped at 384MB.
 
-#### 2. Fly.io
+#### 2. Render
 
-Best CLI coverage: `flyctl` handles deploy, live log streaming, and rollback via image tag redeployment. Persistent Micro-VMs are a natural fit for always-on JVM processes.
-Experimental MCP server is a genuine signal even if not GA. Cost is ~$4–5/month with external Postgres, comparable to Railway.
-Drops to runner-up because the MCP server is experimental and docs are only partially agent-readable.
+The strongest agent-friendly profile overall: GA MCP server, `llms.txt` + `llms-full.txt`, first-party Claude Code skills, deterministic `render deploys create --wait` CI command. Selected against by the user after cross-check surfaced that 512MB Starter RAM is tight for Spring Boot 4.x JVM — Standard tier at $25/month may be needed — making total cost $25–32/month vs Railway's $5/month.
 
-#### 3. Render
+#### 3. Fly.io
 
-Official `llms.txt` / `llms-full.txt` makes docs strongly agent-readable. GA MCP server. Always-on paid web services ($7/month).
-Loses to Railway on MCP completeness (Render's MCP cannot trigger deploys) and to Fly.io on CLI rollback (none — API/dashboard only).
-The Docker-only Java path is also a minor additional maintenance surface vs Railway's Railpack.
+Most mature Docker-JVM community story, comprehensive `flyctl` CLI, GitHub-hosted Markdown docs. Critical requirement: must set `auto_stop_machines = "off"` in `fly.toml` or `@Scheduled` tasks stop firing when no HTTP traffic arrives. MCP server is experimental. Slightly higher first-time operational overhead than Railway; no official Java language guide (community resources fill the gap).
 
 ## Anti-Bias Cross-Check: Railway
 
 ### Devil's Advocate — Weaknesses
 
-1. **Spring Boot 4.x is untested on Railpack**: Railway docs and templates target Boot 3.x. Railpack's Java path hasn't been publicly validated against Boot 4's packaging changes (removed `layertools`). Using a Dockerfile bypass mitigates this but removes the DX advantage of Railpack auto-detection.
-2. **No CLI rollback**: `railway rollback` does not exist as a command. A bad deploy cannot be reversed by an agent unattended — a human must click in the dashboard. This is a real gap for autonomous CI/CD.
-3. **Silent JVM heap overage**: Railway bills actual RAM. Uncapped JVM heap during a scheduled email batch job can spike memory above the $5 Hobby credit with no automated safeguard and unexpected overage charges.
-4. **`DATABASE_URL` format mismatch**: Railway injects a `postgresql://` URI; Spring Boot requires `jdbc:postgresql://`. This breaks the first deploy and requires a manual environment variable fix.
-5. **Railpack Java version detection is unverified**: Without explicit JDK version pinning in `.mise.toml` or `railway.toml`, Railpack may pick the wrong JDK version silently — the build succeeds but the runtime fails with class version mismatches.
+1. **Supabase IPv6 is a silent hard blocker**: Railway is IPv4-only; Supabase direct connection strings resolve to IPv6 only. The app deploys successfully and then crashes at startup with a generic "Connection refused" error — no IPv6 mention in the logs. Hours of debugging without prior knowledge of this incompatibility.
+2. **Railpack Boot 4.x validation gap**: Railpack auto-detects Java/Maven but Boot 4.0 changed the fat JAR structure. Railpack may silently generate an incorrect start command, causing a `ClassNotFoundException` at container startup. The zero-config appeal disappears — a Dockerfile is required for reliable Boot 4.x deployment.
+3. **No CLI rollback**: `railway rollback` does not exist. Reverting a bad deploy at midnight requires either a dashboard click or manually constructing an API call with the correct deploy ID.
+4. **JVM heap overage risk**: Railway's $5/month includes $5 usage credit at $10/GB RAM. An uncapped JVM during a scheduled email batch can spike to 600MB+, generating overage on the first month. Requires explicit `JAVA_TOOL_OPTIONS=-Xmx384m` and a Railway spend alert.
+5. **MCP server self-flagged as "work in progress"**: The Claude integration page presents as production-ready, but Railway's official MCP docs include a WIP disclaimer — potential undocumented breaking changes without deprecation notice.
 
 ### Pre-Mortem — How This Could Fail
 
-The team deployed Spring Boot 4.0 on Railway and it worked — after 20 minutes debugging the `jdbc:postgresql://` URL prefix that Railway doesn't pre-apply. The app ran, scheduled jobs fired, emails went out. The cracks appeared gradually. A heavier-than-expected email batch job spiked JVM heap to 700 MB, well past the $5 Hobby credit threshold, and Railway sent an unexpected invoice. Adjusting `JAVA_OPTS` required an environment variable update through the dashboard because the CI workflow hadn't wired the Railway CLI variable command. Then a Spring Boot 4.1 patch update caused Railpack to fail: Railpack's Maven step made an assumption about the fat JAR structure that Boot 4.1 changed. Switching to an explicit Dockerfile and rewriting the CI config took two hours and blocked the next feature. Finally, a bad deploy arrived on a Friday. Rolling back required a manual dashboard login because `railway rollback` doesn't exist as a command. The combination of no CLI rollback, Railpack fragility against a brand-new framework version, and invisible cost spikes made the platform feel unreliable for autonomous agent operations.
+The Spring Boot app deployed on Railway after a frustrating first hour: Railpack silently broke the Boot 4.x fat JAR start command, causing the container to exit immediately with a `ClassNotFoundException`. A Dockerfile fixed it. Month two: Supabase stopped connecting. The developer had used the direct Supabase connection string, not the Session Pooler. Railway's IPv4-only network couldn't resolve Supabase's IPv6 address. Three hours of debugging — Railway logs said "Connection refused" with no IPv6 indication. The fix was a one-line URL change to the pooler endpoint, but finding it required a GitHub community thread. Month three: a surprise bill. No JVM heap cap had been set. The daily notification job loaded all obligations, fired JavaMail, and peaked at 600MB RAM. The $5 usage credit ran out in week two; the month-end invoice was $13. Setting `-Xmx384m` in `JAVA_TOOL_OPTIONS` resolved it, but the developer only found the cause after manually reading Railway billing metrics. Three separate failure modes — each fixable in under an hour with foreknowledge, but together they consumed an entire evening without it.
 
 ### Unknown Unknowns
 
-- **Railpack is newer than Nixpacks**: replaced Nixpacks as default in 2024; the Java/Spring Boot path has less community mileage. Edge cases in Boot 4 support exist that aren't documented anywhere yet.
-- **HikariCP + Railway connection pooler stacking**: Railway PostgreSQL uses a connection pooler in some configurations. Spring Boot's HikariCP + a platform-side pooler stacks two pools, causing "too many connections" errors that surface at the platform level rather than in application logs.
-- **Custom domain requires dashboard setup on Hobby plan**: the default is a `railway.app` subdomain. Email notifications with proper SPF/DKIM validation need a custom domain — this requires manual dashboard steps the CLI cannot drive.
-- **CLI auth token silently expires**: the `~/.railway/config.json` token can go stale without prompting for re-auth, causing silent deploy failures in automated workflows.
-- **Spring Boot 4 fat JAR structure changed**: Boot 4 removed the `layertools` jar mode used in multi-stage Dockerfiles from Boot 3.x guides. Copying that Dockerfile pattern results in an image that builds but doesn't start correctly.
+- **Supabase IPv6 failure looks like a Spring Boot networking bug**: The error message is "Connection refused," not "IPv6 address not reachable." Easy to spend hours adjusting Spring Boot datasource config before discovering the cause is Railway's IPv4-only infrastructure.
+- **`SPRING_DATASOURCE_URL` is never auto-injected for external databases**: Railway auto-injects `DATABASE_URL` in `postgresql://` format only for its own Postgres add-on. For external Supabase, you must manually set `SPRING_DATASOURCE_URL=jdbc:postgresql://[pooler-host]:5432/postgres`. There is no automatic `postgresql://` → `jdbc:postgresql://` transformation.
+- **MCP build log gap**: Railway's MCP server surfaces service runtime logs and deploy status, but Maven/Docker build-time failures may not be accessible via MCP tools — the agent falls back to `railway logs --build`.
+- **Spring Boot 4.x Jakarta EE namespace migration**: Boot 4.0 uses `jakarta.*` packages exclusively. Any transitive dependency still importing `javax.*` causes `ClassNotFoundException` at runtime — easy to misattribute to Railway infrastructure when it is a dependency issue. Run `./mvnw dependency:tree | grep javax` before first deploy.
 
 ## Operational Story
 
-- **Preview deploys**: Railway supports per-branch environments. Create an environment from the Railway dashboard; each branch can deploy to its own environment URL (`<branch>.up.railway.app`). Preview environments are not auto-created from PRs by default — you configure them per environment.
-- **Secrets**: environment variables live in Railway's project dashboard under each service's Variables tab. Set them via `railway variables set KEY=VALUE` (CLI) or the dashboard. Injected automatically into the running container at deploy time. Rotate by updating the variable — next deploy picks up the new value.
-- **Rollback**: select a previous deployment in the Railway dashboard and click "Redeploy". Typical time: 2–5 minutes (image is cached). DB migrations do not roll back automatically — you must handle schema rollback separately before rolling back the app.
-- **Approval**: human-required actions — deleting a project, dropping a PostgreSQL database, modifying billing. Agent-permitted actions — triggering deploys, reading logs, updating environment variables, listing services (all via `railway` CLI or MCP server).
-- **Logs**: `railway logs --service <name> --deployment <id>` streams live logs. Tail recent output with `railway logs --lines 100`. For build logs specifically: `railway logs --build`. MCP server also exposes a log retrieval tool for structured queries.
+- **Preview deploys**: Railway supports per-branch environments configured manually from the dashboard. Each environment gets its own URL (`<branch>.up.railway.app`). PR preview URLs are not auto-created — you configure environments per branch. No protection gate on preview URLs by default.
+- **Secrets**: Environment variables are stored in Railway's project per-service Variables tab. Set via `railway variable set KEY=value` (CLI) or dashboard. Encrypted at rest by Railway; not readable in plaintext after setting. Use project-scoped `RAILWAY_TOKEN` (from Project Settings → Tokens) for CI/CD — not the interactive session token.
+- **Rollback**: No `railway rollback` CLI command. To revert: go to Railway dashboard → Deployments tab → find the last known-good deploy → click "Redeploy". Alternatively: `railway up` with a known-good Git commit. Typical time to revert: 2–4 minutes (Maven build + container start). Database migrations do not roll back automatically — use Flyway undo scripts if schema changes need reverting.
+- **Approval**: Agent may perform unattended: `railway up` (deploy), `railway logs` (tail logs), `railway variable set/list` (env vars), `railway redeploy` (redeploy latest). Human required for: deleting a service or project, modifying billing plan, rotating Railway tokens, executing database schema destructive operations.
+- **Logs**: `railway logs` (tail live runtime logs); `railway logs --build` (build-time logs); `railway logs -n 100` (last N lines). MCP server also exposes log retrieval as a structured tool call for agent use.
 
 ## Risk Register
 
 | Risk | Source | Likelihood | Impact | Mitigation |
 |---|---|---|---|---|
-| Spring Boot 4.x untested on Railpack causes build failures | Devil's advocate | M | M | Use explicit `Dockerfile` (multi-stage, `eclipse-temurin:21-jre-alpine`) instead of Railpack from day one. Add to `railway.toml`: `[build] builder = "DOCKERFILE"`. |
-| No CLI rollback means bad deploys require human dashboard action | Devil's advocate | M | M | Implement a smoke-test step in CI that calls the `/actuator/health` endpoint after deploy. Fail the pipeline before promoting if health check fails. |
-| Uncapped JVM heap causes overage on Hobby plan | Devil's advocate | M | L | Set `JAVA_OPTS=-Xmx384m -Xms128m` as an environment variable in Railway. Set a Railway spending alert at $8/month. |
-| `DATABASE_URL` uses `postgresql://` prefix, not `jdbc:postgresql://` | Devil's advocate | H | M | Set `SPRING_DATASOURCE_URL` explicitly: `jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}` using Railway's injected variables. Document this in the repo's deployment notes. |
-| Railpack silently picks wrong JDK version | Devil's advocate | L | M | Pin JDK in `.mise.toml`: `[tools] java = "21"` or use explicit Dockerfile (see first mitigation above). |
-| JVM heap spike during email batch drives cost above $5 credit | Pre-mortem | M | L | See JAVA_OPTS mitigation above. Also: schedule email batches during off-peak hours; test batch with 1 obligation before deploying to production. |
-| HikariCP + Railway pooler causes connection saturation | Unknown unknowns | L | M | Configure `spring.datasource.hikari.maximum-pool-size=5` for MVP. Monitor with Railway metrics dashboard. |
-| CLI auth token expires in CI — silent deploy failure | Unknown unknowns | M | M | Use a Railway API token (not CLI session token) for CI: `RAILWAY_TOKEN` env var. Rotate on a calendar reminder (90 days). |
-| Spring Boot 4 fat JAR structure change breaks Dockerfile from Boot 3.x guides | Unknown unknowns | H | M | Do not copy Boot 3.x Dockerfile patterns. Use Spring Boot's own `./mvnw spring-boot:build-image` or write a fresh multi-stage Dockerfile targeting the unpacked JAR: `ENTRYPOINT ["java", "-jar", "app.jar"]`. |
-| Custom domain needed for SPF/DKIM on email notifications | Unknown unknowns | M | L | Register domain before configuring JavaMail. Configure custom domain in Railway dashboard. Set SPF/DKIM/DMARC records at DNS provider before enabling email notifications in production. |
+| Supabase IPv6 connection failure on Railway | Unknown unknowns | High | High | Use Supabase **Session Pooler** host (`[ref].pooler.supabase.com:5432`) in `SPRING_DATASOURCE_URL`; set `jdbc:postgresql://` prefix manually before first deploy |
+| Railpack Boot 4.x start command mismatch | Devil's advocate | High | High | Write explicit Dockerfile with `ENTRYPOINT ["java", "-jar", "/app.jar"]`; do not rely on Railpack auto-detection for Boot 4.x |
+| JVM heap overage charges | Devil's advocate | Medium | Medium | Set `JAVA_TOOL_OPTIONS=-Xmx384m -Xms128m` in Railway env vars; configure Railway spend alert at $8/month before first deploy |
+| No CLI rollback for bad deploys | Devil's advocate | Medium | Medium | Implement post-deploy health check in CI (`/actuator/health`); document manual rollback procedure (dashboard → Deployments → Redeploy) in repo before first deploy |
+| MCP server breaking change (WIP status) | Devil's advocate | Low | Low | Pin `@railway/mcp-server` to a specific version in Claude Code MCP config; test MCP tools after each Railway CLI update |
+| Jakarta EE `javax.*` transitive dependency | Unknown unknowns | Low | High | Run `./mvnw dependency:tree \| grep javax` before deploy; exclude any `javax.*` transitive dependencies found |
+| `SPRING_DATASOURCE_URL` format not auto-injected | Research finding | High | High | Explicitly set `SPRING_DATASOURCE_URL=jdbc:postgresql://...` in Railway Variables — do not rely on Railway's injected `DATABASE_URL` for external Supabase connections |
+| HikariCP + Supabase pooler double-pool | Research finding | Low | Medium | Set `spring.datasource.hikari.maximum-pool-size=5` for MVP; monitor Supabase connection dashboard for pool exhaustion |
 
 ## Getting Started
 
-These steps are specific to Spring Boot 4.0.6 on Railway — validated against Railpack's current Java support and Railway's CLI as of 2026.
+1. **Install Railway CLI** (GA, verified 2026-05-20):
+   ```bash
+   npm i -g @railway/cli
+   # or: brew install railway (macOS)
+   railway login
+   ```
 
-1. **Install Railway CLI**: `npm install -g @railway/cli` (or `brew install railway`). Authenticate: `railway login` (OAuth browser flow).
-
-2. **Write an explicit Dockerfile** (do not rely on Railpack for Boot 4.x):
+2. **Write an explicit Dockerfile** at project root — do not rely on Railpack for Boot 4.x:
    ```dockerfile
    FROM maven:3.9-eclipse-temurin-21-alpine AS build
    WORKDIR /app
@@ -126,36 +119,42 @@ These steps are specific to Spring Boot 4.0.6 on Railway — validated against R
    FROM eclipse-temurin:21-jre-alpine
    WORKDIR /app
    COPY --from=build /app/target/*.jar app.jar
-   ENV JAVA_OPTS="-Xmx384m -Xms128m"
-   ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+   EXPOSE 8080
+   ENTRYPOINT ["java", "-jar", "app.jar"]
    ```
 
-3. **Fix the database URL before first deploy**: Railway injects `DATABASE_URL=postgresql://...`. Add this to your Railway service environment variables:
+3. **Set environment variables** in Railway project settings (Variables tab) — set these before first deploy:
    ```
-   SPRING_DATASOURCE_URL=jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
-   SPRING_DATASOURCE_USERNAME=${PGUSER}
-   SPRING_DATASOURCE_PASSWORD=${PGPASSWORD}
+   SPRING_DATASOURCE_URL=jdbc:postgresql://[ref].pooler.supabase.com:5432/postgres
+   SPRING_DATASOURCE_USERNAME=postgres.[ref]
+   SPRING_DATASOURCE_PASSWORD=[your-supabase-db-password]
+   JAVA_TOOL_OPTIONS=-Xmx384m -Xms128m
+   SERVER_PORT=8080
+   ```
+   Use the Supabase **Session Pooler** hostname (`[ref].pooler.supabase.com`), not the direct connection hostname. Find it in Supabase dashboard → Project Settings → Database → Connection string → Session mode.
+
+4. **Add `server.port` binding** to `src/main/resources/application.properties`:
+   ```properties
+   server.port=${SERVER_PORT:8080}
    ```
 
-4. **Create project and deploy**:
+5. **Deploy**:
    ```bash
-   railway init          # creates project, links repo
-   railway up            # first deploy — streams logs
+   railway link          # link local directory to Railway project
+   railway up            # first deploy (builds Docker image, streams logs)
+   railway logs          # verify startup — look for "Started FinanceHqApplication"
    ```
 
-5. **Wire GitHub Actions for auto-deploy on merge** (CI default from `tech-stack.md`):
-   - Add `RAILWAY_TOKEN` to GitHub repo secrets (from Railway dashboard → Project Settings → Tokens)
-   - In `.github/workflows/deploy.yml`: `railway up --ci` as the deploy step
-
-6. **Add Railway MCP server to Claude Code** for agentic operations:
+6. **Add Railway MCP server** to Claude Code for agent-driven operations (optional, WIP):
    ```bash
    claude mcp add railway-mcp-server -- npx -y @railway/mcp-server
    ```
+   Authenticate via OAuth when prompted. No API key required — uses Railway account session.
 
 ## Out of Scope
 
 The following were not evaluated in this research:
-- Docker image configuration beyond the Dockerfile template above
-- CI/CD pipeline full configuration (GitHub Actions workflow file)
+- Docker image layer caching optimization
+- CI/CD pipeline setup (GitHub Actions `RAILWAY_TOKEN` integration)
 - Production-scale architecture (multi-region, HA, DR)
-- Spring Security, JavaMail, or Quartz configuration — these are application-layer concerns, not infrastructure
+- Angular frontend CDN strategy (Cloudflare Pages in front of Railway is a viable future addition)
