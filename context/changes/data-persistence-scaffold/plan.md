@@ -294,19 +294,19 @@ V1 is the first migration. Flyway checksums the file after applying — do not m
 
 #### Automated
 
-- [x] 2.1 `./mvnw test` exits 0
-- [x] 2.2 Test output contains `Successfully applied 1 migration to schema "public"`
+- [x] 2.1 `./mvnw test` exits 0 — 43f4dc0
+- [x] 2.2 Test output contains `Successfully applied 1 migration to schema "public"` — 43f4dc0
 
 #### Manual
 
-- [x] 2.3 Test runs without `SPRING_DATASOURCE_URL` set locally — `@ServiceConnection` overrides datasource config
+- [x] 2.3 Test runs without `SPRING_DATASOURCE_URL` set locally — `@ServiceConnection` overrides datasource config — 43f4dc0
 
 ### Phase 3: Railway Deployment Verification
 
 #### Manual
 
-- [ ] 3.1 Railway Variables set: `SPRING_DATASOURCE_URL` (Session Pooler host), `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`
-- [ ] 3.2 `railway logs` shows `Started FinanceHqApplication` with no connection errors
-- [ ] 3.3 `railway logs` shows `Successfully applied 1 migration to schema "public"`
-- [ ] 3.4 `curl /actuator/health` returns HTTP 200 `{"status":"UP"}`
-- [ ] 3.5 Supabase Table Editor shows `users` table in `public` schema
+- [x] 3.1 Railway Variables set: `SPRING_DATASOURCE_URL` (Session Pooler host), `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`
+- [x] 3.2 `railway logs` shows `Started FinanceHqApplication` with no connection errors
+- [x] 3.3 `railway logs` shows `Successfully applied 1 migration to schema "public"`
+- [x] 3.4 `curl /actuator/health` returns HTTP 200 `{"status":"UP"}`
+- [x] 3.5 Supabase Table Editor shows `users` table in `public` schema
