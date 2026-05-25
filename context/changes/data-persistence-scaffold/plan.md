@@ -282,24 +282,24 @@ V1 is the first migration. Flyway checksums the file after applying — do not m
 
 #### Automated
 
-- [x] 1.1 `./mvnw clean package -DskipTests` exits 0
-- [x] 1.2 `./mvnw dependency:tree | grep javax` returns empty
+- [x] 1.1 `./mvnw clean package -DskipTests` exits 0 — 6f580ac
+- [x] 1.2 `./mvnw dependency:tree | grep javax` returns empty — 6f580ac
 
 #### Manual
 
-- [x] 1.3 Migration file exists at `src/main/resources/db/migration/V1__create_users_table.sql`
-- [x] 1.4 No datasource properties use hardcoded credentials — all values use `${...}` env var binding
+- [x] 1.3 Migration file exists at `src/main/resources/db/migration/V1__create_users_table.sql` — 6f580ac
+- [x] 1.4 No datasource properties use hardcoded credentials — all values use `${...}` env var binding — 6f580ac
 
 ### Phase 2: Testcontainers Test Configuration
 
 #### Automated
 
-- [ ] 2.1 `./mvnw test` exits 0
-- [ ] 2.2 Test output contains `Successfully applied 1 migration to schema "public"`
+- [x] 2.1 `./mvnw test` exits 0
+- [x] 2.2 Test output contains `Successfully applied 1 migration to schema "public"`
 
 #### Manual
 
-- [ ] 2.3 Test runs without `SPRING_DATASOURCE_URL` set locally — `@ServiceConnection` overrides datasource config
+- [x] 2.3 Test runs without `SPRING_DATASOURCE_URL` set locally — `@ServiceConnection` overrides datasource config
 
 ### Phase 3: Railway Deployment Verification
 
