@@ -43,6 +43,20 @@ Using TC 1.x artifact names with Spring Boot 4.x produces `Could not find artifa
 
 ---
 
+## REST API error responses: use RFC 7807 Problem Details (tech debt: MVP uses simple JSON)
+
+MVP auth endpoints return `{ "error": "message" }` for simplicity. This is **not** RFC 7807 compliant. Before adding more API surface (S-02, S-03), migrate error responses to RFC 7807 `ProblemDetail` (supported natively by Spring MVC 6+ via `ResponseEntityExceptionHandler`):
+
+```java
+ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Email already registered");
+problem.setTitle("Registration failed");
+return ResponseEntity.status(409).body(problem);
+```
+
+This ensures Angular clients (and any future consumers) can rely on a standard error contract.
+
+---
+
 ## Supabase + Railway: use Session Pooler URL, not direct connection host
 
 Railway is IPv4-only. Supabase's direct connection host resolves to IPv6 and produces a silent "Connection refused" at startup. Always use the **Session Pooler** host (`[ref].pooler.supabase.com:5432`) in `SPRING_DATASOURCE_URL`.
