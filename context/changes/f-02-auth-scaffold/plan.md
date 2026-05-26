@@ -560,20 +560,20 @@ V2 migration is purely additive. No existing data is affected. The `baseline-on-
 
 #### Automated
 
-- [x] 5.1 `./mvnw test` passes — context loads with full security config
+- [x] 5.1 `./mvnw test` passes — context loads with full security config — 7523c7c
 
 #### Manual
 
-- [x] 5.2 `POST /auth/register` returns 201 via local `spring-boot:run`
-- [x] 5.3 `curl /actuator/health` returns `{"status":"UP"}` without auth header
-- [x] 5.4 Request to an unrecognised route returns 401
+- [x] 5.2 `POST /auth/register` returns 201 via local `spring-boot:run` — 7523c7c
+- [x] 5.3 `curl /actuator/health` returns `{"status":"UP"}` without auth header — 7523c7c
+- [x] 5.4 Request to an unrecognised route returns 401 — 7523c7c
 
 ### Phase 6: Tests
 
 #### Automated
 
-- [ ] 6.1 `./mvnw test` passes — all integration and unit test cases pass
-- [ ] 6.2 `./mvnw dependency:tree | grep javax` returns empty
+- [x] 6.1 `./mvnw test` passes — all integration and unit test cases pass
+- [x] 6.2 `./mvnw dependency:tree | grep javax` returns empty
 
 #### Manual
 

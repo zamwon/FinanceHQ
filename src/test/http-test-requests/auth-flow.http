@@ -1,0 +1,69 @@
+### ──────────────────────────────────────────────────
+### FinanceHQ – Auth flow: register → login → protected
+###             → refresh → logout → confirm 401
+### ──────────────────────────────────────────────────
+### Prerequisites:
+###   1. Server running on localhost:8080
+###   2. Select "dev" environment (top-right in IntelliJ HTTP Client)
+###   3. Run requests IN ORDER — each script stores tokens in env vars
+
+
+
+### ─── Step 1: Register ───────────────────────────
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### ─── Step 2: Login ──────────────────────────────
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.global.set("accessToken", response.body.accessToken);
+  client.global.set("refreshToken", response.body.refreshToken);
+%}
+
+### ─── Step 3: Hit protected route with Bearer token ─
+# Expected: 200 OK  (any authenticated-only endpoint)
+GET {{baseUrl}}/api/me
+Authorization: Bearer {{accessToken}}
+
+
+### ─── Step 4: Refresh ────────────────────────────
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+> {%
+  client.global.set("newRefreshToken", response.body.refreshToken);
+  client.global.set("accessToken", response.body.accessToken);
+%}
+
+### ─── Step 5: Logout ─────────────────────────────
+POST {{baseUrl}}/auth/logout
+Content-Type: application/json
+
+{
+  "refreshToken": "{{newRefreshToken}}"
+}
+
+### ─── Step 6: Confirm refresh token returns 401 after logout ─
+# Expected: 401 Unauthorized
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{newRefreshToken}}"
+}

@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService implements UserDetailsService {
@@ -55,6 +56,7 @@ public class AuthService implements UserDetailsService {
         return new TokenResponse(accessToken, refreshToken.getToken(), accessTokenExpiry);
     }
 
+    @Transactional
     public TokenResponse refresh(String refreshToken) {
         RefreshToken rotated = refreshTokenService.rotate(refreshToken);
         String accessToken = jwtService.generateAccessToken(rotated.getUser().getEmail());
