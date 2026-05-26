@@ -526,29 +526,29 @@ V2 migration is purely additive. No existing data is affected. The `baseline-on-
 
 #### Automated
 
-- [x] 1.1 `./mvnw clean package -DskipTests` exits 0
-- [x] 1.2 `./mvnw test` passes with Spring Security on classpath
+- [x] 1.1 `./mvnw clean package -DskipTests` exits 0 — 21250f6
+- [x] 1.2 `./mvnw test` passes with Spring Security on classpath — 21250f6
 
 #### Manual
 
-- [x] 1.3 `JWT_SECRET` and `CORS_ALLOWED_ORIGINS` added to Railway environment variables
+- [x] 1.3 `JWT_SECRET` and `CORS_ALLOWED_ORIGINS` added to Railway environment variables — 21250f6
 
 ### Phase 2: Core Domain — Entities and Repositories
 
 #### Automated
 
-- [ ] 2.1 `./mvnw test` passes — V1 + V2 migrations applied; Hibernate column mappings validated
+- [x] 2.1 `./mvnw test` passes — V1 + V2 migrations applied; Hibernate column mappings validated
 
 #### Manual
 
-- [ ] 2.2 No `HibernateException` or column-not-found warnings in test output
+- [x] 2.2 No `HibernateException` or column-not-found warnings in test output
 
 ### Phase 3: Token Services
 
 #### Automated
 
-- [ ] 3.1 `JwtServiceTest` unit tests pass (generate, extract email, validate fresh, reject expired, reject tampered)
-- [ ] 3.2 `RefreshTokenServiceTest` unit tests pass (create, rotate, rotate-on-expired throws, revoke)
+- [x] 3.1 `JwtServiceTest` unit tests pass (generate, extract email, validate fresh, reject expired, reject tampered)
+- [x] 3.2 `RefreshTokenServiceTest` unit tests pass (create, rotate, rotate-on-expired throws, revoke)
 
 ### Phase 4: Auth Endpoints and Error Handling
 
