@@ -57,6 +57,15 @@ This ensures Angular clients (and any future consumers) can rely on a standard e
 
 ---
 
+## Use fallback defaults in application.properties for local dev
+
+- **Context**: Any phase that configures `application.properties` with environment variable placeholders (e.g. `${SPRING_DATASOURCE_URL}`)
+- **Problem**: When env vars are not set locally (Railway injects them only in prod), Spring Boot fails to start with `HikariCP: 'url' must start with "jdbc"`. Profile-based workarounds (`application-local.properties`) are unreliable — Spring Boot DevTools restart launcher can lose the active profile, leaving placeholders unresolved.
+- **Rule**: Always add a local fallback default using the `${VAR:default}` syntax in `application.properties` for every env var that Railway injects in prod. Local Postgres defaults are safe to commit since Railway env vars override them in prod.
+- **Applies to**: plan, implement
+
+---
+
 ## Supabase + Railway: use Session Pooler URL, not direct connection host
 
 Railway is IPv4-only. Supabase's direct connection host resolves to IPv6 and produces a silent "Connection refused" at startup. Always use the **Session Pooler** host (`[ref].pooler.supabase.com:5432`) in `SPRING_DATASOURCE_URL`.
