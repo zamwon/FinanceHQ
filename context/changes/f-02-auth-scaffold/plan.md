@@ -547,14 +547,14 @@ V2 migration is purely additive. No existing data is affected. The `baseline-on-
 
 #### Automated
 
-- [x] 3.1 `JwtServiceTest` unit tests pass (generate, extract email, validate fresh, reject expired, reject tampered)
-- [x] 3.2 `RefreshTokenServiceTest` unit tests pass (create, rotate, rotate-on-expired throws, revoke)
+- [x] 3.1 `JwtServiceTest` unit tests pass (generate, extract email, validate fresh, reject expired, reject tampered) — 83cb023
+- [x] 3.2 `RefreshTokenServiceTest` unit tests pass (create, rotate, rotate-on-expired throws, revoke) — 83cb023
 
 ### Phase 4: Auth Endpoints and Error Handling
 
 #### Automated
 
-- [ ] 4.1 `./mvnw clean package -DskipTests` exits 0
+- [x] 4.1 `./mvnw clean package -DskipTests` exits 0
 
 ### Phase 5: Security Filter Chain and CORS
 
