@@ -554,19 +554,19 @@ V2 migration is purely additive. No existing data is affected. The `baseline-on-
 
 #### Automated
 
-- [x] 4.1 `./mvnw clean package -DskipTests` exits 0
+- [x] 4.1 `./mvnw clean package -DskipTests` exits 0 — 5d41d9c
 
 ### Phase 5: Security Filter Chain and CORS
 
 #### Automated
 
-- [ ] 5.1 `./mvnw test` passes — context loads with full security config
+- [x] 5.1 `./mvnw test` passes — context loads with full security config
 
 #### Manual
 
-- [ ] 5.2 `POST /auth/register` returns 201 via local `spring-boot:run`
-- [ ] 5.3 `curl /actuator/health` returns `{"status":"UP"}` without auth header
-- [ ] 5.4 Request to an unrecognised route returns 401
+- [x] 5.2 `POST /auth/register` returns 201 via local `spring-boot:run`
+- [x] 5.3 `curl /actuator/health` returns `{"status":"UP"}` without auth header
+- [x] 5.4 Request to an unrecognised route returns 401
 
 ### Phase 6: Tests
 
