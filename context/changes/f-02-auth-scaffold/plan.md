@@ -572,11 +572,11 @@ V2 migration is purely additive. No existing data is affected. The `baseline-on-
 
 #### Automated
 
-- [x] 6.1 `./mvnw test` passes — all integration and unit test cases pass
-- [x] 6.2 `./mvnw dependency:tree | grep javax` returns empty
+- [x] 6.1 `./mvnw test` passes — all integration and unit test cases pass — a99e409
+- [x] 6.2 `./mvnw dependency:tree | grep javax` returns empty — a99e409
 
 #### Manual
 
-- [ ] 6.3 Full auth flow verified via cURL/Postman (register → login → protected route → refresh → logout → confirm revocation)
-- [ ] 6.4 Railway deploy shows `Successfully applied 2 migrations to schema "public"` in startup logs
-- [ ] 6.5 Supabase Table Editor shows `refresh_tokens` table with expected columns
+- [x] 6.3 Full auth flow verified via cURL/Postman (register → login → protected route → refresh → logout → confirm revocation)
+- [x] 6.4 Railway deploy shows `Successfully applied 2 migrations to schema "public"` in startup logs
+- [x] 6.5 Supabase Table Editor shows `refresh_tokens` table with expected columns
