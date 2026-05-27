@@ -98,3 +98,12 @@ Also: Railway does not auto-transform `DATABASE_URL` for external Supabase conne
 - **Problem**: Access and refresh tokens stored in localStorage are readable by any JS on the page. Refresh token theft gives durable session access. Accepted risk for v0.1; httpOnly-cookie hardening deferred to v1.1.
 - **Rule**: When tokens are stored in localStorage, add a Content Security Policy (CSP) header on Spring Boot responses as a compensating control before shipping to production.
 - **Applies to**: Any feature that writes auth tokens to browser storage before cookie hardening is implemented.
+
+---
+
+## Spring Boot 4.x: PathRequest.toStaticResources() removed
+
+- **Context**: src/main/java/com/example/finance_hq/security/SecurityConfig.java
+- **Problem**: `PathRequest.toStaticResources().atCommonLocations()` (from `org.springframework.boot.autoconfigure.security.servlet.PathRequest`) does not exist in Spring Boot 4.x — the class was removed. Using it causes a compile-time `package does not exist` error.
+- **Rule**: Use explicit ant patterns in `requestMatchers` instead: `"/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg", "/*.woff", "/*.woff2", "/*.ttf", "/assets/**"`. This is stricter (only named extensions) and has no Spring Boot version dependency.
+- **Applies to**: plan, implement — any phase that configures Spring Security static asset rules.
