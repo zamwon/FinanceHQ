@@ -24,6 +24,7 @@ public class AuthService implements UserDetailsService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final long accessTokenExpiry;
+    private final String dummyHash;
 
     public AuthService(
             UserRepository userRepository,
@@ -36,6 +37,8 @@ public class AuthService implements UserDetailsService {
         this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
         this.accessTokenExpiry = accessTokenExpiry;
+        // Precomputed once so unknown-email login still pays the BCrypt cost (constant-time defense).
+        this.dummyHash = passwordEncoder.encode("__dummy__");
     }
 
     public void register(RegisterRequest req) {
@@ -46,8 +49,12 @@ public class AuthService implements UserDetailsService {
     }
 
     public TokenResponse login(LoginRequest req) {
-        User user = userRepository.findByEmail(req.email())
-                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+        User user = userRepository.findByEmail(req.email()).orElse(null);
+        if (user == null) {
+            // Burn the same BCrypt cost as a real verify so attackers can't enumerate emails by timing.
+            passwordEncoder.matches(req.password(), dummyHash);
+            throw new BadCredentialsException("Invalid credentials");
+        }
         if (!passwordEncoder.matches(req.password(), user.getPassword())) {
             throw new BadCredentialsException("Invalid credentials");
         }

@@ -71,3 +71,12 @@ This ensures Angular clients (and any future consumers) can rely on a standard e
 Railway is IPv4-only. Supabase's direct connection host resolves to IPv6 and produces a silent "Connection refused" at startup. Always use the **Session Pooler** host (`[ref].pooler.supabase.com:5432`) in `SPRING_DATASOURCE_URL`.
 
 Also: Railway does not auto-transform `DATABASE_URL` for external Supabase connections. Set `SPRING_DATASOURCE_URL` manually with the `jdbc:postgresql://` prefix.
+
+---
+
+## JPA entity should not implement Spring Security UserDetails directly
+
+- **Context**: src/main/java/com/example/finance_hq/user/User.java — User entity implements UserDetails
+- **Problem**: Mixing the JPA entity with Spring Security's `UserDetails` contract couples persistence to the auth layer. Adding future security flags (locked, enabled, credentials_expired) requires schema changes on the core entity, and every entity fetch leaks the password hash through `getPassword()`.
+- **Rule**: Keep `UserDetails` adapters in `auth/` or `security/`. Wrap the entity with a `UserPrincipal` (or equivalent) instead of having the entity itself implement `UserDetails`.
+- **Applies to**: plan, implement

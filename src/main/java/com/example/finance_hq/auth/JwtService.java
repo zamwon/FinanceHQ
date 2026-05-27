@@ -36,6 +36,7 @@ public class JwtService {
     public String extractEmail(String token) {
         return Jwts.parser()
                 .verifyWith(key)
+                .clockSkewSeconds(30)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
@@ -44,7 +45,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token) {
         try {
-            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+            Jwts.parser().verifyWith(key).clockSkewSeconds(30).build().parseSignedClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;

@@ -31,7 +31,8 @@ class JwtServiceTest {
 
     @Test
     void isTokenValid_falseForExpiredToken() {
-        JwtService shortLived = new JwtService(SECRET, -1L);
+        // Must exceed JwtService's 30s clock-skew tolerance.
+        JwtService shortLived = new JwtService(SECRET, -120L);
         String token = shortLived.generateAccessToken(EMAIL);
         assertFalse(jwtService.isTokenValid(token));
     }

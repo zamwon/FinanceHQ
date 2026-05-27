@@ -35,7 +35,7 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken rotate(String oldToken) {
-        RefreshToken existing = refreshTokenRepository.findByToken(oldToken)
+        RefreshToken existing = refreshTokenRepository.findByTokenForUpdate(oldToken)
                 .orElseThrow(() -> new InvalidRefreshTokenException("Invalid or expired refresh token"));
 
         if (existing.getExpiresAt().isBefore(LocalDateTime.now())) {

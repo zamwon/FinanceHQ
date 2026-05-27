@@ -49,7 +49,7 @@ class RefreshTokenServiceTest {
         String oldTokenValue = "old-token";
         RefreshToken existing = new RefreshToken(oldTokenValue, user, LocalDateTime.now().plusDays(30));
 
-        when(refreshTokenRepository.findByToken(oldTokenValue)).thenReturn(Optional.of(existing));
+        when(refreshTokenRepository.findByTokenForUpdate(oldTokenValue)).thenReturn(Optional.of(existing));
         when(refreshTokenRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         RefreshToken newToken = refreshTokenService.rotate(oldTokenValue);
@@ -63,7 +63,7 @@ class RefreshTokenServiceTest {
         String tokenValue = "expired-token";
         RefreshToken expired = new RefreshToken(tokenValue, user, LocalDateTime.now().minusDays(1));
 
-        when(refreshTokenRepository.findByToken(tokenValue)).thenReturn(Optional.of(expired));
+        when(refreshTokenRepository.findByTokenForUpdate(tokenValue)).thenReturn(Optional.of(expired));
 
         assertThrows(InvalidRefreshTokenException.class, () -> refreshTokenService.rotate(tokenValue));
     }

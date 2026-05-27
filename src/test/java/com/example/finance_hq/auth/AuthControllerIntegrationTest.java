@@ -177,6 +177,22 @@ class AuthControllerIntegrationTest {
     }
 
     @Test
+    void protectedEndpoint_401_tamperedBearerToken() throws Exception {
+        mvc.perform(post("/auth/register")
+                        .contentType(APPLICATION_JSON)
+                        .content(json(new RegisterRequest("tamper_test@example.com", "Test1234!"))))
+                .andExpect(status().isCreated());
+
+        Map<String, Object> loginTokens = loginAndGetTokens("tamper_test@example.com", "Test1234!");
+        String accessToken = (String) loginTokens.get("accessToken");
+        String tampered = accessToken.substring(0, accessToken.length() - 4) + "XXXX";
+
+        mvc.perform(get("/some-protected-path")
+                        .header("Authorization", "Bearer " + tampered))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void protectedEndpoint_notUnauthorized_validBearerToken() throws Exception {
         mvc.perform(post("/auth/register")
                         .contentType(APPLICATION_JSON)
