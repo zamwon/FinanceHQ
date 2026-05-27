@@ -1,4 +1,3 @@
-HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -33,4 +32,22 @@ build/
 .vscode/
 
 ### Local dev credentials (never commit) ###
+# Profile-activated by --spring.profiles.active=local; lives at project root so it isn't packaged into the JAR.
+/application-local.yml
+/application-local.properties
+# Legacy path kept in case anyone still has the file under resources/ — that location leaks into the JAR; move it to project root.
 src/main/resources/application-local.properties
+src/main/resources/application-local.yml
+
+### Claude Code local directories ###
+.agents/
+.claude/
+
+### Build artifacts ###
+META-INF/
+
+### Angular frontend ###
+src/main/frontend/node_modules/
+src/main/frontend/.angular/
+src/main/frontend/dist/
+src/main/frontend/coverage/
