@@ -467,14 +467,14 @@ Add a `WebMvcConfigurer` so Spring Boot forwards SPA deep links (e.g., `/dashboa
 
 #### Automated
 
-- [x] 4.1 `./mvnw test` passes (including `SpaForwardingConfigTest`)
-- [x] 4.2 `npm test -- --run` passes (including `auth.guard.spec.ts`)
-- [x] 4.3 JAR contains `static/index.html`
+- [x] 4.1 `./mvnw test` passes (including `SpaForwardingConfigTest`) — dd63577
+- [x] 4.2 `npm test -- --run` passes (including `auth.guard.spec.ts`) — dd63577
+- [x] 4.3 JAR contains `static/index.html` — dd63577
 
 #### Manual
 
-- [x] 4.4 `java -jar target/finance-hq-*.jar` serves the SPA at `/`
-- [x] 4.5 Direct-load `/login` renders the login stub
-- [x] 4.6 Reload from `/dashboard` redirects via guard (no Spring error page)
-- [x] 4.7 `curl -sI /main-*.js` returns `200` with `application/javascript`
-- [x] 4.8 `curl -sI -X GET /auth/login` returns `405` (controller still owns it)
+- [x] 4.4 `java -jar target/finance-hq-*.jar` serves the SPA at `/` — dd63577
+- [x] 4.5 Direct-load `/login` renders the login stub — dd63577
+- [x] 4.6 Reload from `/dashboard` redirects via guard (no Spring error page) — dd63577
+- [x] 4.7 `curl -sI /main-*.js` returns `200` with `application/javascript` — dd63577
+- [x] 4.8 `curl -sI -X GET /auth/login` returns `405` (controller still owns it) — dd63577

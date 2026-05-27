@@ -1,7 +1,7 @@
 ---
 change_id: angular-spa-scaffold
 title: Angular spa scaffold
-status: implementing
+status: implemented
 created: 2026-05-27
 updated: 2026-05-27
 archived_at: null
