@@ -1,6 +1,6 @@
 <mat-toolbar color="primary" class="app-toolbar">
   <span>FinanceHQ</span>
   <span class="toolbar-spacer"></span>
-  <button mat-button (click)="signOut()">Sign out</button>
+  <button mat-button *ngIf="authService.isAuthenticated()" (click)="signOut()">Sign out</button>
 </mat-toolbar>
 <router-outlet />

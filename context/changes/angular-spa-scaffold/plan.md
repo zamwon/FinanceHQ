@@ -436,25 +436,25 @@ Add a `WebMvcConfigurer` so Spring Boot forwards SPA deep links (e.g., `/dashboa
 
 #### Automated
 
-- [x] 2.1 `./mvnw clean package -DskipTests` succeeds with the new component tree
-- [x] 2.2 `npx ng build` initial bundle is within the 800 KB budget
-- [x] 2.3 `npm test -- --run` exits 0
+- [x] 2.1 `./mvnw clean package -DskipTests` succeeds with the new component tree — d193780
+- [x] 2.2 `npx ng build` initial bundle is within the 800 KB budget — d193780
+- [x] 2.3 `npm test -- --run` exits 0 — d193780
 
 #### Manual
 
-- [x] 2.4 Toolbar renders across all routes
-- [x] 2.5 `/login`, `/register`, `/dashboard` each render their placeholder cards
-- [x] 2.6 Unknown route shows the not-found component
-- [x] 2.7 Browser back/forward updates URL without a page reload
-- [x] 2.8 Lighthouse accessibility audit on `/login` returns ≥ 90
+- [x] 2.4 Toolbar renders across all routes — d193780
+- [x] 2.5 `/login`, `/register`, `/dashboard` each render their placeholder cards — d193780
+- [x] 2.6 Unknown route shows the not-found component — d193780
+- [x] 2.7 Browser back/forward updates URL without a page reload — d193780
+- [x] 2.8 Lighthouse accessibility audit on `/login` returns ≥ 90 — d193780
 
 ### Phase 3: Auth plumbing (interceptor, refresh, guard)
 
 #### Automated
 
-- [ ] 3.1 `./mvnw clean package -DskipTests` succeeds
-- [ ] 3.2 `npx ng build` succeeds with no type errors
-- [ ] 3.3 `npm test -- --run` exits 0
+- [x] 3.1 `./mvnw clean package -DskipTests` succeeds
+- [x] 3.2 `npx ng build` succeeds with no type errors
+- [x] 3.3 `npm test -- --run` exits 0
 
 #### Manual
 
