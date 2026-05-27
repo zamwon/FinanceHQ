@@ -2,7 +2,6 @@ package com.example.finance_hq.security;
 
 import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,8 +46,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
                 // SPA shell routes — Angular guard handles client-side auth checks.
                 .requestMatchers(HttpMethod.GET, "/", "/index.html", "/login", "/register", "/dashboard").permitAll()
-                // Static assets served by Spring Boot's resource handler.
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                // Static assets — explicit extensions are safer than dot-based matching.
+                .requestMatchers(HttpMethod.GET, "/*.js", "/*.js.map", "/*.css", "/*.css.map",
+                    "/*.ico", "/*.png", "/*.svg", "/*.woff", "/*.woff2", "/*.ttf", "/assets/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
