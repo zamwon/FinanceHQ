@@ -80,3 +80,12 @@ Also: Railway does not auto-transform `DATABASE_URL` for external Supabase conne
 - **Problem**: Mixing the JPA entity with Spring Security's `UserDetails` contract couples persistence to the auth layer. Adding future security flags (locked, enabled, credentials_expired) requires schema changes on the core entity, and every entity fetch leaks the password hash through `getPassword()`.
 - **Rule**: Keep `UserDetails` adapters in `auth/` or `security/`. Wrap the entity with a `UserPrincipal` (or equivalent) instead of having the entity itself implement `UserDetails`.
 - **Applies to**: plan, implement
+
+---
+
+## Run local backend with `--spring.profiles.active=local`
+
+- **Context**: any local backend run
+- **Problem**: without profile selected to local, app tries default — which has secrets configured in Supabase
+- **Rule**: Always run the app locally with `--spring.profiles.active=local` (or `SPRING_PROFILES_ACTIVE=local`) so Spring Boot loads `/application-local.yml` from the project root, which provides `JWT_SECRET` and local datasource overrides.
+- **Applies to**: implement, impl-review

@@ -422,31 +422,31 @@ Add a `WebMvcConfigurer` so Spring Boot forwards SPA deep links (e.g., `/dashboa
 
 #### Automated
 
-- [x] 1.1 `./mvnw clean package -DskipTests` completes successfully
-- [x] 1.2 Produced JAR contains `BOOT-INF/classes/static/index.html`
-- [x] 1.3 `npm test -- --run` exits 0 in `src/main/frontend`
-- [x] 1.4 `npx ng lint` exits 0 in `src/main/frontend`
+- [x] 1.1 `./mvnw clean package -DskipTests` completes successfully — c89b261
+- [x] 1.2 Produced JAR contains `BOOT-INF/classes/static/index.html` — c89b261
+- [x] 1.3 `npm test -- --run` exits 0 in `src/main/frontend` — c89b261
+- [x] 1.4 `npx ng lint` exits 0 in `src/main/frontend` — c89b261
 
 #### Manual
 
-- [x] 1.5 `java -jar target/finance-hq-*.jar` serves the default Angular welcome page at `http://localhost:8080/`
-- [x] 1.6 `ng serve --proxy-config proxy.conf.json` proxies `/auth/**` to the backend (not connection-refused)
+- [x] 1.5 `java -jar target/finance-hq-*.jar` serves the default Angular welcome page at `http://localhost:8080/` — c89b261
+- [x] 1.6 `ng serve --proxy-config proxy.conf.json` proxies `/auth/**` to the backend (not connection-refused) — c89b261
 
 ### Phase 2: SPA shell + routing + stub components
 
 #### Automated
 
-- [ ] 2.1 `./mvnw clean package -DskipTests` succeeds with the new component tree
-- [ ] 2.2 `npx ng build` initial bundle is within the 800 KB budget
-- [ ] 2.3 `npm test -- --run` exits 0
+- [x] 2.1 `./mvnw clean package -DskipTests` succeeds with the new component tree
+- [x] 2.2 `npx ng build` initial bundle is within the 800 KB budget
+- [x] 2.3 `npm test -- --run` exits 0
 
 #### Manual
 
-- [ ] 2.4 Toolbar renders across all routes
-- [ ] 2.5 `/login`, `/register`, `/dashboard` each render their placeholder cards
-- [ ] 2.6 Unknown route shows the not-found component
-- [ ] 2.7 Browser back/forward updates URL without a page reload
-- [ ] 2.8 Lighthouse accessibility audit on `/login` returns ≥ 90
+- [x] 2.4 Toolbar renders across all routes
+- [x] 2.5 `/login`, `/register`, `/dashboard` each render their placeholder cards
+- [x] 2.6 Unknown route shows the not-found component
+- [x] 2.7 Browser back/forward updates URL without a page reload
+- [x] 2.8 Lighthouse accessibility audit on `/login` returns ≥ 90
 
 ### Phase 3: Auth plumbing (interceptor, refresh, guard)
 
