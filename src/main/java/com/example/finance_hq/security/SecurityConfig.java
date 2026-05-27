@@ -2,6 +2,7 @@ package com.example.finance_hq.security;
 
 import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,11 @@ public class SecurityConfig {
             CorsConfigurationSource corsConfigurationSource) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
+            .headers(headers -> headers
+                .contentSecurityPolicy(csp -> csp.policyDirectives(
+                    "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'"
+                ))
+            )
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 // Permit Spring Boot error dispatch so framework-generated 4xx/5xx pages are served without re-auth.
@@ -41,15 +47,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
                 // SPA shell routes — Angular guard handles client-side auth checks.
                 .requestMatchers(HttpMethod.GET, "/", "/index.html", "/login", "/register", "/dashboard").permitAll()
-                // Static assets: lambda bypasses MVC handler requirement in Spring Security 6.
-                // Permits GET and HEAD (curl -I uses HEAD; browsers use GET).
-                .requestMatchers(request -> {
-                    String method = request.getMethod();
-                    if (!"GET".equals(method) && !"HEAD".equals(method)) return false;
-                    String uri = request.getRequestURI();
-                    String filename = uri.substring(uri.lastIndexOf('/') + 1);
-                    return filename.contains(".");
-                }).permitAll()
+                // Static assets served by Spring Boot's resource handler.
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

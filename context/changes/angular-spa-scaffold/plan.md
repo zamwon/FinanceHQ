@@ -134,7 +134,7 @@ Vitest is NOT bound to the Maven `test` phase in this iteration — the backend 
 
 - `./mvnw clean package -DskipTests` completes successfully
 - The produced JAR (`target/finance-hq-*.jar`) contains `BOOT-INF/classes/static/index.html` (verify with `jar tf`)
-- `cd src/main/frontend && npm test -- --run` exits 0 (Vitest, default spec from `ng new`)
+- `cd src/main/frontend && npm test` exits 0 (Vitest, default spec from `ng new`)
 - `cd src/main/frontend && npx ng lint` exits 0 (default ESLint config from `ng new`)
 
 #### Manual Verification:
@@ -204,7 +204,7 @@ Replace the default `ng new` welcome page with a Material toolbar shell, a route
 
 - `./mvnw clean package -DskipTests` succeeds with the new component tree
 - `cd src/main/frontend && npx ng build` produces a bundle ≤ 800 KB initial-load (`ng build` budget warnings cause non-zero exit if exceeded)
-- `cd src/main/frontend && npm test -- --run` exits 0
+- `cd src/main/frontend && npm test` exits 0
 
 #### Manual Verification:
 
@@ -304,7 +304,7 @@ Apply to the dashboard route in `app.routes.ts`: `{ path: 'dashboard', canActiva
 
 - `./mvnw clean package -DskipTests` succeeds
 - `cd src/main/frontend && npx ng build` succeeds with no type errors
-- `cd src/main/frontend && npm test -- --run` exits 0 (default Vitest spec still passes; no new specs required this phase)
+- `cd src/main/frontend && npm test` exits 0 (default Vitest spec still passes; no new specs required this phase)
 
 #### Manual Verification:
 
@@ -356,7 +356,7 @@ Add a `WebMvcConfigurer` so Spring Boot forwards SPA deep links (e.g., `/dashboa
 #### Automated Verification:
 
 - `./mvnw test` passes (new `SpaForwardingConfigTest` included)
-- `cd src/main/frontend && npm test -- --run` passes (new `auth.guard.spec.ts` included)
+- `cd src/main/frontend && npm test` passes (new `auth.guard.spec.ts` included)
 - `./mvnw clean package` produces a JAR; `jar tf target/finance-hq-*.jar | grep 'static/index.html'` finds the file
 
 #### Manual Verification:
@@ -424,7 +424,7 @@ Add a `WebMvcConfigurer` so Spring Boot forwards SPA deep links (e.g., `/dashboa
 
 - [x] 1.1 `./mvnw clean package -DskipTests` completes successfully — c89b261
 - [x] 1.2 Produced JAR contains `BOOT-INF/classes/static/index.html` — c89b261
-- [x] 1.3 `npm test -- --run` exits 0 in `src/main/frontend` — c89b261
+- [x] 1.3 `npm test` exits 0 in `src/main/frontend` — c89b261
 - [x] 1.4 `npx ng lint` exits 0 in `src/main/frontend` — c89b261
 
 #### Manual
@@ -438,7 +438,7 @@ Add a `WebMvcConfigurer` so Spring Boot forwards SPA deep links (e.g., `/dashboa
 
 - [x] 2.1 `./mvnw clean package -DskipTests` succeeds with the new component tree — d193780
 - [x] 2.2 `npx ng build` initial bundle is within the 800 KB budget — d193780
-- [x] 2.3 `npm test -- --run` exits 0 — d193780
+- [x] 2.3 `npm test` exits 0 — d193780
 
 #### Manual
 
@@ -454,7 +454,7 @@ Add a `WebMvcConfigurer` so Spring Boot forwards SPA deep links (e.g., `/dashboa
 
 - [x] 3.1 `./mvnw clean package -DskipTests` succeeds — ff93b22
 - [x] 3.2 `npx ng build` succeeds with no type errors — ff93b22
-- [x] 3.3 `npm test -- --run` exits 0 — ff93b22
+- [x] 3.3 `npm test` exits 0 — ff93b22
 
 #### Manual
 
@@ -468,7 +468,7 @@ Add a `WebMvcConfigurer` so Spring Boot forwards SPA deep links (e.g., `/dashboa
 #### Automated
 
 - [x] 4.1 `./mvnw test` passes (including `SpaForwardingConfigTest`) — dd63577
-- [x] 4.2 `npm test -- --run` passes (including `auth.guard.spec.ts`) — dd63577
+- [x] 4.2 `npm test` passes (including `auth.guard.spec.ts`) — dd63577
 - [x] 4.3 JAR contains `static/index.html` — dd63577
 
 #### Manual

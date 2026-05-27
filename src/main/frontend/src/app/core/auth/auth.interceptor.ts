@@ -1,13 +1,13 @@
 import { HttpInterceptorFn, HttpErrorResponse, HttpRequest, HttpHandlerFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, throwError, Observable } from 'rxjs';
-import { catchError, filter, switchMap, take } from 'rxjs/operators';
+import { Subject, throwError } from 'rxjs';
+import { catchError, switchMap, take } from 'rxjs/operators';
 import { TokenStorageService } from './token-storage.service';
 import { AuthService } from './auth.service';
 
 const AUTH_BYPASS_PATHS = ['/auth/login', '/auth/register', '/auth/refresh'];
-const refresh$ = new BehaviorSubject<string | null>(null);
+const refresh$ = new Subject<string>();
 let refreshInFlight = false;
 
 function addBearer(req: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
@@ -40,14 +40,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (refreshInFlight) {
         return refresh$.pipe(
-          filter((t): t is string => !!t),
           take(1),
           switchMap(newToken => next(addBearer(req, newToken)))
         );
       }
 
       refreshInFlight = true;
-      refresh$.next(null);
       const storedRefresh = tokenStorage.getRefreshToken();
       if (!storedRefresh) {
         refreshInFlight = false;

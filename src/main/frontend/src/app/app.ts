@@ -17,7 +17,8 @@ export class App {
 
   signOut(): void {
     this.authService.logout().subscribe({
-      complete: () => this.router.navigate(['/login'])
+      complete: () => this.router.navigate(['/login']),
+      error: () => this.router.navigate(['/login'])
     });
   }
 }

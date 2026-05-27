@@ -89,3 +89,12 @@ Also: Railway does not auto-transform `DATABASE_URL` for external Supabase conne
 - **Problem**: without profile selected to local, app tries default — which has secrets configured in Supabase
 - **Rule**: Always run the app locally with `--spring.profiles.active=local` (or `SPRING_PROFILES_ACTIVE=local`) so Spring Boot loads `/application-local.yml` from the project root, which provides `JWT_SECRET` and local datasource overrides.
 - **Applies to**: implement, impl-review
+
+---
+
+## localStorage token storage — XSS exposure before httpOnly-cookie hardening
+
+- **Context**: src/main/frontend/src/app/core/auth/token-storage.service.ts
+- **Problem**: Access and refresh tokens stored in localStorage are readable by any JS on the page. Refresh token theft gives durable session access. Accepted risk for v0.1; httpOnly-cookie hardening deferred to v1.1.
+- **Rule**: When tokens are stored in localStorage, add a Content Security Policy (CSP) header on Spring Boot responses as a compensating control before shipping to production.
+- **Applies to**: Any feature that writes auth tokens to browser storage before cookie hardening is implemented.
