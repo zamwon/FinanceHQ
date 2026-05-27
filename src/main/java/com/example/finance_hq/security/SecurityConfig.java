@@ -1,5 +1,6 @@
 package com.example.finance_hq.security;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -32,8 +33,23 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Permit Spring Boot error dispatch so framework-generated 4xx/5xx pages are served without re-auth.
+                .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh", "/auth/logout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
+                // Auth endpoints have no GET handlers; permitAll lets the controller return 405 instead of security 401.
+                .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
+                // SPA shell routes — Angular guard handles client-side auth checks.
+                .requestMatchers(HttpMethod.GET, "/", "/index.html", "/login", "/register", "/dashboard").permitAll()
+                // Static assets: lambda bypasses MVC handler requirement in Spring Security 6.
+                // Permits GET and HEAD (curl -I uses HEAD; browsers use GET).
+                .requestMatchers(request -> {
+                    String method = request.getMethod();
+                    if (!"GET".equals(method) && !"HEAD".equals(method)) return false;
+                    String uri = request.getRequestURI();
+                    String filename = uri.substring(uri.lastIndexOf('/') + 1);
+                    return filename.contains(".");
+                }).permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

@@ -452,29 +452,29 @@ Add a `WebMvcConfigurer` so Spring Boot forwards SPA deep links (e.g., `/dashboa
 
 #### Automated
 
-- [x] 3.1 `./mvnw clean package -DskipTests` succeeds
-- [x] 3.2 `npx ng build` succeeds with no type errors
-- [x] 3.3 `npm test -- --run` exits 0
+- [x] 3.1 `./mvnw clean package -DskipTests` succeeds — ff93b22
+- [x] 3.2 `npx ng build` succeeds with no type errors — ff93b22
+- [x] 3.3 `npm test -- --run` exits 0 — ff93b22
 
 #### Manual
 
-- [ ] 3.4 Fresh tab → `/dashboard` redirects to `/login?returnUrl=%2Fdashboard`
-- [ ] 3.5 Setting `localStorage.fhq.accessToken` lets `/dashboard` render
-- [ ] 3.6 Outbound request includes `Authorization: Bearer <token>`
-- [ ] 3.7 Clearing storage restores the guard redirect
+- [x] 3.4 Fresh tab → `/dashboard` redirects to `/login?returnUrl=%2Fdashboard` — ff93b22
+- [x] 3.5 Setting `localStorage.fhq.accessToken` lets `/dashboard` render — ff93b22
+- [x] 3.6 Outbound request includes `Authorization: Bearer <token>` — ff93b22
+- [x] 3.7 Clearing storage restores the guard redirect — ff93b22
 
 ### Phase 4: Spring SPA fallback + production smoke
 
 #### Automated
 
-- [ ] 4.1 `./mvnw test` passes (including `SpaForwardingConfigTest`)
-- [ ] 4.2 `npm test -- --run` passes (including `auth.guard.spec.ts`)
-- [ ] 4.3 JAR contains `static/index.html`
+- [x] 4.1 `./mvnw test` passes (including `SpaForwardingConfigTest`)
+- [x] 4.2 `npm test -- --run` passes (including `auth.guard.spec.ts`)
+- [x] 4.3 JAR contains `static/index.html`
 
 #### Manual
 
-- [ ] 4.4 `java -jar target/finance-hq-*.jar` serves the SPA at `/`
-- [ ] 4.5 Direct-load `/login` renders the login stub
-- [ ] 4.6 Reload from `/dashboard` redirects via guard (no Spring error page)
-- [ ] 4.7 `curl -sI /main-*.js` returns `200` with `application/javascript`
-- [ ] 4.8 `curl -sI -X GET /auth/login` returns `405` (controller still owns it)
+- [x] 4.4 `java -jar target/finance-hq-*.jar` serves the SPA at `/`
+- [x] 4.5 Direct-load `/login` renders the login stub
+- [x] 4.6 Reload from `/dashboard` redirects via guard (no Spring error page)
+- [x] 4.7 `curl -sI /main-*.js` returns `200` with `application/javascript`
+- [x] 4.8 `curl -sI -X GET /auth/login` returns `405` (controller still owns it)
