@@ -461,13 +461,13 @@ No data migration needed — obligations table is new. Flyway V4 applies cleanly
 
 #### Manual
 
-- [ ] 1.2 obligations table exists in local DB with correct columns and index
+- [x] 1.2 obligations table exists in local DB with correct columns and index
 
 ### Phase 2: Service layer
 
 #### Automated
 
-- [ ] 2.1 Backend compiles after Phase 2 additions (`./mvnw clean package -DskipTests`)
+- [x] 2.1 Backend compiles after Phase 2 additions (`./mvnw clean package -DskipTests`)
 
 ### Phase 3: REST controller + DTOs + security fix
 
