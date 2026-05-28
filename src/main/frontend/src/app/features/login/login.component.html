@@ -1,10 +1,66 @@
 <div class="page-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title><h1>Login</h1></mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p>Sign in to your FinanceHQ account.</p>
-    </mat-card-content>
+  <mat-card class="auth-card">
+    <div class="card-accent-bar"></div>
+
+    <div class="card-inner">
+      <header class="card-header">
+        <h1 class="card-title">Sign in</h1>
+        <p class="card-subtitle">Access your FinanceHQ account</p>
+      </header>
+
+      @if (errorMessage) {
+        <div class="error-alert" role="alert">
+          <mat-icon class="error-icon">error_outline</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="submit()" novalidate class="auth-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email address</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="email" />
+          @if (loginForm.controls.email.touched && loginForm.controls.email.hasError('required')) {
+            <mat-error>Email is required</mat-error>
+          } @else if (loginForm.controls.email.touched && loginForm.controls.email.hasError('email')) {
+            <mat-error>Enter a valid email address</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="showPassword = !showPassword"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          >
+            <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (loginForm.controls.password.touched && loginForm.controls.password.hasError('required')) {
+            <mat-error>Password is required</mat-error>
+          }
+        </mat-form-field>
+
+        <button
+          mat-flat-button
+          type="submit"
+          class="submit-btn"
+          [disabled]="loginForm.invalid || loading"
+        >
+          {{ loading ? 'Signing in…' : 'Sign in' }}
+        </button>
+      </form>
+
+      <p class="auth-link">
+        Need an account? <a routerLink="/register">Register</a>
+      </p>
+    </div>
   </mat-card>
 </div>
