@@ -152,7 +152,23 @@ All endpoints are authenticated (Bearer token via `AuthInterceptor`). The backen
 ### Layout
 - `app.html` is a bare `<router-outlet />` — no sidebar, no toolbar at root level
 - Auth pages (`/login`, `/register`) render their own centered-card layout, no sidebar
-- The protected layout (sidebar + content) is composed inside the Obligations page or a dedicated `LayoutComponent` wrapping all protected routes
+- Protected routes render inside a `LayoutComponent` (`shared/layout/layout.component.ts`) which composes the sidebar + `<router-outlet />` for page content. `LayoutComponent` is the parent route in `app.routes.ts` with `canActivate: [AuthGuard]`; child routes (obligations, future pages) nest under it.
+
+```typescript
+// app.routes.ts structure
+{ path: 'login', loadComponent: () => LoginComponent },
+{ path: 'register', loadComponent: () => RegisterComponent },
+{
+  path: '',
+  component: LayoutComponent,   // sidebar shell
+  canActivate: [AuthGuard],
+  children: [
+    { path: 'dashboard', loadComponent: () => ObligationsComponent },
+    // future pages added here
+  ]
+},
+{ path: '**', loadComponent: () => NotFoundComponent },
+```
 
 ### SidebarComponent (`shared/layout/sidebar/`)
 Standalone component, injected into the protected layout. Contents top to bottom:
@@ -217,7 +233,9 @@ When Dashboard and other pages are added, insert nav links between the section l
 
 ---
 
-### 6.3 Obligations (`/dashboard`, protected by AuthGuard)
+### 6.3 Obligations (`/dashboard`, via `ObligationsComponent`)
+
+**Routing note:** The `/dashboard` route loads `ObligationsComponent` directly (from `features/obligations/`). There is no separate `DashboardComponent` or `features/dashboard/` folder in MVP — the obligations list *is* the dashboard for now. A separate dashboard page is a future concern (see section 8).
 
 **Page header:**
 - Left: "Obligations" `text-xl font-bold` + subtitle "N active obligations" where N = total count returned by `GET /api/obligations` (all obligations, no status filtering)
@@ -272,8 +290,7 @@ src/main/frontend/src/app/
 ├── features/
 │   ├── login/
 │   ├── register/
-│   ├── dashboard/             # "coming soon" placeholder
-│   ├── obligations/
+│   ├── obligations/           # serves the /dashboard route in MVP
 │   │   ├── obligations.component.ts
 │   │   ├── obligations.component.html
 │   │   ├── obligation.model.ts       # Obligation interface + DTOs
@@ -281,11 +298,14 @@ src/main/frontend/src/app/
 │   └── not-found/
 └── shared/
     ├── layout/
-    │   └── sidebar/           # SidebarComponent (nav + logout + dark toggle)
+    │   ├── layout.component.ts        # LayoutComponent — sidebar shell for protected routes
+    │   └── sidebar/                   # SidebarComponent (nav + logout + dark toggle)
     ├── theme.service.ts        # ThemeService — single source of truth for dark mode
     └── ui/
         └── category-badge/    # CategoryBadgeComponent
 ```
+
+Note: `features/dashboard/` is not created in MVP. A future dashboard page will be added to `features/dashboard/` and wired as a child route of `LayoutComponent` at that time.
 
 ### 7.2 Component conventions
 
@@ -306,7 +326,8 @@ src/main/frontend/src/app/
 - `ThemeService` (`shared/theme.service.ts`) is the single source of truth:
   - On init: reads `'theme'` from `localStorage`, applies/removes `dark` class on `document.documentElement`
   - `toggle()`: flips class and persists to `localStorage`
-- Components inject `ThemeService` and bind the toggle button — never manipulate `document` directly in components.
+- **Initialization:** `ThemeService` must be injected in `app.ts` (the root `App` component) so the `dark` class is applied before any route renders — including auth pages. Do not rely solely on `SidebarComponent` injection, which would cause a flash of light mode on page load for dark-mode users.
+- Child components inject `ThemeService` and bind the toggle button — never manipulate `document` directly in components.
 
 ### 7.5 Form validation pattern
 
