@@ -3,14 +3,16 @@ package com.example.finance_hq.user;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "refresh_tokens")
 public class RefreshToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "uuid")
+    private UUID id;
 
     @Column(nullable = false, unique = true, length = 512)
     private String token;
@@ -34,7 +36,7 @@ public class RefreshToken {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Long getId() { return id; }
+    public UUID getId() { return id; }
     public String getToken() { return token; }
     public User getUser() { return user; }
     public LocalDateTime getExpiresAt() { return expiresAt; }

@@ -8,14 +8,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "uuid")
+    private UUID id;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -62,6 +64,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() { return true; }
 
-    public Long getId() { return id; }
+    public UUID getId() { return id; }
     public String getEmail() { return email; }
 }

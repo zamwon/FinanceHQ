@@ -6,16 +6,18 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "obligations")
 public class Obligation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "uuid")
+    private UUID id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -47,6 +49,11 @@ public class Obligation {
 
     public Obligation() {}
 
+    @PrePersist
+    void prePersist() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
+    }
+
     public Obligation(User user, String name, BigDecimal amount, ObligationCategory category,
                       ObligationPeriod period, Integer paymentDay, LocalDate endDate,
                       Integer remainingPayments) {
@@ -61,7 +68,7 @@ public class Obligation {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Long getId() { return id; }
+    public UUID getId() { return id; }
     public User getUser() { return user; }
     public String getName() { return name; }
     public BigDecimal getAmount() { return amount; }
