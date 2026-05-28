@@ -3,7 +3,6 @@ package com.example.finance_hq.auth;
 import com.example.finance_hq.auth.dto.LoginRequest;
 import com.example.finance_hq.auth.dto.RegisterRequest;
 import com.example.finance_hq.auth.dto.TokenResponse;
-import com.example.finance_hq.auth.exception.EmailAlreadyExistsException;
 import com.example.finance_hq.user.RefreshToken;
 import com.example.finance_hq.user.User;
 import com.example.finance_hq.user.UserRepository;
@@ -42,9 +41,6 @@ public class AuthService implements UserDetailsService {
     }
 
     public void register(RegisterRequest req) {
-        if (userRepository.existsByEmail(req.email())) {
-            throw new EmailAlreadyExistsException("Email already registered");
-        }
         userRepository.save(new User(req.email(), passwordEncoder.encode(req.password())));
     }
 

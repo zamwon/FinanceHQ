@@ -42,8 +42,6 @@ public class SecurityConfig {
                 .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh", "/auth/logout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
-                // Auth endpoints have no GET handlers; permitAll lets the controller return 405 instead of security 401.
-                .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
                 // SPA shell routes — Angular guard handles client-side auth checks.
                 .requestMatchers(HttpMethod.GET, "/", "/index.html", "/login", "/register", "/dashboard").permitAll()
                 // Static assets — explicit extensions are safer than dot-based matching.

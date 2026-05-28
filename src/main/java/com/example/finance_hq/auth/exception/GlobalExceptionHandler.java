@@ -1,5 +1,6 @@
 package com.example.finance_hq.auth.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,9 +15,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
-        return ResponseEntity.status(409).body(Map.of("error", "Email already registered"));
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleDataIntegrity(DataIntegrityViolationException ex) {
+        String msg = ex.getMessage() != null ? ex.getMessage().toLowerCase() : "";
+        if (msg.contains("users_email_key") || msg.contains("users_email")) {
+            return ResponseEntity.status(409).body(Map.of("error", "Email already registered"));
+        }
+        return ResponseEntity.status(409).body(Map.of("error", "Duplicate entry"));
     }
 
     @ExceptionHandler(InvalidRefreshTokenException.class)
@@ -35,5 +40,10 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .toList();
         return ResponseEntity.status(400).body(Map.of("error", "Validation failed", "details", details));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleUnexpected(Exception ex) {
+        return ResponseEntity.status(500).body(Map.of("error", "Internal server error"));
     }
 }

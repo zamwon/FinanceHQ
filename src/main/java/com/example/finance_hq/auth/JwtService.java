@@ -34,13 +34,17 @@ public class JwtService {
     }
 
     public String extractEmail(String token) {
-        return Jwts.parser()
-                .verifyWith(key)
-                .clockSkewSeconds(30)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+        try {
+            return Jwts.parser()
+                    .verifyWith(key)
+                    .clockSkewSeconds(30)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+        } catch (JwtException | IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public boolean isTokenValid(String token) {

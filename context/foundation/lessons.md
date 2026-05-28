@@ -107,3 +107,12 @@ Also: Railway does not auto-transform `DATABASE_URL` for external Supabase conne
 - **Problem**: `PathRequest.toStaticResources().atCommonLocations()` (from `org.springframework.boot.autoconfigure.security.servlet.PathRequest`) does not exist in Spring Boot 4.x — the class was removed. Using it causes a compile-time `package does not exist` error.
 - **Rule**: Use explicit ant patterns in `requestMatchers` instead: `"/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg", "/*.woff", "/*.woff2", "/*.ttf", "/assets/**"`. This is stricter (only named extensions) and has no Spring Boot version dependency.
 - **Applies to**: plan, implement — any phase that configures Spring Security static asset rules.
+
+---
+
+## Auth logout endpoint should require authentication post-MVP
+
+- **Context**: src/main/java/com/example/finance_hq/auth/AuthController.java — POST /auth/logout is in the permitAll list
+- **Problem**: An attacker who intercepts a refresh token can call /auth/logout to revoke it before the legitimate user does, silently logging them out. Accepted MVP risk for a single-user tool.
+- **Rule**: Post-MVP, require a valid Bearer token on the logout endpoint and verify that the submitted refresh token belongs to the authenticated user before deleting it.
+- **Applies to**: plan, implement — any phase that adds or modifies the logout flow or SecurityConfig permitAll rules.

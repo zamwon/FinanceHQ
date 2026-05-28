@@ -24,6 +24,7 @@ public class RefreshTokenService {
         this.refreshTokenExpiry = refreshTokenExpiry;
     }
 
+    @Transactional
     public RefreshToken create(User user) {
         RefreshToken token = new RefreshToken(
                 UUID.randomUUID().toString(),
