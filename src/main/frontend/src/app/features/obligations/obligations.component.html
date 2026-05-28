@@ -66,5 +66,10 @@
     </div>
   }
 
-  <!-- Dialogs rendered here in Tasks 12 and 13 -->
+  @if (showAddEdit()) {
+    <app-obligation-dialog
+      [obligation]="editing()"
+      (saved)="onSaved()"
+      (cancelled)="showAddEdit.set(false)" />
+  }
 </div>

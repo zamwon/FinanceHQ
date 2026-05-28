@@ -2,10 +2,11 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { ObligationsService } from './obligations.service';
 import { Obligation } from './obligation.model';
 import { CategoryBadgeComponent } from '../../shared/ui/category-badge/category-badge.component';
+import { ObligationDialogComponent } from './obligation-dialog/obligation-dialog.component';
 
 @Component({
   selector: 'app-obligations',
-  imports: [CategoryBadgeComponent],
+  imports: [CategoryBadgeComponent, ObligationDialogComponent],
   templateUrl: './obligations.component.html',
 })
 export class ObligationsComponent implements OnInit {

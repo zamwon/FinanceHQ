@@ -1,0 +1,87 @@
+<!-- Backdrop -->
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+  <div class="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 w-full max-w-sm shadow-xl">
+
+    <h2 class="text-base font-bold text-zinc-900 dark:text-zinc-50 mb-1">
+      {{ isEdit ? 'Edit Obligation' : 'Add Obligation' }}
+    </h2>
+    <p class="text-xs text-zinc-500 mb-5">Fill in the details for your obligation</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+
+      <!-- Row 1: Name + Amount -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Name</label>
+          <input formControlName="name" type="text" placeholder="e.g. Rent"
+                 class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:bg-zinc-50 dark:disabled:bg-zinc-900 disabled:text-zinc-400"
+                 [class.border-red-400]="form.controls.name.invalid && form.controls.name.touched" />
+          @if (form.controls.name.invalid && form.controls.name.touched) {
+            <p class="text-xs text-red-500">Required (max 100 chars)</p>
+          }
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Amount ($)</label>
+          <input formControlName="amount" type="number" step="0.01" placeholder="0.00"
+                 class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                 [class.border-red-400]="form.controls.amount.invalid && form.controls.amount.touched" />
+          @if (form.controls.amount.invalid && form.controls.amount.touched) {
+            <p class="text-xs text-red-500">Enter amount (0.01–999,999.99)</p>
+          }
+        </div>
+      </div>
+
+      <!-- Row 2: Category + Period -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Category</label>
+          <select formControlName="category"
+                  class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:bg-zinc-50 dark:disabled:bg-zinc-900 disabled:text-zinc-400">
+            <option value="TOP">TOP</option>
+            <option value="HIGH">HIGH</option>
+            <option value="LOW">LOW</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Period</label>
+          <select formControlName="period"
+                  class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:bg-zinc-50 dark:disabled:bg-zinc-900 disabled:text-zinc-400">
+            <option value="RECURRING">Recurring</option>
+            <option value="FIXED_TERM">Fixed term</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Payment day -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Payment day of month</label>
+        <input formControlName="paymentDay" type="number" min="1" max="31" placeholder="1–31"
+               class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+               [class.border-red-400]="form.controls.paymentDay.invalid && form.controls.paymentDay.touched" />
+        @if (form.controls.paymentDay.invalid && form.controls.paymentDay.touched) {
+          <p class="text-xs text-red-500">Enter a day between 1 and 31</p>
+        }
+      </div>
+
+      <!-- Error -->
+      @if (error()) {
+        <div class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md px-3 py-2 text-sm text-red-600 dark:text-red-400">
+          {{ error() }}
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-2 pt-1">
+        <button type="button" (click)="cancelled.emit()"
+                class="border border-zinc-200 dark:border-zinc-700 rounded-md px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+          Cancel
+        </button>
+        <button type="submit" [disabled]="loading() || form.invalid"
+                class="bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 font-semibold rounded-md px-4 py-2 text-sm hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          @if (loading()) { Saving… } @else { Save }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
