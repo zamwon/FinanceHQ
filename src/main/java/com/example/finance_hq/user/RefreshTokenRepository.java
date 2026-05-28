@@ -16,6 +16,7 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select rt from RefreshToken rt where rt.token = :token")
+    @Transactional
     Optional<RefreshToken> findByTokenForUpdate(@Param("token") String token);
 
     @Modifying

@@ -33,7 +33,11 @@ public class RefreshToken {
         this.token = token;
         this.user = user;
         this.expiresAt = expiresAt;
-        this.createdAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    private void onCreate() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
     }
 
     public UUID getId() { return id; }
