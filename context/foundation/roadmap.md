@@ -32,7 +32,7 @@ FinanceHQ solves a gap that standard fintech apps ignore: active investors who p
 | F-01 | f-01-data-persistence-scaffold | (foundation) database connectivity and schema migration tooling wired; base user table seeded       | —                | NFR (data persists reliably), NFR (encrypted at rest) | done     |
 | F-02 | auth-scaffold                 | (foundation) registration and login REST endpoints secured; user identity issued on every protected route | F-01         | FR-001, FR-002, Access Control    | done     |
 | F-03 | angular-spa-scaffold          | (foundation) Angular SPA scaffolded with routing, HTTP client, and auth guard; served by backend in production | —       | NFR (latest two major browser versions) | done  |
-| S-01 | register-and-login            | user can register with email and password and log in via the web UI without errors                  | F-01, F-02, F-03 | FR-001, FR-002, US-01             | proposed |
+| S-01 | register-and-login            | user can register with email and password and log in via the web UI without errors                  | F-01, F-02, F-03 | FR-001, FR-002, US-01             | done     |
 | S-02 | add-and-list-obligations      | user can add an obligation and see it immediately in their obligation list                          | S-01             | FR-003, FR-004, US-01             | proposed |
 | S-03 | edit-and-delete-obligations   | user can edit an obligation's amount and payment date, and delete it after a confirmation dialog     | S-02             | FR-005, FR-006                    | proposed |
 | S-04 | email-notification-scheduler  | system sends an email one business day before each obligation's next due date, reliably             | S-02             | FR-007, US-01                     | proposed |
@@ -116,7 +116,7 @@ What's already in place in the codebase as of 2026-05-25 (auto-researched + user
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** First user-visible slice; depends on all three foundations being complete. If any foundation is delayed, this is the first item to slip. Treat as the join point for Stream A and Stream B work.
-- **Status:** proposed
+- **Status:** done
 
 ---
 
@@ -195,3 +195,4 @@ What's already in place in the codebase as of 2026-05-25 (auto-researched + user
 - **F-01: (foundation) database connectivity and schema migration tooling wired; base user table seeded** — Archived 2026-05-25 → `context/archive/2026-05-25-f-01-data-persistence-scaffold/`. Lesson: —.
 - **F-03: (foundation) Angular SPA scaffolded with routing, HTTP client, and auth guard; served by backend in production** — Archived 2026-05-27 → `context/archive/2026-05-27-angular-spa-scaffold/`. Lesson: —.
 - **F-02: (foundation) registration and login REST endpoints secured; user identity issued on every protected route** — Archived 2026-05-28 → `context/archive/2026-05-25-f-02-auth-scaffold/`. Lesson: —.
+- **S-01: user can register with email and password and log in via the web UI without errors** — Archived 2026-05-28 → `context/archive/2026-05-28-register-and-login/`. Lesson: —.
