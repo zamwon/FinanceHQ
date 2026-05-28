@@ -276,7 +276,7 @@ Synchronise the Angular frontend to the new backend contract: update the model t
 **Contract**:
 ```typescript
 export interface Obligation {
-  id: number;                                          // was string
+  id: string;
   name: string;
   amount: number;
   category: 'ESSENTIAL' | 'IMPORTANT' | 'OPTIONAL';  // was TOP|HIGH|LOW
@@ -296,9 +296,9 @@ export type UpdateObligationDto = Partial<Pick<Obligation, 'amount' | 'paymentDa
 
 **File**: `src/main/frontend/src/app/features/obligations/obligations.service.ts`
 
-**Intent**: Update method signatures to use `number` for id parameters (was `string`).
+**Intent**: No changes to method signatures — `update(id: string, ...)` and `delete(id: string, ...)` already accept `id: string` which is UUID-compatible.
 
-**Contract**: Change `update(id: string, ...)` and `delete(id: string, ...)` to accept `id: number`. URL template literals work unchanged.
+**Contract**: No changes needed. URL template literals work unchanged.
 
 #### 3. obligation-dialog.component.ts
 
@@ -457,7 +457,7 @@ No data migration needed — obligations table is new. Flyway V4 applies cleanly
 
 #### Automated
 
-- [x] 1.1 Application context loads with V4 migration applied (`./mvnw test -Dtest=FinanceHqApplicationTests`)
+- [x] 1.1 Application context loads with V4 migration applied (`./mvnw test -Dtest=FinanceHqApplicationTests`) — 38e1cf9
 
 #### Manual
 

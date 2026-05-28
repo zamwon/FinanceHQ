@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface ObligationRepository extends JpaRepository<Obligation, Long> {
+public interface ObligationRepository extends JpaRepository<Obligation, UUID> {
 
     List<Obligation> findAllByUserOrderByCreatedAtDesc(User user);
 
-    Optional<Obligation> findByIdAndUser(Long id, User user);
+    Optional<Obligation> findByIdAndUser(UUID id, User user);
 }
