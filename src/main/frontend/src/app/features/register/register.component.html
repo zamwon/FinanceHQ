@@ -1,99 +1,45 @@
+<!-- Register UI stub — full spartan/ui rebuild in Tasks 8-14 -->
 <div class="page-container">
-  <mat-card class="auth-card">
-    <div class="card-accent-bar"></div>
+  <div class="auth-card">
+    <header>
+      <h1>Create account</h1>
+      <p>Start tracking your financial obligations</p>
+    </header>
 
-    <div class="card-inner">
-      <header class="card-header">
-        <h1 class="card-title">Create account</h1>
-        <p class="card-subtitle">Start tracking your financial obligations</p>
-      </header>
+    @if (errorMessage) {
+      <div role="alert">{{ errorMessage }}</div>
+    }
 
-      @if (errorMessage) {
-        <div class="error-alert" role="alert">
-          <mat-icon class="error-icon">error_outline</mat-icon>
-          <span>{{ errorMessage }}</span>
-        </div>
-      }
+    <form [formGroup]="registerForm" (ngSubmit)="submit()" novalidate>
+      <div>
+        <label for="email">Email address</label>
+        <input id="email" type="email" formControlName="email" autocomplete="email" />
+      </div>
 
-      <form [formGroup]="registerForm" (ngSubmit)="submit()" novalidate class="auth-form">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email address</mat-label>
-          <input matInput type="email" formControlName="email" autocomplete="email" />
-          @if (registerForm.controls.email.touched && registerForm.controls.email.hasError('required')) {
-            <mat-error>Email is required</mat-error>
-          } @else if (registerForm.controls.email.touched && registerForm.controls.email.hasError('email')) {
-            <mat-error>Enter a valid email address</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width password-field">
-          <mat-label>Password</mat-label>
-          <input
-            matInput
-            [type]="showPassword ? 'text' : 'password'"
-            formControlName="password"
-            autocomplete="new-password"
-            [matTooltip]="passwordTooltip"
-            #pwTooltip="matTooltip"
-            matTooltipClass="pw-rules-tooltip"
-            matTooltipPosition="right"
-            (blur)="onPasswordBlur(pwTooltip)"
-            (focus)="pwTooltip.hide()"
-          />
-          <button
-            mat-icon-button
-            matSuffix
-            type="button"
-            (click)="showPassword = !showPassword"
-            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
-          >
-            <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-          @if (registerForm.controls.password.touched && registerForm.controls.password.hasError('required')) {
-            <mat-error>Password is required</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Confirm password</mat-label>
-          <input
-            matInput
-            [type]="showConfirm ? 'text' : 'password'"
-            formControlName="confirmPassword"
-            autocomplete="new-password"
-          />
-          <button
-            mat-icon-button
-            matSuffix
-            type="button"
-            (click)="showConfirm = !showConfirm"
-            [attr.aria-label]="showConfirm ? 'Hide password' : 'Show password'"
-          >
-            <mat-icon>{{ showConfirm ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-          @if (registerForm.controls.confirmPassword.touched && registerForm.controls.confirmPassword.hasError('required')) {
-            <mat-error>Please confirm your password</mat-error>
-          }
-          @if (registerForm.controls.confirmPassword.value && registerForm.hasError('passwordMismatch')) {
-            <mat-hint class="mismatch-hint">
-              <mat-icon inline class="hint-icon">info</mat-icon> Passwords do not match
-            </mat-hint>
-          }
-        </mat-form-field>
-
-        <button
-          mat-flat-button
-          type="submit"
-          class="submit-btn"
-          [disabled]="registerForm.invalid || loading"
-        >
-          {{ loading ? 'Creating account…' : 'Create account' }}
+      <div>
+        <label for="password">Password</label>
+        <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" autocomplete="new-password" [title]="passwordTooltip" />
+        <button type="button" (click)="showPassword = !showPassword">
+          {{ showPassword ? 'Hide' : 'Show' }}
         </button>
-      </form>
+      </div>
 
-      <p class="auth-link">
-        Already have an account? <a routerLink="/login">Sign in</a>
-      </p>
-    </div>
-  </mat-card>
+      <div>
+        <label for="confirmPassword">Confirm password</label>
+        <input id="confirmPassword" [type]="showConfirm ? 'text' : 'password'" formControlName="confirmPassword" autocomplete="new-password" />
+        <button type="button" (click)="showConfirm = !showConfirm">
+          {{ showConfirm ? 'Hide' : 'Show' }}
+        </button>
+        @if (registerForm.controls.confirmPassword.value && registerForm.hasError('passwordMismatch')) {
+          <span>Passwords do not match</span>
+        }
+      </div>
+
+      <button type="submit" [disabled]="registerForm.invalid || loading">
+        {{ loading ? 'Creating account…' : 'Create account' }}
+      </button>
+    </form>
+
+    <p>Already have an account? <a routerLink="/login">Sign in</a></p>
+  </div>
 </div>

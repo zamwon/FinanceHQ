@@ -1,24 +1,12 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { NgIf } from '@angular/common';
-import { AuthService } from './core/auth/auth.service';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatToolbarModule, MatButtonModule, NgIf],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App {
-  protected authService = inject(AuthService);
-  private router = inject(Router);
-
-  signOut(): void {
-    this.authService.logout().subscribe({
-      complete: () => this.router.navigate(['/login']),
-      error: () => this.router.navigate(['/login'])
-    });
-  }
+  // ThemeService.init() will be wired here in Task 4
 }

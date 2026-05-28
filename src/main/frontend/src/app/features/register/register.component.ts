@@ -9,13 +9,6 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
-import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 
@@ -37,12 +30,6 @@ const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Validation
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltip,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
@@ -52,7 +39,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private router = inject(Router);
   private ngZone = inject(NgZone);
-  private snackBar = inject(MatSnackBar);
   private cdr = inject(ChangeDetectorRef);
 
   protected registerForm = this.fb.group(
@@ -69,15 +55,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
   protected showPassword = false;
   protected showConfirm = false;
 
-  private snackBarRef: MatSnackBarRef<TextOnlySnackBar> | null = null;
   private formChangeSub: Subscription | null = null;
 
   ngOnInit(): void {
     this.formChangeSub = this.registerForm.valueChanges.subscribe(() => {
       if (this.errorMessage) {
         this.errorMessage = null;
-        this.snackBarRef?.dismiss();
-        this.snackBarRef = null;
       }
     });
   }
@@ -90,18 +73,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
     const ctrl = this.registerForm.controls.password;
     if (!ctrl.errors) return '';
     const msgs: string[] = [];
-    if (ctrl.hasError('pwLength')) msgs.push('• At least 8 characters');
-    if (ctrl.hasError('pwUppercase')) msgs.push('• Requires an uppercase letter');
-    if (ctrl.hasError('pwDigit')) msgs.push('• Requires a digit');
-    if (ctrl.hasError('pwSpecial')) msgs.push('• Requires a special character (@#$%^&+=!?)');
-    return msgs.join('\n');
-  }
-
-  protected onPasswordBlur(tooltip: MatTooltip): void {
-    if (this.registerForm.controls.password.invalid && this.registerForm.controls.password.touched) {
-      tooltip.show();
-      setTimeout(() => tooltip.hide(), 4000);
-    }
+    if (ctrl.hasError('pwLength')) msgs.push('At least 8 characters');
+    if (ctrl.hasError('pwUppercase')) msgs.push('Requires an uppercase letter');
+    if (ctrl.hasError('pwDigit')) msgs.push('Requires a digit');
+    if (ctrl.hasError('pwSpecial')) msgs.push('Requires a special character (@#$%^&+=!?)');
+    return msgs.join(', ');
   }
 
   protected submit(): void {
@@ -120,17 +96,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
         error: (err) => {
           this.ngZone.run(() => {
             this.loading = false;
-            const msg =
+            this.errorMessage =
               err.status === 409
                 ? 'This email is already registered. Please use a different email or sign in.'
                 : 'Registration failed. Please try again.';
-            this.errorMessage = msg;
-            this.snackBarRef = this.snackBar.open(msg, 'Dismiss', {
-              duration: 6000,
-              panelClass: 'register-error-snack',
-              verticalPosition: 'top',
-              horizontalPosition: 'center',
-            });
             this.cdr.detectChanges();
           });
         },
