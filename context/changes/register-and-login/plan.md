@@ -214,9 +214,9 @@ Replace the `RegisterComponent` stub with a reactive form that registers a new u
 
 #### Manual
 
-- [x] 2.3 Mismatched confirm-password → "Passwords do not match" shown before API call
-- [x] 2.4 Weak password → per-rule mat-errors shown
-- [x] 2.5 Valid form → auto-logged in → redirected to /dashboard
-- [x] 2.6 Existing email → inline "This email is already registered"
-- [x] 2.7 Password show/hide toggle works
-- [x] 2.8 "Already have an account? Sign in" link navigates to /login
+- [x] 2.3 Mismatched confirm-password → "Passwords do not match" shown before API call — dfb1614
+- [x] 2.4 Weak password → per-rule mat-errors shown — dfb1614
+- [x] 2.5 Valid form → auto-logged in → redirected to /dashboard — dfb1614
+- [x] 2.6 Existing email → inline "This email is already registered" — dfb1614
+- [x] 2.7 Password show/hide toggle works — dfb1614
+- [x] 2.8 "Already have an account? Sign in" link navigates to /login — dfb1614
