@@ -1,7 +1,7 @@
 ---
 change_id: uuid-entity-ids
 title: Migrate entity IDs from BIGSERIAL/Long to UUID
-status: implementing
+status: implemented
 created: 2026-05-28
 updated: 2026-05-28
 archived_at: null

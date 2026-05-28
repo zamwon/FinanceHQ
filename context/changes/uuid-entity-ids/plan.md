@@ -248,9 +248,9 @@ Then restart the backend. Flyway applies all migrations from scratch.
 
 #### Automated
 
-- [x] 2.1 Full test suite passes (`./mvnw test`) — all 25 tests green
+- [x] 2.1 Full test suite passes (`./mvnw test`) — all 25 tests green — 81f423a
 
 #### Manual
 
-- [x] 2.2 Auth flow works end-to-end via UI after UUID migration
-- [x] 2.3 add-and-list-obligations Phase 4 plan updated to remove `id: number` change
+- [x] 2.2 Auth flow works end-to-end via UI after UUID migration — 81f423a
+- [x] 2.3 add-and-list-obligations Phase 4 plan updated to remove `id: number` change — 81f423a
