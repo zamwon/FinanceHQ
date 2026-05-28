@@ -3,10 +3,11 @@ import { ObligationsService } from './obligations.service';
 import { Obligation } from './obligation.model';
 import { CategoryBadgeComponent } from '../../shared/ui/category-badge/category-badge.component';
 import { ObligationDialogComponent } from './obligation-dialog/obligation-dialog.component';
+import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-obligations',
-  imports: [CategoryBadgeComponent, ObligationDialogComponent],
+  imports: [CategoryBadgeComponent, ObligationDialogComponent, DeleteDialogComponent],
   templateUrl: './obligations.component.html',
 })
 export class ObligationsComponent implements OnInit {

@@ -72,4 +72,11 @@
       (saved)="onSaved()"
       (cancelled)="showAddEdit.set(false)" />
   }
+
+  @if (showDelete() && deleting()) {
+    <app-delete-dialog
+      [obligation]="deleting()!"
+      (deleted)="onDeleted()"
+      (cancelled)="showDelete.set(false)" />
+  }
 </div>
