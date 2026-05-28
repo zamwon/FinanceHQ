@@ -3,7 +3,7 @@ project: FinanceHQ
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-05-27
+updated: 2026-05-28
 prd_version: 1
 main_goal: speed
 top_blocker: capacity
@@ -30,7 +30,7 @@ FinanceHQ solves a gap that standard fintech apps ignore: active investors who p
 | ID   | Change ID                     | Outcome (user can … / foundation …)                                                                 | Prerequisites    | PRD refs                          | Status   |
 |------|-------------------------------|-----------------------------------------------------------------------------------------------------|------------------|-----------------------------------|----------|
 | F-01 | f-01-data-persistence-scaffold | (foundation) database connectivity and schema migration tooling wired; base user table seeded       | —                | NFR (data persists reliably), NFR (encrypted at rest) | done     |
-| F-02 | auth-scaffold                 | (foundation) registration and login REST endpoints secured; user identity issued on every protected route | F-01         | FR-001, FR-002, Access Control    | proposed |
+| F-02 | auth-scaffold                 | (foundation) registration and login REST endpoints secured; user identity issued on every protected route | F-01         | FR-001, FR-002, Access Control    | done     |
 | F-03 | angular-spa-scaffold          | (foundation) Angular SPA scaffolded with routing, HTTP client, and auth guard; served by backend in production | —       | NFR (latest two major browser versions) | done  |
 | S-01 | register-and-login            | user can register with email and password and log in via the web UI without errors                  | F-01, F-02, F-03 | FR-001, FR-002, US-01             | proposed |
 | S-02 | add-and-list-obligations      | user can add an obligation and see it immediately in their obligation list                          | S-01             | FR-003, FR-004, US-01             | proposed |
@@ -85,7 +85,7 @@ What's already in place in the codebase as of 2026-05-25 (auto-researched + user
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequenced immediately after F-01 because auth is the identity layer for all obligation data. Getting the session or token contract wrong here cascades into every downstream slice and requires breaking refactors.
-- **Status:** proposed
+- **Status:** done
 
 ---
 
@@ -194,3 +194,4 @@ What's already in place in the codebase as of 2026-05-25 (auto-researched + user
 
 - **F-01: (foundation) database connectivity and schema migration tooling wired; base user table seeded** — Archived 2026-05-25 → `context/archive/2026-05-25-f-01-data-persistence-scaffold/`. Lesson: —.
 - **F-03: (foundation) Angular SPA scaffolded with routing, HTTP client, and auth guard; served by backend in production** — Archived 2026-05-27 → `context/archive/2026-05-27-angular-spa-scaffold/`. Lesson: —.
+- **F-02: (foundation) registration and login REST endpoints secured; user identity issued on every protected route** — Archived 2026-05-28 → `context/archive/2026-05-25-f-02-auth-scaffold/`. Lesson: —.
