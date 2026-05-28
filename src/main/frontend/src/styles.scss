@@ -37,3 +37,16 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
+
+.pw-rules-tooltip {
+  white-space: pre-line;
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.register-error-snack {
+  --mdc-snackbar-container-color: #7f1d1d;
+  --mdc-snackbar-supporting-text-color: #fef2f2;
+  --mat-snack-bar-button-color: #fca5a5;
+  font-size: 0.875rem;
+}

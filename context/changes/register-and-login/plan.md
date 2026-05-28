@@ -194,29 +194,29 @@ Replace the `RegisterComponent` stub with a reactive form that registers a new u
 
 #### Automated
 
-- [x] 1.1 Angular app compiles cleanly: `cd src/main/frontend && ng build`
-- [x] 1.2 Existing tests still pass: `cd src/main/frontend && ng test --watch=false`
+- [x] 1.1 Angular app compiles cleanly: `cd src/main/frontend && ng build` — dfe8c98
+- [x] 1.2 Existing tests still pass: `cd src/main/frontend && ng test --watch=false` — dfe8c98
 
 #### Manual
 
-- [ ] 1.3 Submit valid credentials → redirected to /dashboard
-- [ ] 1.4 Submit wrong credentials → inline "Invalid email or password" error appears
-- [ ] 1.5 Unauthenticated /dashboard access → redirect to /login?returnUrl → sign in → land on /dashboard
-- [ ] 1.6 Password show/hide toggle works
-- [ ] 1.7 "Need an account? Register" link navigates to /register
+- [x] 1.3 Submit valid credentials → redirected to /dashboard — dfe8c98
+- [x] 1.4 Submit wrong credentials → inline "Invalid email or password" error appears — dfe8c98
+- [x] 1.5 Unauthenticated /dashboard access → redirect to /login?returnUrl → sign in → land on /dashboard — dfe8c98
+- [x] 1.6 Password show/hide toggle works — dfe8c98
+- [x] 1.7 "Need an account? Register" link navigates to /register — dfe8c98
 
 ### Phase 2: Register form
 
 #### Automated
 
-- [ ] 2.1 Angular app compiles cleanly: `cd src/main/frontend && ng build`
-- [ ] 2.2 Existing tests still pass: `cd src/main/frontend && ng test --watch=false`
+- [x] 2.1 Angular app compiles cleanly: `cd src/main/frontend && ng build`
+- [x] 2.2 Existing tests still pass: `cd src/main/frontend && ng test --watch=false`
 
 #### Manual
 
-- [ ] 2.3 Mismatched confirm-password → "Passwords do not match" shown before API call
-- [ ] 2.4 Weak password → per-rule mat-errors shown
-- [ ] 2.5 Valid form → auto-logged in → redirected to /dashboard
-- [ ] 2.6 Existing email → inline "This email is already registered"
-- [ ] 2.7 Password show/hide toggle works
-- [ ] 2.8 "Already have an account? Sign in" link navigates to /login
+- [x] 2.3 Mismatched confirm-password → "Passwords do not match" shown before API call
+- [x] 2.4 Weak password → per-rule mat-errors shown
+- [x] 2.5 Valid form → auto-logged in → redirected to /dashboard
+- [x] 2.6 Existing email → inline "This email is already registered"
+- [x] 2.7 Password show/hide toggle works
+- [x] 2.8 "Already have an account? Sign in" link navigates to /login
