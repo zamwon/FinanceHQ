@@ -4,6 +4,8 @@ import com.example.finance_hq.obligation.dto.CreateObligationRequest;
 import com.example.finance_hq.obligation.dto.ObligationResponse;
 import com.example.finance_hq.obligation.dto.UpdateObligationRequest;
 import com.example.finance_hq.user.User;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +22,24 @@ public class ObligationService {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public List<ObligationResponse> findAll(User user) {
-        return repository.findAllByUserOrderByCreatedAtDesc(user).stream()
-                .map(o -> ObligationResponse.from(o, nextDueDate(o)))
+        LocalDate today = LocalDate.now();
+        PageRequest page = PageRequest.of(0, 200, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return repository.findAllByUser(user, page).getContent().stream()
+                .map(o -> ObligationResponse.from(o, NextDueDateComputer.compute(o.getPaymentDay(), today, o.getPeriod(), o.getEndDate())))
                 .toList();
     }
 
     @Transactional
     public ObligationResponse create(User user, CreateObligationRequest req) {
-        if (req.period() == ObligationPeriod.FIXED_TERM
-                && (req.endDate() == null || req.remainingPayments() == null)) {
-            throw new InvalidObligationException("FIXED_TERM obligations require both endDate and remainingPayments");
+        if (req.period() == ObligationPeriod.FIXED_TERM) {
+            if (req.endDate() == null || req.remainingPayments() == null) {
+                throw new InvalidObligationException("FIXED_TERM obligations require both endDate and remainingPayments");
+            }
+            if (!req.endDate().isAfter(LocalDate.now())) {
+                throw new InvalidObligationException("FIXED_TERM endDate must be in the future");
+            }
         }
         Obligation obligation = new Obligation(
                 user, req.name(), req.amount(), req.category(),
@@ -42,6 +51,9 @@ public class ObligationService {
 
     @Transactional
     public ObligationResponse update(User user, UUID id, UpdateObligationRequest req) {
+        if (req.amount() == null && req.paymentDay() == null) {
+            throw new InvalidObligationException("At least one field must be provided for update");
+        }
         Obligation obligation = repository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new ObligationNotFoundException("Obligation not found"));
         if (req.amount() != null) obligation.setAmount(req.amount());

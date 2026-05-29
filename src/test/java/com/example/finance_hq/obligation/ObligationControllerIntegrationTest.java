@@ -285,6 +285,25 @@ class ObligationControllerIntegrationTest {
            .andExpect(status().isNotFound());
     }
 
+    @Test
+    void list_200_doesNotReturnOtherUsersObligations() throws Exception {
+        String tokenA = registerAndLogin("read_isolation_a@test.com", "Test1234!");
+        String tokenB = registerAndLogin("read_isolation_b@test.com", "Test1234!");
+
+        mvc.perform(post(API_OBLIGATIONS)
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + tokenA)
+                            .content(json(recurringBody())))
+           .andExpect(status().isCreated());
+
+        MvcResult result = mvc.perform(get(API_OBLIGATIONS)
+                                               .header("Authorization", "Bearer " + tokenB))
+                              .andExpect(status().isOk())
+                              .andReturn();
+
+        assertThat(parseBodyAsList(result)).isEmpty();
+    }
+
     // ── Private helpers ────────────────────────────────────────────────────────
 
     private String json(Object obj) throws Exception {

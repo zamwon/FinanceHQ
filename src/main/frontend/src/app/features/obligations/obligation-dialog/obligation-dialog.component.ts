@@ -20,7 +20,7 @@ export class ObligationDialogComponent implements OnInit {
   error = signal('');
 
   form = this.fb.group({
-    name: ['', [Validators.required, Validators.maxLength(100)]],
+    name: ['', [Validators.required, Validators.maxLength(255)]],
     amount: [null as number | null, [Validators.required, Validators.min(0.01), Validators.max(999999.99)]],
     category: ['ESSENTIAL' as 'ESSENTIAL' | 'IMPORTANT' | 'OPTIONAL', Validators.required],
     period: ['RECURRING' as 'RECURRING' | 'FIXED_TERM', Validators.required],
@@ -87,7 +87,7 @@ export class ObligationDialogComponent implements OnInit {
         });
 
     call.subscribe({
-      next: () => this.saved.emit(),
+      next: () => { this.loading.set(false); this.saved.emit(); },
       error: () => { this.loading.set(false); this.error.set('Failed to save. Please try again.'); },
     });
   }

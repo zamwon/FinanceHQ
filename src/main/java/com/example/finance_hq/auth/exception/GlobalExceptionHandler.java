@@ -17,66 +17,79 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String, String>> handleDataIntegrity(DataIntegrityViolationException ex) {
+    public ResponseEntity<ProblemDetail> handleDataIntegrity(DataIntegrityViolationException ex) {
         String msg = ex.getMessage() != null ? ex.getMessage().toLowerCase() : "";
-        if (msg.contains("users_email_key") || msg.contains("users_email")) {
-            return ResponseEntity.status(409).body(Map.of("error", "Email already registered"));
-        }
-        return ResponseEntity.status(409).body(Map.of("error", "Duplicate entry"));
+        String detail = (msg.contains("users_email_key") || msg.contains("users_email"))
+                ? "Email already registered" : "Duplicate entry";
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, detail);
+        problem.setTitle("Conflict");
+        return ResponseEntity.status(409).body(problem);
     }
 
     @ExceptionHandler(InvalidRefreshTokenException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidRefreshToken(InvalidRefreshTokenException ex) {
-        return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired refresh token"));
+    public ResponseEntity<ProblemDetail> handleInvalidRefreshToken(InvalidRefreshTokenException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid or expired refresh token");
+        problem.setTitle("Unauthorized");
+        return ResponseEntity.status(401).body(problem);
     }
 
     @ExceptionHandler({UsernameNotFoundException.class, BadCredentialsException.class})
-    public ResponseEntity<Map<String, String>> handleAuthFailure(RuntimeException ex) {
-        return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+    public ResponseEntity<ProblemDetail> handleAuthFailure(RuntimeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        problem.setTitle("Unauthorized");
+        return ResponseEntity.status(401).body(problem);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidException ex) {
         List<String> details = ex.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .toList();
-        return ResponseEntity.status(400).body(Map.of("error", "Validation failed", "details", details));
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation failed");
+        problem.setTitle("Validation Failed");
+        problem.setProperty("details", details);
+        return ResponseEntity.status(400).body(problem);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<Map<String, String>> handleNoResource(NoResourceFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Not found"));
+    public ResponseEntity<ProblemDetail> handleNoResource(NoResourceFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Not found");
+        problem.setTitle("Not Found");
+        return ResponseEntity.status(404).body(problem);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<Map<String, String>> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(Map.of("error", "Method not allowed"));
+    public ResponseEntity<ProblemDetail> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.METHOD_NOT_ALLOWED, "Method not allowed");
+        problem.setTitle("Method Not Allowed");
+        return ResponseEntity.status(405).body(problem);
     }
 
     @ExceptionHandler(ObligationNotFoundException.class)
     public ResponseEntity<ProblemDetail> handleObligationNotFound(ObligationNotFoundException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Obligation not found");
         problem.setTitle("Not Found");
         return ResponseEntity.status(404).body(problem);
     }
 
     @ExceptionHandler(InvalidObligationException.class)
     public ResponseEntity<ProblemDetail> handleInvalidObligation(InvalidObligationException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid obligation request");
         problem.setTitle("Validation Failed");
         return ResponseEntity.status(400).body(problem);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleUnexpected(Exception ex) {
+    public ResponseEntity<ProblemDetail> handleUnexpected(Exception ex) {
         log.error("Unexpected error", ex);
-        return ResponseEntity.status(500).body(Map.of("error", "Internal server error"));
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
+        problem.setTitle("Internal Server Error");
+        return ResponseEntity.status(500).body(problem);
     }
 }
