@@ -281,7 +281,7 @@ onDeleted(): void {
 
 #### Manual
 
-- [ ] 2.2 Edit FIXED_TERM obligation → endDate and remainingPayments are greyed-out and non-interactive — styling fix in f1ef6b6, re-verify
+- [x] 2.2 Edit FIXED_TERM obligation → endDate and remainingPayments are greyed-out and non-interactive — f1ef6b6, f4e7beb
 - [x] 2.3 Edit RECURRING obligation → no FIXED_TERM fields shown; only amount and paymentDay editable
 - [x] 2.4 Simulate delete failure → error message appears inside dialog; Cancel works
 - [x] 2.5 Name field validation → error reads "Required (max 255 chars)"
