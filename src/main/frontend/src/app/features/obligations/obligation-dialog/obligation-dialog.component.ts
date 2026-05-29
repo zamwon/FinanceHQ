@@ -43,11 +43,29 @@ export class ObligationDialogComponent implements OnInit {
         endDate: this.obligation.endDate,
         remainingPayments: this.obligation.remainingPayments,
       });
-      // lock read-only fields in edit mode
+      // lock read-only fields in edit mode — patchValue must run before disable()
+      // so that isFixedTerm getter reads the correct value from the disabled control
       this.form.controls.name.disable();
       this.form.controls.category.disable();
       this.form.controls.period.disable();
     }
+
+    this.updateFixedTermValidators(this.form.controls.period.value);
+    this.form.controls.period.valueChanges.subscribe(v => this.updateFixedTermValidators(v));
+  }
+
+  private updateFixedTermValidators(period: string | null): void {
+    const endDate = this.form.controls.endDate;
+    const remaining = this.form.controls.remainingPayments;
+    if (period === 'FIXED_TERM') {
+      endDate.setValidators([Validators.required]);
+      remaining.setValidators([Validators.required, Validators.min(1)]);
+    } else {
+      endDate.clearValidators();
+      remaining.setValidators([Validators.min(1)]);
+    }
+    endDate.updateValueAndValidity();
+    remaining.updateValueAndValidity();
   }
 
   submit(): void {
