@@ -502,9 +502,9 @@ No data migration needed — obligations table is new. Flyway V4 applies cleanly
 
 #### Automated
 
-- [x] 5.1 ObligationControllerIntegrationTest all pass: `./mvnw test -Dtest=ObligationControllerIntegrationTest`
-- [x] 5.2 Full test suite passes: `./mvnw test`
+- [x] 5.1 ObligationControllerIntegrationTest all pass: `./mvnw test -Dtest=ObligationControllerIntegrationTest` — dbbfaa9
+- [x] 5.2 Full test suite passes: `./mvnw test` — dbbfaa9
 
 #### Manual
 
-- [ ] 5.3 Test output reviewed; scenario names meaningful and match plan
+- [x] 5.3 Test output reviewed; scenario names meaningful and match plan — dbbfaa9
