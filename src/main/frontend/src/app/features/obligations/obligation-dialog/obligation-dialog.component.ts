@@ -48,6 +48,8 @@ export class ObligationDialogComponent implements OnInit {
       this.form.controls.name.disable();
       this.form.controls.category.disable();
       this.form.controls.period.disable();
+      this.form.controls.endDate.disable();
+      this.form.controls.remainingPayments.disable();
     }
 
     this.updateFixedTermValidators(this.form.controls.period.value);

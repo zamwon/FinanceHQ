@@ -13,12 +13,14 @@ export class DeleteDialogComponent {
 
   private svc = inject(ObligationsService);
   loading = signal(false);
+  error = signal('');
 
   confirm(): void {
     this.loading.set(true);
+    this.error.set('');
     this.svc.delete(this.obligation.id).subscribe({
       next: () => this.deleted.emit(),
-      error: () => this.loading.set(false),
+      error: () => { this.loading.set(false); this.error.set('Failed to delete. Please try again.'); },
     });
   }
 }

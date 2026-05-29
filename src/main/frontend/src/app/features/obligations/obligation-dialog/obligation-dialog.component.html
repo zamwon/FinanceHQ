@@ -17,7 +17,7 @@
                  class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:bg-zinc-50 dark:disabled:bg-zinc-900 disabled:text-zinc-400"
                  [class.border-red-400]="form.controls.name.invalid && form.controls.name.touched" />
           @if (form.controls.name.invalid && form.controls.name.touched) {
-            <p class="text-xs text-red-500">Required (max 100 chars)</p>
+            <p class="text-xs text-red-500">Required (max 255 chars)</p>
           }
         </div>
         <div class="flex flex-col gap-1">
