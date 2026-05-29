@@ -4,6 +4,7 @@ import { Obligation } from './obligation.model';
 import { CategoryBadgeComponent } from '../../shared/ui/category-badge/category-badge.component';
 import { ObligationDialogComponent } from './obligation-dialog/obligation-dialog.component';
 import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
+import { ToastService } from '../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-obligations',
@@ -12,6 +13,7 @@ import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
 })
 export class ObligationsComponent implements OnInit {
   private svc = inject(ObligationsService);
+  private toast = inject(ToastService);
 
   obligations = signal<Obligation[]>([]);
   loading = signal(true);
@@ -51,12 +53,15 @@ export class ObligationsComponent implements OnInit {
   }
 
   onSaved(): void {
+    const wasEdit = this.editing() !== null;
     this.showAddEdit.set(false);
+    this.toast.show(wasEdit ? 'Obligation updated.' : 'Obligation added.');
     this.load();
   }
 
   onDeleted(): void {
     this.showDelete.set(false);
+    this.toast.show('Obligation deleted.');
     this.load();
   }
 
