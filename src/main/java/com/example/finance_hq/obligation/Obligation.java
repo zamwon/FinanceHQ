@@ -81,4 +81,5 @@ public class Obligation {
 
     public void setAmount(BigDecimal amount) { this.amount = amount; }
     public void setPaymentDay(Integer paymentDay) { this.paymentDay = paymentDay; }
+    public void setRemainingPayments(Integer remainingPayments) { this.remainingPayments = remainingPayments; }
 }

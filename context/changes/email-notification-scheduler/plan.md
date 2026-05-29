@@ -404,25 +404,25 @@ Unit tests for business day logic and `NotificationService`, plus an integration
 
 #### Automated
 
-- [x] 1.1 `./mvnw clean package -DskipTests` compiles without errors
-- [x] 1.2 `./mvnw test` passes
-- [x] 1.3 V6 migration applies cleanly on app startup
+- [x] 1.1 `./mvnw clean package -DskipTests` compiles without errors — 41b9dbb
+- [x] 1.2 `./mvnw test` passes — 41b9dbb
+- [x] 1.3 V6 migration applies cleanly on app startup — 41b9dbb
 
 #### Manual
 
-- [x] 1.4 `notification_log` table exists in local DB with correct columns and constraints
-- [x] 1.5 App starts without errors locally
+- [x] 1.4 `notification_log` table exists in local DB with correct columns and constraints — 41b9dbb
+- [x] 1.5 App starts without errors locally — 41b9dbb
 
 ### Phase 2: Business Logic
 
 #### Automated
 
-- [ ] 2.1 `./mvnw clean package -DskipTests` compiles
-- [ ] 2.2 `./mvnw test` — all existing tests still pass
+- [x] 2.1 `./mvnw clean package -DskipTests` compiles
+- [x] 2.2 `./mvnw test` — all existing tests still pass
 
 #### Manual
 
-- [ ] 2.3 `findAllSchedulerTargets()` returns correct data for a test obligation
+- [x] 2.3 `findAllSchedulerTargets()` returns correct data for a test obligation
 
 ### Phase 3: Scheduler
 

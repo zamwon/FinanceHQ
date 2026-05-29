@@ -69,6 +69,17 @@ public class ObligationService {
         repository.delete(obligation);
     }
 
+    public record SchedulerTarget(Obligation obligation, LocalDate nextDueDate) {}
+
+    @Transactional(readOnly = true)
+    public List<SchedulerTarget> findAllSchedulerTargets(LocalDate today) {
+        return repository.findAll().stream()
+                .map(o -> new SchedulerTarget(o, NextDueDateComputer.compute(
+                        o.getPaymentDay(), today, o.getPeriod(), o.getEndDate())))
+                .filter(t -> t.nextDueDate() != null)
+                .toList();
+    }
+
     private LocalDate nextDueDate(Obligation o) {
         return NextDueDateComputer.compute(o.getPaymentDay(), LocalDate.now(), o.getPeriod(), o.getEndDate());
     }
