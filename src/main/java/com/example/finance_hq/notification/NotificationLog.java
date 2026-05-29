@@ -19,14 +19,15 @@ public class NotificationLog {
     @Column(columnDefinition = "uuid")
     private UUID id;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "obligation_id")
+    @ManyToOne(fetch = LAZY, optional = false)
+    @JoinColumn(name = "obligation_id", nullable = false)
     private Obligation obligation;
 
-    @Column(name = "due_date")
+    @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private NotificationStatus status;
 
     @Column(name = "created_at")

@@ -137,6 +137,15 @@ Also: Railway does not auto-transform `DATABASE_URL` for external Supabase conne
 
 ---
 
+## Notification retry loops should have a bounded retry policy
+
+- **Context**: src/main/java/com/example/finance_hq/notification/NotificationService.java — hourly retry scheduler
+- **Problem**: FAILED rows are retried indefinitely. Permanent SMTP failure (wrong credentials, banned address) causes the retry loop to run every hour forever with no exit. For a single-user v0.1 tool this is acceptable, but it produces noisy ERROR logs and accumulates retry attempts with no resolution path.
+- **Rule**: Post-v0.1, add a retry cap (max_retries column or attempt counter) and an ABANDONED status so rows stop cycling after N failed attempts. v0.1 exception: accepted because the operator is also the only user — they will notice the credential issue.
+- **Applies to**: plan, implement — any phase that adds scheduled retry jobs
+
+---
+
 ## Annotate @SpringBootTest integration tests with @Transactional
 
 - **Context**: All @SpringBootTest integration tests that write to the database

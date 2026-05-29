@@ -4,6 +4,7 @@ title: Email notification scheduler
 status: implementing
 created: 2026-05-29
 updated: 2026-05-29
+impl_reviewed: 2026-05-29
 archived_at: null
 ---
 
