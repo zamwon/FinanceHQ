@@ -38,20 +38,21 @@
   @if (!loading() && obligations().length > 0) {
     <div class="border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden">
       <!-- Header -->
-      <div class="grid grid-cols-[2fr_1fr_1fr_1fr_64px] bg-zinc-50 dark:bg-zinc-900 border-b-2 border-zinc-200 dark:border-zinc-700 px-4 py-2.5">
-        @for (col of ['NAME','AMOUNT','DUE DAY','CATEGORY','ACTIONS']; track col) {
+      <div class="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_64px] bg-zinc-50 dark:bg-zinc-900 border-b-2 border-zinc-200 dark:border-zinc-700 px-4 py-2.5">
+        @for (col of ['NAME','AMOUNT','DUE DAY','NEXT DUE','CATEGORY','ACTIONS']; track col) {
           <span class="text-[11px] font-bold text-zinc-500 tracking-wider">{{ col }}</span>
         }
       </div>
       <!-- Rows -->
       @for (o of obligations(); track o.id) {
-        <div class="grid grid-cols-[2fr_1fr_1fr_1fr_64px] px-4 py-3 items-center border-b border-zinc-100 dark:border-zinc-800 last:border-0 bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+        <div class="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_64px] px-4 py-3 items-center border-b border-zinc-100 dark:border-zinc-800 last:border-0 bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
           <div>
             <p class="font-semibold text-sm text-zinc-900 dark:text-zinc-50">{{ o.name }}</p>
             <p class="text-xs text-zinc-500">{{ periodLabel(o.period) }}</p>
           </div>
-          <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-50">${{ o.amount.toLocaleString() }}</p>
+          <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-50">{{ o.amount.toLocaleString('pl-PL') }} zł</p>
           <p class="text-sm text-zinc-700 dark:text-zinc-300">{{ ordinal(o.paymentDay) }}</p>
+          <p class="text-sm text-zinc-700 dark:text-zinc-300">{{ o.nextDueDate ?? '—' }}</p>
           <app-category-badge [category]="o.category" />
           <div class="flex gap-1.5">
             <button (click)="openEdit(o)"

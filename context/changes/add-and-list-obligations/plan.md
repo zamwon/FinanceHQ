@@ -473,30 +473,30 @@ No data migration needed — obligations table is new. Flyway V4 applies cleanly
 
 #### Automated
 
-- [x] 3.1 Backend compiles: `./mvnw clean package -DskipTests`
-- [x] 3.2 Context loads: `./mvnw test -Dtest=FinanceHqApplicationTests`
+- [x] 3.1 Backend compiles: `./mvnw clean package -DskipTests` — d90c5ee
+- [x] 3.2 Context loads: `./mvnw test -Dtest=FinanceHqApplicationTests` — d90c5ee
 
 #### Manual
 
-- [x] 3.3 GET /api/obligations without token → 401
-- [x] 3.4 GET /api/obligations with valid token → 200 empty array
-- [x] 3.5 POST valid RECURRING obligation → 201 with id and nextDueDate
-- [x] 3.6 POST FIXED_TERM missing endDate → 400 ProblemDetail
-- [x] 3.7 PATCH valid amount change → 200 updated response
+- [x] 3.3 GET /api/obligations without token → 401 — d90c5ee
+- [x] 3.4 GET /api/obligations with valid token → 200 empty array — d90c5ee
+- [x] 3.5 POST valid RECURRING obligation → 201 with id and nextDueDate — d90c5ee
+- [x] 3.6 POST FIXED_TERM missing endDate → 400 ProblemDetail — d90c5ee
+- [x] 3.7 PATCH valid amount change → 200 updated response — d90c5ee
 
 ### Phase 4: Frontend model + UI updates
 
 #### Automated
 
-- [ ] 4.1 TypeScript compiles with no errors: `ng build`
+- [x] 4.1 TypeScript compiles with no errors: `ng build`
 
 #### Manual
 
-- [ ] 4.2 Obligations list loads in browser (empty state shown)
-- [ ] 4.3 RECURRING obligation adds and appears with PLN amount and nextDueDate
-- [ ] 4.4 FIXED_TERM obligation shows conditional fields; saves correctly
-- [ ] 4.5 Edit updates amount; delete removes obligation
-- [ ] 4.6 Category badges show ESSENTIAL/IMPORTANT/OPTIONAL with correct colours
+- [x] 4.2 Obligations list loads in browser (empty state shown)
+- [x] 4.3 RECURRING obligation adds and appears with PLN amount and nextDueDate
+- [x] 4.4 FIXED_TERM obligation shows conditional fields; saves correctly
+- [x] 4.5 Edit updates amount; delete removes obligation
+- [x] 4.6 Category badges show ESSENTIAL/IMPORTANT/OPTIONAL with correct colours
 
 ### Phase 5: Integration tests
 

@@ -21,7 +21,7 @@
           }
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Amount ($)</label>
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Amount (PLN)</label>
           <input formControlName="amount" type="number" step="0.01" placeholder="0.00"
                  class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
                  [class.border-red-400]="form.controls.amount.invalid && form.controls.amount.touched" />
@@ -37,9 +37,9 @@
           <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Category</label>
           <select formControlName="category"
                   class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:bg-zinc-50 dark:disabled:bg-zinc-900 disabled:text-zinc-400">
-            <option value="TOP">TOP</option>
-            <option value="HIGH">HIGH</option>
-            <option value="LOW">LOW</option>
+            <option value="ESSENTIAL">Essential</option>
+            <option value="IMPORTANT">Important</option>
+            <option value="OPTIONAL">Optional</option>
           </select>
         </div>
         <div class="flex flex-col gap-1">
@@ -62,6 +62,30 @@
           <p class="text-xs text-red-500">Enter a day between 1 and 31</p>
         }
       </div>
+
+      <!-- FIXED_TERM conditional fields -->
+      @if (isFixedTerm) {
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">End date</label>
+            <input formControlName="endDate" type="date"
+                   class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                   [class.border-red-400]="form.controls.endDate.invalid && form.controls.endDate.touched" />
+            @if (form.controls.endDate.invalid && form.controls.endDate.touched) {
+              <p class="text-xs text-red-500">Required for fixed-term</p>
+            }
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Remaining payments</label>
+            <input formControlName="remainingPayments" type="number" min="1" placeholder="e.g. 12"
+                   class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                   [class.border-red-400]="form.controls.remainingPayments.invalid && form.controls.remainingPayments.touched" />
+            @if (form.controls.remainingPayments.invalid && form.controls.remainingPayments.touched) {
+              <p class="text-xs text-red-500">Required, must be ≥ 1</p>
+            }
+          </div>
+        </div>
+      }
 
       <!-- Error -->
       @if (error()) {
