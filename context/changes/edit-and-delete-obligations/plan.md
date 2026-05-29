@@ -281,10 +281,10 @@ onDeleted(): void {
 
 #### Manual
 
-- [ ] 2.2 Edit FIXED_TERM obligation → endDate and remainingPayments are greyed-out and non-interactive
-- [ ] 2.3 Edit RECURRING obligation → no FIXED_TERM fields shown; only amount and paymentDay editable
+- [ ] 2.2 Edit FIXED_TERM obligation → endDate and remainingPayments are greyed-out and non-interactive — styling fix in f1ef6b6, re-verify
+- [x] 2.3 Edit RECURRING obligation → no FIXED_TERM fields shown; only amount and paymentDay editable
 - [ ] 2.4 Simulate delete failure → error message appears inside dialog; Cancel works
-- [ ] 2.5 Name field validation → error reads "Required (max 255 chars)"
+- [x] 2.5 Name field validation → error reads "Required (max 255 chars)"
 
 ### Phase 3: Toast notification system
 
@@ -294,8 +294,8 @@ onDeleted(): void {
 
 #### Manual
 
-- [ ] 3.2 Add obligation → "Obligation added." toast appears top-right, auto-dismisses ~3s
-- [ ] 3.3 Edit obligation → "Obligation updated." toast appears
-- [ ] 3.4 Delete obligation → "Obligation deleted." toast appears
-- [ ] 3.5 Toast does not block "Add Obligation" button while visible
-- [ ] 3.6 Dark mode: toast renders correctly
+- [x] 3.2 Add obligation → "Obligation added." toast appears top-right, auto-dismisses ~3s
+- [x] 3.3 Edit obligation → "Obligation updated." toast appears
+- [x] 3.4 Delete obligation → "Obligation deleted." toast appears
+- [ ] 3.5 Toast does not block "Add Obligation" button while visible — pointer-events-none fix in f1ef6b6, re-verify
+- [x] 3.6 Dark mode: toast renders correctly
