@@ -297,5 +297,5 @@ onDeleted(): void {
 - [x] 3.2 Add obligation → "Obligation added." toast appears top-right, auto-dismisses ~3s
 - [x] 3.3 Edit obligation → "Obligation updated." toast appears
 - [x] 3.4 Delete obligation → "Obligation deleted." toast appears
-- [ ] 3.5 Toast does not block "Add Obligation" button while visible — pointer-events-none fix in f1ef6b6, re-verify
+- [x] 3.5 Toast does not block "Add Obligation" button while visible — f1ef6b6
 - [x] 3.6 Dark mode: toast renders correctly
