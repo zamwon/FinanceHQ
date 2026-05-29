@@ -7,6 +7,9 @@ final class NextDueDateComputer {
 
     private NextDueDateComputer() {}
 
+    // RECURRING obligations ignore endDate entirely; the two FIXED_TERM guards below are skipped.
+    // Guard 1: obligation already past its end date → no next due date.
+    // Guard 2: next candidate would fall after the end date → return the end date as the final payment.
     public static LocalDate compute(int paymentDay, LocalDate today, ObligationPeriod period, LocalDate endDate) {
         if (period == ObligationPeriod.FIXED_TERM && endDate != null && endDate.isBefore(today)) {
             return null;

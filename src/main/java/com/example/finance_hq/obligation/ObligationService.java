@@ -73,7 +73,7 @@ public class ObligationService {
 
     @Transactional(readOnly = true)
     public List<SchedulerTarget> findAllSchedulerTargets(LocalDate today) {
-        return repository.findAll().stream()
+        return repository.findAllWithUser().stream()
                 .map(o -> new SchedulerTarget(o, NextDueDateComputer.compute(
                         o.getPaymentDay(), today, o.getPeriod(), o.getEndDate())))
                 .filter(t -> t.nextDueDate() != null)

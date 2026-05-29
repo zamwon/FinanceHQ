@@ -428,22 +428,22 @@ Unit tests for business day logic and `NotificationService`, plus an integration
 
 #### Automated
 
-- [x] 3.1 `./mvnw clean package -DskipTests` compiles
-- [x] 3.2 `./mvnw test` passes
+- [x] 3.1 `./mvnw clean package -DskipTests` compiles — f5d8e85
+- [x] 3.2 `./mvnw test` passes — f5d8e85
 
 #### Manual
 
-- [x] 3.3 App starts; `@Scheduled` tasks visible in startup logs
-- [x] 3.4 Test obligation triggers notification email end-to-end
+- [x] 3.3 App starts; `@Scheduled` tasks visible in startup logs — f5d8e85
+- [x] 3.4 Test obligation triggers notification email end-to-end — f5d8e85
 
 ### Phase 4: Tests
 
 #### Automated
 
-- [ ] 4.1 `./mvnw test -Dtest=BusinessDayCalculatorTest` passes
-- [ ] 4.2 `./mvnw test -Dtest=NotificationServiceTest` passes
-- [ ] 4.3 `./mvnw test -Dtest=NotificationLogRepositoryTest` passes
-- [ ] 4.4 `./mvnw test` — full suite passes with no regressions
+- [x] 4.1 `./mvnw test -Dtest=BusinessDayCalculatorTest` passes
+- [x] 4.2 `./mvnw test -Dtest=NotificationServiceTest` passes
+- [x] 4.3 `./mvnw test -Dtest=NotificationLogRepositoryTest` passes
+- [x] 4.4 `./mvnw test` — full suite passes with no regressions
 
 #### Manual
 

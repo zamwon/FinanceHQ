@@ -33,7 +33,7 @@ build/
 
 ### Local dev credentials (never commit) ###
 # Profile-activated by --spring.profiles.active=local; lives at project root so it isn't packaged into the JAR.
-/application-local.yml
+/src/main/resources/application-local.yml
 /application-local.properties
 # Legacy path kept in case anyone still has the file under resources/ — that location leaks into the JAR; move it to project root.
 src/main/resources/application-local.properties
