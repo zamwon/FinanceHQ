@@ -271,7 +271,7 @@ onDeleted(): void {
 
 #### Automated
 
-- [x] 1.1 All obligation integration tests pass: `./mvnw test -Dtest=ObligationControllerIntegrationTest` — 09a08cd
+- [x] 1.1 All obligation integration tests pass: `./mvnw test -Dtest=ObligationControllerIntegrationTest` — 09a08cd (18 tests passed)
 
 ### Phase 2: Frontend — Dialog fixes
 
