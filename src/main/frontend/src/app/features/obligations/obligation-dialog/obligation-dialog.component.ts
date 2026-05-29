@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Obligation } from '../obligation.model';
 import { ObligationsService } from '../obligations.service';
@@ -15,6 +16,7 @@ export class ObligationDialogComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private svc = inject(ObligationsService);
+  private destroyRef = inject(DestroyRef);
 
   loading = signal(false);
   error = signal('');
@@ -53,7 +55,9 @@ export class ObligationDialogComponent implements OnInit {
     }
 
     this.updateFixedTermValidators(this.form.controls.period.value);
-    this.form.controls.period.valueChanges.subscribe(v => this.updateFixedTermValidators(v));
+    this.form.controls.period.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(v => this.updateFixedTermValidators(v));
   }
 
   private updateFixedTermValidators(period: string | null): void {
