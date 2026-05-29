@@ -1,0 +1,65 @@
+### ──────────────────────────────────────────────────
+### FinanceHQ – Obligations flow: manual Phase 3 checks
+###   3.3 No token → 401
+###   3.4 Empty list
+###   3.5 Create RECURRING → 201
+###   3.6 Create FIXED_TERM missing endDate → 400
+###   3.7 Update amount → 200
+### ──────────────────────────────────────────────────
+### Prerequisites:
+###   1. Server running on localhost:8080
+###   2. Select "dev" environment (top-right in IntelliJ HTTP Client)
+###   3. Run auth-flow.http Steps 1–2 first to populate accessToken
+###   4. Run requests IN ORDER
+
+
+
+### ─── 3.3: GET without token — expect 401 ────────
+GET {{baseUrl}}/api/obligations
+
+
+### ─── 3.4: GET with token — expect 200 [] ───────
+GET {{baseUrl}}/api/obligations
+Authorization: Bearer {{accessToken}}
+
+
+### ─── 3.5: POST RECURRING — expect 201 with id and nextDueDate ─
+POST {{baseUrl}}/api/obligations
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Rent",
+  "amount": 1500.00,
+  "category": "ESSENTIAL",
+  "period": "RECURRING",
+  "paymentDay": 15
+}
+
+> {%
+  client.global.set("obligationId", response.body.id);
+%}
+
+
+### ─── 3.6: POST FIXED_TERM missing endDate — expect 400 ProblemDetail ─
+POST {{baseUrl}}/api/obligations
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Loan",
+  "amount": 500.00,
+  "category": "IMPORTANT",
+  "period": "FIXED_TERM",
+  "paymentDay": 10
+}
+
+
+### ─── 3.7: PATCH amount — expect 200 with updated amount ────
+PATCH {{baseUrl}}/api/obligations/{{obligationId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "amount": 999.99
+}

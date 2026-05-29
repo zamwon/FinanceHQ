@@ -1,8 +1,11 @@
 package com.example.finance_hq.auth.exception;
 
+import com.example.finance_hq.obligation.InvalidObligationException;
+import com.example.finance_hq.obligation.ObligationNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -55,6 +58,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<Map<String, String>> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(Map.of("error", "Method not allowed"));
+    }
+
+    @ExceptionHandler(ObligationNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleObligationNotFound(ObligationNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Not Found");
+        return ResponseEntity.status(404).body(problem);
+    }
+
+    @ExceptionHandler(InvalidObligationException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidObligation(InvalidObligationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Validation Failed");
+        return ResponseEntity.status(400).body(problem);
     }
 
     @ExceptionHandler(Exception.class)

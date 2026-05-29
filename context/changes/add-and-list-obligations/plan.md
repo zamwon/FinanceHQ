@@ -467,22 +467,22 @@ No data migration needed — obligations table is new. Flyway V4 applies cleanly
 
 #### Automated
 
-- [x] 2.1 Backend compiles after Phase 2 additions (`./mvnw clean package -DskipTests`)
+- [x] 2.1 Backend compiles after Phase 2 additions (`./mvnw clean package -DskipTests`) — 6dd0786
 
 ### Phase 3: REST controller + DTOs + security fix
 
 #### Automated
 
-- [ ] 3.1 Backend compiles: `./mvnw clean package -DskipTests`
-- [ ] 3.2 Context loads: `./mvnw test -Dtest=FinanceHqApplicationTests`
+- [x] 3.1 Backend compiles: `./mvnw clean package -DskipTests`
+- [x] 3.2 Context loads: `./mvnw test -Dtest=FinanceHqApplicationTests`
 
 #### Manual
 
-- [ ] 3.3 GET /api/obligations without token → 401
-- [ ] 3.4 GET /api/obligations with valid token → 200 empty array
-- [ ] 3.5 POST valid RECURRING obligation → 201 with id and nextDueDate
-- [ ] 3.6 POST FIXED_TERM missing endDate → 400 ProblemDetail
-- [ ] 3.7 PATCH valid amount change → 200 updated response
+- [x] 3.3 GET /api/obligations without token → 401
+- [x] 3.4 GET /api/obligations with valid token → 200 empty array
+- [x] 3.5 POST valid RECURRING obligation → 201 with id and nextDueDate
+- [x] 3.6 POST FIXED_TERM missing endDate → 400 ProblemDetail
+- [x] 3.7 PATCH valid amount change → 200 updated response
 
 ### Phase 4: Frontend model + UI updates
 
