@@ -417,24 +417,24 @@ Unit tests for business day logic and `NotificationService`, plus an integration
 
 #### Automated
 
-- [x] 2.1 `./mvnw clean package -DskipTests` compiles
-- [x] 2.2 `./mvnw test` — all existing tests still pass
+- [x] 2.1 `./mvnw clean package -DskipTests` compiles — cc72e9a
+- [x] 2.2 `./mvnw test` — all existing tests still pass — cc72e9a
 
 #### Manual
 
-- [x] 2.3 `findAllSchedulerTargets()` returns correct data for a test obligation
+- [x] 2.3 `findAllSchedulerTargets()` returns correct data for a test obligation — cc72e9a
 
 ### Phase 3: Scheduler
 
 #### Automated
 
-- [ ] 3.1 `./mvnw clean package -DskipTests` compiles
-- [ ] 3.2 `./mvnw test` passes
+- [x] 3.1 `./mvnw clean package -DskipTests` compiles
+- [x] 3.2 `./mvnw test` passes
 
 #### Manual
 
-- [ ] 3.3 App starts; `@Scheduled` tasks visible in startup logs
-- [ ] 3.4 Test obligation triggers notification email end-to-end
+- [x] 3.3 App starts; `@Scheduled` tasks visible in startup logs
+- [x] 3.4 Test obligation triggers notification email end-to-end
 
 ### Phase 4: Tests
 
