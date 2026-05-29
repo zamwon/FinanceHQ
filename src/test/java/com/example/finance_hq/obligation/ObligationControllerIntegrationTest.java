@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -302,6 +303,57 @@ class ObligationControllerIntegrationTest {
                               .andReturn();
 
         assertThat(parseBodyAsList(result)).isEmpty();
+    }
+
+    // ── Additional update/delete validation ───────────────────────────────────
+
+    @Test
+    void update_400_bothFieldsNull() throws Exception {
+        String token = registerAndLogin("update_both_null@test.com", "Test1234!");
+
+        MvcResult created = mvc.perform(post(API_OBLIGATIONS)
+                                                .contentType(APPLICATION_JSON)
+                                                .header("Authorization", "Bearer " + token)
+                                                .content(json(recurringBody())))
+                               .andExpect(status().isCreated())
+                               .andReturn();
+
+        String id = (String) parseBody(created).get("id");
+
+        mvc.perform(patch(API_OBLIGATIONS + "/" + id)
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .content("{}"))
+           .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void update_400_amountZero() throws Exception {
+        String token = registerAndLogin("update_amount_zero@test.com", "Test1234!");
+
+        MvcResult created = mvc.perform(post(API_OBLIGATIONS)
+                                                .contentType(APPLICATION_JSON)
+                                                .header("Authorization", "Bearer " + token)
+                                                .content(json(recurringBody())))
+                               .andExpect(status().isCreated())
+                               .andReturn();
+
+        String id = (String) parseBody(created).get("id");
+
+        mvc.perform(patch(API_OBLIGATIONS + "/" + id)
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .content(json(Map.of("amount", 0))))
+           .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void delete_404_notFound() throws Exception {
+        String token = registerAndLogin("delete_not_found@test.com", "Test1234!");
+
+        mvc.perform(delete(API_OBLIGATIONS + "/" + UUID.randomUUID())
+                            .header("Authorization", "Bearer " + token))
+           .andExpect(status().isNotFound());
     }
 
     // ── Private helpers ────────────────────────────────────────────────────────
