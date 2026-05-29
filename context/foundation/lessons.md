@@ -116,3 +116,30 @@ Also: Railway does not auto-transform `DATABASE_URL` for external Supabase conne
 - **Problem**: An attacker who intercepts a refresh token can call /auth/logout to revoke it before the legitimate user does, silently logging them out. Accepted MVP risk for a single-user tool.
 - **Rule**: Post-MVP, require a valid Bearer token on the logout endpoint and verify that the submitted refresh token belongs to the authenticated user before deleting it.
 - **Applies to**: plan, implement — any phase that adds or modifies the logout flow or SecurityConfig permitAll rules.
+
+---
+
+## Always place private methods below public methods
+
+- **Context**: All Java classes in this project
+- **Problem**: Reader scans private helpers first, missing the public contract at a glance — makes the class harder to navigate and understand intent before seeing the implementation details.
+- **Rule**: Always place private methods below public methods. Public methods form the readable contract; private helpers are implementation detail.
+- **Applies to**: implement, impl-review
+
+---
+
+## Extract API path strings to named constants
+
+- **Context**: All test classes and service/client classes that reference API paths
+- **Problem**: Path typos go undetected; a renamed endpoint silently breaks only the tests that inline the old string — no compile-time safety.
+- **Rule**: Extract all API path strings to named constants and reference only the constant. Inline path literals are prohibited; a single rename of the constant catches every usage.
+- **Applies to**: implement, impl-review
+
+---
+
+## Annotate @SpringBootTest integration tests with @Transactional
+
+- **Context**: All @SpringBootTest integration tests that write to the database
+- **Problem**: Test data accumulates across runs; unique-constraint violations appear on re-run; tests depend on insertion order or leftover state from prior tests.
+- **Rule**: Annotate every @SpringBootTest integration test class with @Transactional. Spring rolls back each test's writes automatically, preventing data accumulation and unique-constraint failures on re-run. When a test asserts on a DB unique-constraint violation (e.g. duplicate email → 409), the service must use saveAndFlush() rather than save() — otherwise Hibernate defers the INSERT until after MockMvc returns the response, the constraint is never checked, and the test unexpectedly gets 201.
+- **Applies to**: implement, impl-review

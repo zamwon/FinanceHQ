@@ -41,7 +41,7 @@ public class AuthService implements UserDetailsService {
     }
 
     public void register(RegisterRequest req) {
-        userRepository.save(new User(req.email(), passwordEncoder.encode(req.password())));
+        userRepository.saveAndFlush(new User(req.email(), passwordEncoder.encode(req.password())));
     }
 
     public TokenResponse login(LoginRequest req) {

@@ -488,22 +488,22 @@ No data migration needed — obligations table is new. Flyway V4 applies cleanly
 
 #### Automated
 
-- [x] 4.1 TypeScript compiles with no errors: `ng build`
+- [x] 4.1 TypeScript compiles with no errors: `ng build` — 1939511
 
 #### Manual
 
-- [x] 4.2 Obligations list loads in browser (empty state shown)
-- [x] 4.3 RECURRING obligation adds and appears with PLN amount and nextDueDate
-- [x] 4.4 FIXED_TERM obligation shows conditional fields; saves correctly
-- [x] 4.5 Edit updates amount; delete removes obligation
-- [x] 4.6 Category badges show ESSENTIAL/IMPORTANT/OPTIONAL with correct colours
+- [x] 4.2 Obligations list loads in browser (empty state shown) — 1939511
+- [x] 4.3 RECURRING obligation adds and appears with PLN amount and nextDueDate — 1939511
+- [x] 4.4 FIXED_TERM obligation shows conditional fields; saves correctly — 1939511
+- [x] 4.5 Edit updates amount; delete removes obligation — 1939511
+- [x] 4.6 Category badges show ESSENTIAL/IMPORTANT/OPTIONAL with correct colours — 1939511
 
 ### Phase 5: Integration tests
 
 #### Automated
 
-- [ ] 5.1 ObligationControllerIntegrationTest all pass: `./mvnw test -Dtest=ObligationControllerIntegrationTest`
-- [ ] 5.2 Full test suite passes: `./mvnw test`
+- [x] 5.1 ObligationControllerIntegrationTest all pass: `./mvnw test -Dtest=ObligationControllerIntegrationTest`
+- [x] 5.2 Full test suite passes: `./mvnw test`
 
 #### Manual
 
