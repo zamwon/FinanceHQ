@@ -78,6 +78,9 @@ public class NotificationService {
             } catch (MailException e) {
                 log.error("Failed to send notification to {}: {}", user.getEmail(), e.getMessage());
                 persistenceService.recordFailure(userTargets);
+            } catch (RuntimeException e) {
+                log.error("recordSuccess failed for {} due {} — marking FAILED for retry: {}", user.getEmail(), dueDate, e.getMessage());
+                persistenceService.recordFailure(userTargets);
             }
         });
     }
@@ -99,6 +102,8 @@ public class NotificationService {
                 persistenceService.markRetrySuccess(logs);
             } catch (MailException e) {
                 log.error("Retry failed for {}: {}", user.getEmail(), e.getMessage());
+            } catch (RuntimeException e) {
+                log.error("markRetrySuccess failed for {} due {} — group skipped: {}", user.getEmail(), dueDate, e.getMessage());
             }
         });
     }

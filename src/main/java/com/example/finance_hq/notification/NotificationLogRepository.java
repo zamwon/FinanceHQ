@@ -13,6 +13,7 @@ import java.util.UUID;
 
 public interface NotificationLogRepository extends JpaRepository<NotificationLog, UUID> {
 
+    // No status filter: PENDING blocks same-run duplicate; SENT blocks re-send on subsequent runs.
     @Query("SELECT nl.obligation.id FROM NotificationLog nl WHERE nl.dueDate IN :dueDates")
     Set<UUID> findAlreadyLoggedObligationIds(@Param("dueDates") Collection<LocalDate> dueDates);
 

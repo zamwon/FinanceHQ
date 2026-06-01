@@ -5,6 +5,9 @@ import com.example.finance_hq.obligation.ObligationPeriod;
 import com.example.finance_hq.obligation.ObligationRepository;
 import com.example.finance_hq.obligation.ObligationService;
 import com.example.finance_hq.obligation.ObligationService.SchedulerTarget;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +16,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class NotificationPersistenceService {
 
@@ -39,11 +43,12 @@ public class NotificationPersistenceService {
         for (SchedulerTarget t : targets) {
             Optional<NotificationLog> existing = notificationLogRepository
                     .findByObligationIdAndDueDate(t.obligation().getId(), t.nextDueDate());
-            existing.ifPresent(entry -> {
+            existing.ifPresentOrElse(entry -> {
                 entry.setStatus(NotificationStatus.SENT);
                 entry.setSentAt(now);
                 notificationLogRepository.save(entry);
-            });
+            }, () -> log.warn("PENDING row not found for obligation {} due {} — log skipped",
+                    t.obligation().getId(), t.nextDueDate()));
             decrementIfFixedTerm(t.obligation());
         }
     }
@@ -53,10 +58,11 @@ public class NotificationPersistenceService {
         for (SchedulerTarget t : targets) {
             Optional<NotificationLog> existing = notificationLogRepository
                     .findByObligationIdAndDueDate(t.obligation().getId(), t.nextDueDate());
-            existing.ifPresent(entry -> {
+            existing.ifPresentOrElse(entry -> {
                 entry.setStatus(NotificationStatus.FAILED);
                 notificationLogRepository.save(entry);
-            });
+            }, () -> log.warn("PENDING row not found for obligation {} due {} — log skipped",
+                    t.obligation().getId(), t.nextDueDate()));
         }
     }
 

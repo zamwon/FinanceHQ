@@ -153,7 +153,7 @@ class NotificationServiceTest {
     }
 
     @Test
-    void doesNotResendWhenPendingRowExistsFromPriorFailedRun() {
+    void doesNotResendWhenRecordSuccessThrowsAndRunRepeated() {
         Obligation o = obligation(user("a@a.com"), ObligationPeriod.RECURRING, null);
         ObligationService.SchedulerTarget target = new ObligationService.SchedulerTarget(o, DUE_TOMORROW);
         when(obligationService.findAllSchedulerTargets(TODAY)).thenReturn(List.of(target));
@@ -170,10 +170,9 @@ class NotificationServiceTest {
         when(notificationLogRepository.findAlreadyLoggedObligationIds(anyCollection()))
                 .thenAnswer(invocation -> Set.copyOf(loggedIds));
 
-        // run 1: PENDING written + email sent, but SENT update fails
+        // run 1: PENDING written + email sent, but SENT update fails (caught internally, recordFailure called)
         doThrow(new RuntimeException("DB down")).when(persistenceService).recordSuccess(any());
-        assertThatThrownBy(() -> service.runDailyNotifications(TODAY))
-                .isInstanceOf(RuntimeException.class);
+        service.runDailyNotifications(TODAY);
 
         // run 2: PENDING row detected by dedup check → obligation filtered out → no send
         service.runDailyNotifications(TODAY);
