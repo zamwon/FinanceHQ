@@ -34,7 +34,7 @@ FinanceHQ solves a gap that standard fintech apps ignore: active investors who p
 | F-03 | angular-spa-scaffold          | (foundation) Angular SPA scaffolded with routing, HTTP client, and auth guard; served by backend in production | —       | NFR (latest two major browser versions) | done  |
 | S-01 | register-and-login            | user can register with email and password and log in via the web UI without errors                  | F-01, F-02, F-03 | FR-001, FR-002, US-01             | done     |
 | S-02 | add-and-list-obligations      | user can add an obligation and see it immediately in their obligation list                          | S-01             | FR-003, FR-004, US-01             | proposed |
-| S-03 | edit-and-delete-obligations   | user can edit an obligation's amount and payment date, and delete it after a confirmation dialog     | S-02             | FR-005, FR-006                    | proposed |
+| S-03 | edit-and-delete-obligations   | user can edit an obligation's amount and payment date, and delete it after a confirmation dialog     | S-02             | FR-005, FR-006                    | done     |
 | S-04 | email-notification-scheduler  | system sends an email one business day before each obligation's next due date, reliably             | S-02             | FR-007, US-01                     | done     |
 
 ## Streams
@@ -144,7 +144,7 @@ What's already in place in the codebase as of 2026-05-25 (auto-researched + user
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Runs in parallel with S-04 (north star) under `main_goal: speed`. Lower-value than S-04 for the core hypothesis; if capacity forces a choice between the two parallel tracks, S-04 ships first.
-- **Status:** proposed
+- **Status:** done
 
 ---
 
@@ -196,4 +196,5 @@ What's already in place in the codebase as of 2026-05-25 (auto-researched + user
 - **F-03: (foundation) Angular SPA scaffolded with routing, HTTP client, and auth guard; served by backend in production** — Archived 2026-05-27 → `context/archive/2026-05-27-angular-spa-scaffold/`. Lesson: —.
 - **F-02: (foundation) registration and login REST endpoints secured; user identity issued on every protected route** — Archived 2026-05-28 → `context/archive/2026-05-25-f-02-auth-scaffold/`. Lesson: —.
 - **S-01: user can register with email and password and log in via the web UI without errors** — Archived 2026-05-28 → `context/archive/2026-05-28-register-and-login/`. Lesson: —.
+- **S-03: user can edit an obligation's amount and payment date, and delete an obligation after confirming in a dialog.** — Implemented 2026-06-01 (not yet archived). Lesson: —.
 - **S-04: system automatically sends an email one business day before each obligation's next due date; notifications require no manual action and are reliably delivered.** — Archived 2026-06-01 → `context/archive/2026-05-29-email-notification-scheduler/`. Lesson: —.
