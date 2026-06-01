@@ -418,25 +418,25 @@ No DB migration required. `PENDING` is a new Java enum value; the column is `VAR
 
 #### Automated
 
-- [x] 3.1 `./mvnw test -Dtest=NotificationServiceTest` passes including new idempotency test
+- [x] 3.1 `./mvnw test -Dtest=NotificationServiceTest` passes including new idempotency test — 0589ab1
 
 #### Manual
 
-- [x] 3.2 `doAnswer` side-effect correctly simulates PENDING row written to mocked DB
-- [x] 3.3 `verify(mailSender, times(1))` is the load-bearing assertion (not `times(2)`)
+- [x] 3.2 `doAnswer` side-effect correctly simulates PENDING row written to mocked DB — 0589ab1
+- [x] 3.3 `verify(mailSender, times(1))` is the load-bearing assertion (not `times(2)`) — 0589ab1
 
 ### Phase 4: Integration Tests — Risk #1 + Retry Path
 
 #### Automated
 
-- [ ] 4.1 `./mvnw test -Dtest=NotificationServiceIntegrationTest` passes all three tests
-- [ ] 4.2 `./mvnw test` passes (full suite, no regressions)
+- [x] 4.1 `./mvnw test -Dtest=NotificationServiceIntegrationTest` passes all three tests
+- [x] 4.2 `./mvnw test` passes (full suite, no regressions)
 
 #### Manual
 
-- [ ] 4.3 `@Transactional` causes each test to roll back — no residual rows between tests
-- [ ] 4.4 `@MockBean JavaMailSender` present — no real SMTP call made
-- [ ] 4.5 Test 1 assertion queries by `status=SENT`, not just count
+- [x] 4.3 `@Transactional` causes each test to roll back — no residual rows between tests
+- [x] 4.4 `@MockBean JavaMailSender` present — no real SMTP call made
+- [x] 4.5 Test 1 assertion queries by `status=SENT`, not just count
 
 ### Phase 5: Cookbook Update
 
