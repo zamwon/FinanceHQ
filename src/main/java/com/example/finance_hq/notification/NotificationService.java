@@ -6,6 +6,7 @@ import com.example.finance_hq.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -65,6 +66,12 @@ public class NotificationService {
         byUserAndDate.forEach((key, userTargets) -> {
             User user = userTargets.getFirst().obligation().getUser();
             LocalDate dueDate = userTargets.getFirst().nextDueDate();
+            try {
+                persistenceService.recordPending(userTargets);
+            } catch (DataIntegrityViolationException e) {
+                log.info("Skipping already-processed group for user {} due {}", user.getEmail(), dueDate);
+                return;
+            }
             try {
                 sendGroupedEmail(user, userTargets, dueDate);
                 persistenceService.recordSuccess(userTargets);

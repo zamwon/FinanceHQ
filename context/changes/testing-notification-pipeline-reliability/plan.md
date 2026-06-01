@@ -395,24 +395,24 @@ No DB migration required. `PENDING` is a new Java enum value; the column is `VAR
 
 #### Automated
 
-- [x] 1.1 `./mvnw test -Dtest=NextDueDateComputerTest` passes with new compound test
+- [x] 1.1 `./mvnw test -Dtest=NextDueDateComputerTest` passes with new compound test — cf249a9
 
 #### Manual
 
-- [x] 1.2 New test name in output expresses the Feb-28-Saturday edge case clearly
+- [x] 1.2 New test name in output expresses the Feb-28-Saturday edge case clearly — cf249a9
 
 ### Phase 2: Code Fix — Idempotency for Risk #6
 
 #### Automated
 
-- [ ] 2.1 `./mvnw test -Dtest=NotificationServiceTest` passes (all 7 existing tests)
-- [ ] 2.2 `./mvnw test -Dtest=NotificationPersistenceServiceTest` passes (updated stubs)
-- [ ] 2.3 `./mvnw test` passes (full suite)
+- [x] 2.1 `./mvnw test -Dtest=NotificationServiceTest` passes (all 7 existing tests)
+- [x] 2.2 `./mvnw test -Dtest=NotificationPersistenceServiceTest` passes (updated stubs)
+- [x] 2.3 `./mvnw test` passes (full suite)
 
 #### Manual
 
-- [ ] 2.4 `recordPending()` uses `saveAndFlush()` not `save()`
-- [ ] 2.5 `runDailyNotifications()` catches `DataIntegrityViolationException` from `recordPending()` only
+- [x] 2.4 `recordPending()` uses `saveAndFlush()` not `save()`
+- [x] 2.5 `runDailyNotifications()` catches `DataIntegrityViolationException` from `recordPending()` only
 
 ### Phase 3: Hermetic Test — Risk #6
 

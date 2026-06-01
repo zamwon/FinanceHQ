@@ -4,12 +4,14 @@ import com.example.finance_hq.obligation.Obligation;
 import com.example.finance_hq.obligation.ObligationPeriod;
 import com.example.finance_hq.obligation.ObligationRepository;
 import com.example.finance_hq.obligation.ObligationService;
+import com.example.finance_hq.obligation.ObligationService.SchedulerTarget;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class NotificationPersistenceService {
@@ -24,21 +26,37 @@ public class NotificationPersistenceService {
     }
 
     @Transactional
-    public void recordSuccess(List<ObligationService.SchedulerTarget> targets) {
+    public void recordPending(List<SchedulerTarget> targets) {
+        for (SchedulerTarget t : targets) {
+            notificationLogRepository.saveAndFlush(
+                    new NotificationLog(t.obligation(), t.nextDueDate(), NotificationStatus.PENDING));
+        }
+    }
+
+    @Transactional
+    public void recordSuccess(List<SchedulerTarget> targets) {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Warsaw"));
-        for (ObligationService.SchedulerTarget t : targets) {
-            NotificationLog entry = new NotificationLog(t.obligation(), t.nextDueDate(), NotificationStatus.SENT);
-            entry.setSentAt(now);
-            notificationLogRepository.save(entry);
+        for (SchedulerTarget t : targets) {
+            Optional<NotificationLog> existing = notificationLogRepository
+                    .findByObligationIdAndDueDate(t.obligation().getId(), t.nextDueDate());
+            existing.ifPresent(entry -> {
+                entry.setStatus(NotificationStatus.SENT);
+                entry.setSentAt(now);
+                notificationLogRepository.save(entry);
+            });
             decrementIfFixedTerm(t.obligation());
         }
     }
 
     @Transactional
-    public void recordFailure(List<ObligationService.SchedulerTarget> targets) {
-        for (ObligationService.SchedulerTarget t : targets) {
-            notificationLogRepository.save(
-                    new NotificationLog(t.obligation(), t.nextDueDate(), NotificationStatus.FAILED));
+    public void recordFailure(List<SchedulerTarget> targets) {
+        for (SchedulerTarget t : targets) {
+            Optional<NotificationLog> existing = notificationLogRepository
+                    .findByObligationIdAndDueDate(t.obligation().getId(), t.nextDueDate());
+            existing.ifPresent(entry -> {
+                entry.setStatus(NotificationStatus.FAILED);
+                notificationLogRepository.save(entry);
+            });
         }
     }
 

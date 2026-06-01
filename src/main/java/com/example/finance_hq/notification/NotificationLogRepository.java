@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,6 +15,8 @@ public interface NotificationLogRepository extends JpaRepository<NotificationLog
 
     @Query("SELECT nl.obligation.id FROM NotificationLog nl WHERE nl.dueDate IN :dueDates")
     Set<UUID> findAlreadyLoggedObligationIds(@Param("dueDates") Collection<LocalDate> dueDates);
+
+    Optional<NotificationLog> findByObligationIdAndDueDate(UUID obligationId, LocalDate dueDate);
 
     @Query("SELECT nl FROM NotificationLog nl JOIN FETCH nl.obligation o JOIN FETCH o.user WHERE nl.status = :status")
     List<NotificationLog> findByStatusWithObligationAndUser(@Param("status") NotificationStatus status);

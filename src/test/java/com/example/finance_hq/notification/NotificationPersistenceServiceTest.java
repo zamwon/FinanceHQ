@@ -16,10 +16,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationPersistenceServiceTest {
@@ -41,6 +44,9 @@ class NotificationPersistenceServiceTest {
         User user = new User("a@a.com", "hash");
         Obligation obligation = obligation(user, ObligationPeriod.FIXED_TERM, 3);
         ObligationService.SchedulerTarget target = new ObligationService.SchedulerTarget(obligation, DUE);
+        NotificationLog pendingLog = new NotificationLog(obligation, DUE, NotificationStatus.PENDING);
+        when(notificationLogRepository.findByObligationIdAndDueDate(any(), any()))
+                .thenReturn(Optional.of(pendingLog));
 
         service.recordSuccess(List.of(target));
 
@@ -54,6 +60,9 @@ class NotificationPersistenceServiceTest {
         User user = new User("a@a.com", "hash");
         Obligation obligation = obligation(user, ObligationPeriod.RECURRING, null);
         ObligationService.SchedulerTarget target = new ObligationService.SchedulerTarget(obligation, DUE);
+        NotificationLog pendingLog = new NotificationLog(obligation, DUE, NotificationStatus.PENDING);
+        when(notificationLogRepository.findByObligationIdAndDueDate(any(), any()))
+                .thenReturn(Optional.of(pendingLog));
 
         service.recordSuccess(List.of(target));
 
