@@ -196,5 +196,5 @@ What's already in place in the codebase as of 2026-05-25 (auto-researched + user
 - **F-03: (foundation) Angular SPA scaffolded with routing, HTTP client, and auth guard; served by backend in production** — Archived 2026-05-27 → `context/archive/2026-05-27-angular-spa-scaffold/`. Lesson: —.
 - **F-02: (foundation) registration and login REST endpoints secured; user identity issued on every protected route** — Archived 2026-05-28 → `context/archive/2026-05-25-f-02-auth-scaffold/`. Lesson: —.
 - **S-01: user can register with email and password and log in via the web UI without errors** — Archived 2026-05-28 → `context/archive/2026-05-28-register-and-login/`. Lesson: —.
-- **S-03: user can edit an obligation's amount and payment date, and delete an obligation after confirming in a dialog.** — Implemented 2026-06-01 (not yet archived). Lesson: —.
+- **S-03: user can edit an obligation's amount and payment date, and delete an obligation after confirming in a dialog.** — Archived 2026-06-01 → `context/archive/2026-05-29-edit-and-delete-obligations/`. Lesson: —.
 - **S-04: system automatically sends an email one business day before each obligation's next due date; notifications require no manual action and are reliably delivered.** — Archived 2026-06-01 → `context/archive/2026-05-29-email-notification-scheduler/`. Lesson: —.
