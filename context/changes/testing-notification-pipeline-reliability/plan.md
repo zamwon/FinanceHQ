@@ -429,23 +429,23 @@ No DB migration required. `PENDING` is a new Java enum value; the column is `VAR
 
 #### Automated
 
-- [x] 4.1 `./mvnw test -Dtest=NotificationServiceIntegrationTest` passes all three tests
-- [x] 4.2 `./mvnw test` passes (full suite, no regressions)
+- [x] 4.1 `./mvnw test -Dtest=NotificationServiceIntegrationTest` passes all three tests — 4452e96
+- [x] 4.2 `./mvnw test` passes (full suite, no regressions) — 4452e96
 
 #### Manual
 
-- [x] 4.3 `@Transactional` causes each test to roll back — no residual rows between tests
-- [x] 4.4 `@MockBean JavaMailSender` present — no real SMTP call made
-- [x] 4.5 Test 1 assertion queries by `status=SENT`, not just count
+- [x] 4.3 `@Transactional` causes each test to roll back — no residual rows between tests — 4452e96
+- [x] 4.4 `@MockBean JavaMailSender` present — no real SMTP call made — 4452e96
+- [x] 4.5 Test 1 assertion queries by `status=SENT`, not just count — 4452e96
 
 ### Phase 5: Cookbook Update
 
 #### Automated
 
-- [ ] 5.1 `./mvnw test` passes (final full suite)
+- [x] 5.1 `./mvnw test` passes (final full suite)
 
 #### Manual
 
-- [ ] 5.2 `test-plan.md §6.1` and `§6.2` contain actionable guidance (not TBD)
-- [ ] 5.3 `change.md` status reads `implemented`
-- [ ] 5.4 `test-plan.md §3` Phase 1 row reads `complete`
+- [x] 5.2 `test-plan.md §6.1` and `§6.2` contain actionable guidance (not TBD)
+- [x] 5.3 `change.md` status reads `implemented`
+- [x] 5.4 `test-plan.md §3` Phase 1 row reads `complete`
