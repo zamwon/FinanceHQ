@@ -405,25 +405,25 @@ No DB migration required. `PENDING` is a new Java enum value; the column is `VAR
 
 #### Automated
 
-- [x] 2.1 `./mvnw test -Dtest=NotificationServiceTest` passes (all 7 existing tests)
-- [x] 2.2 `./mvnw test -Dtest=NotificationPersistenceServiceTest` passes (updated stubs)
-- [x] 2.3 `./mvnw test` passes (full suite)
+- [x] 2.1 `./mvnw test -Dtest=NotificationServiceTest` passes (all 7 existing tests) — e2295a4
+- [x] 2.2 `./mvnw test -Dtest=NotificationPersistenceServiceTest` passes (updated stubs) — e2295a4
+- [x] 2.3 `./mvnw test` passes (full suite) — e2295a4
 
 #### Manual
 
-- [x] 2.4 `recordPending()` uses `saveAndFlush()` not `save()`
-- [x] 2.5 `runDailyNotifications()` catches `DataIntegrityViolationException` from `recordPending()` only
+- [x] 2.4 `recordPending()` uses `saveAndFlush()` not `save()` — e2295a4
+- [x] 2.5 `runDailyNotifications()` catches `DataIntegrityViolationException` from `recordPending()` only — e2295a4
 
 ### Phase 3: Hermetic Test — Risk #6
 
 #### Automated
 
-- [ ] 3.1 `./mvnw test -Dtest=NotificationServiceTest` passes including new idempotency test
+- [x] 3.1 `./mvnw test -Dtest=NotificationServiceTest` passes including new idempotency test
 
 #### Manual
 
-- [ ] 3.2 `doAnswer` side-effect correctly simulates PENDING row written to mocked DB
-- [ ] 3.3 `verify(mailSender, times(1))` is the load-bearing assertion (not `times(2)`)
+- [x] 3.2 `doAnswer` side-effect correctly simulates PENDING row written to mocked DB
+- [x] 3.3 `verify(mailSender, times(1))` is the load-bearing assertion (not `times(2)`)
 
 ### Phase 4: Integration Tests — Risk #1 + Retry Path
 

@@ -17,12 +17,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.*;
@@ -148,6 +150,35 @@ class NotificationServiceTest {
         assertThat(captor.getValue().getSubject())
                 .contains("1 payment(s) due")
                 .contains(DUE_TOMORROW.toString());
+    }
+
+    @Test
+    void doesNotResendWhenPendingRowExistsFromPriorFailedRun() {
+        Obligation o = obligation(user("a@a.com"), ObligationPeriod.RECURRING, null);
+        ObligationService.SchedulerTarget target = new ObligationService.SchedulerTarget(o, DUE_TOMORROW);
+        when(obligationService.findAllSchedulerTargets(TODAY)).thenReturn(List.of(target));
+
+        // Mutable set simulating the PENDING rows written to the mock DB
+        Set<UUID> loggedIds = new HashSet<>();
+        doAnswer(invocation -> {
+            List<ObligationService.SchedulerTarget> ts = invocation.getArgument(0);
+            ts.forEach(t -> loggedIds.add(t.obligation().getId()));
+            return null;
+        }).when(persistenceService).recordPending(any());
+
+        // dedup check returns whatever is in the mock DB at call time
+        when(notificationLogRepository.findAlreadyLoggedObligationIds(anyCollection()))
+                .thenAnswer(invocation -> Set.copyOf(loggedIds));
+
+        // run 1: PENDING written + email sent, but SENT update fails
+        doThrow(new RuntimeException("DB down")).when(persistenceService).recordSuccess(any());
+        assertThatThrownBy(() -> service.runDailyNotifications(TODAY))
+                .isInstanceOf(RuntimeException.class);
+
+        // run 2: PENDING row detected by dedup check → obligation filtered out → no send
+        service.runDailyNotifications(TODAY);
+
+        verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────────
