@@ -5,6 +5,7 @@ import { Obligation } from '../obligation.model';
 import { ObligationsService } from '../obligations.service';
 
 @Component({
+  standalone: true,
   selector: 'app-obligation-dialog',
   imports: [ReactiveFormsModule],
   templateUrl: './obligation-dialog.component.html',
@@ -50,6 +51,7 @@ export class ObligationDialogComponent implements OnInit {
       this.form.controls.name.disable();
       this.form.controls.category.disable();
       this.form.controls.period.disable();
+      // disabled controls are excluded from form.invalid — submit guard only checks amount + paymentDay in edit mode
       this.form.controls.endDate.disable();
       this.form.controls.remainingPayments.disable();
     }
@@ -92,7 +94,7 @@ export class ObligationDialogComponent implements OnInit {
           remainingPayments: this.isFixedTerm ? v.remainingPayments : null,
         });
 
-    call.subscribe({
+    call.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => { this.loading.set(false); this.saved.emit(); },
       error: () => { this.loading.set(false); this.error.set('Failed to save. Please try again.'); },
     });
