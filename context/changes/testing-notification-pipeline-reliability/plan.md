@@ -442,10 +442,10 @@ No DB migration required. `PENDING` is a new Java enum value; the column is `VAR
 
 #### Automated
 
-- [x] 5.1 `./mvnw test` passes (final full suite)
+- [x] 5.1 `./mvnw test` passes (final full suite) — 249522d
 
 #### Manual
 
-- [x] 5.2 `test-plan.md §6.1` and `§6.2` contain actionable guidance (not TBD)
-- [x] 5.3 `change.md` status reads `implemented`
-- [x] 5.4 `test-plan.md §3` Phase 1 row reads `complete`
+- [x] 5.2 `test-plan.md §6.1` and `§6.2` contain actionable guidance (not TBD) — 249522d
+- [x] 5.3 `change.md` status reads `implemented` — 249522d
+- [x] 5.4 `test-plan.md §3` Phase 1 row reads `complete` — 249522d
