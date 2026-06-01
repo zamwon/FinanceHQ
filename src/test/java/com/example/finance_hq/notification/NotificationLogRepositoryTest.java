@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -47,20 +48,20 @@ class NotificationLogRepositoryTest {
     }
 
     @Test
-    void existsByObligationIdAndDueDate_returnsFalseWhenNoRow() {
+    void findAlreadyLoggedObligationIds_returnsEmptyWhenNoRow() {
         assertThat(notificationLogRepository
-                .existsByObligationIdAndDueDate(savedObligation.getId(), DUE))
-                .isFalse();
+                .findAlreadyLoggedObligationIds(Set.of(DUE)))
+                .isEmpty();
     }
 
     @Test
-    void existsByObligationIdAndDueDate_returnsTrueAfterInsert() {
+    void findAlreadyLoggedObligationIds_returnsIdAfterInsert() {
         notificationLogRepository.saveAndFlush(
                 new NotificationLog(savedObligation, DUE, NotificationStatus.SENT));
 
         assertThat(notificationLogRepository
-                .existsByObligationIdAndDueDate(savedObligation.getId(), DUE))
-                .isTrue();
+                .findAlreadyLoggedObligationIds(Set.of(DUE)))
+                .containsExactly(savedObligation.getId());
     }
 
     @Test

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,10 +44,18 @@ public class NotificationService {
     public void runDailyNotifications(LocalDate today) {
         List<ObligationService.SchedulerTarget> targets = obligationService.findAllSchedulerTargets(today);
 
-        List<ObligationService.SchedulerTarget> due = targets.stream()
+        List<ObligationService.SchedulerTarget> dateDue = targets.stream()
                 .filter(t -> BusinessDayCalculator.previousBusinessDay(t.nextDueDate()).equals(today))
-                .filter(t -> !notificationLogRepository.existsByObligationIdAndDueDate(
-                        t.obligation().getId(), t.nextDueDate()))
+                .toList();
+
+        Set<LocalDate> dueDates = dateDue.stream().map(ObligationService.SchedulerTarget::nextDueDate)
+                .collect(Collectors.toSet());
+        Set<UUID> alreadyLogged = dueDates.isEmpty()
+                ? Set.of()
+                : notificationLogRepository.findAlreadyLoggedObligationIds(dueDates);
+
+        List<ObligationService.SchedulerTarget> due = dateDue.stream()
+                .filter(t -> !alreadyLogged.contains(t.obligation().getId()))
                 .toList();
 
         Map<String, List<ObligationService.SchedulerTarget>> byUserAndDate = due.stream()

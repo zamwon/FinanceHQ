@@ -42,6 +42,8 @@ Four phases: infrastructure (schema + dependencies + config), business logic (ca
 
 **Send / log ordering:** `JavaMailSender.send()` is called *outside* any `@Transactional` context. Only the subsequent DB write (SENT insert + decrement, or FAILED insert) is `@Transactional`. This ordering ensures the count is only decremented when the send is confirmed.
 
+**Implementation addendum (post-impl-review):** The `@Transactional` private helpers (`recordSuccess`, `recordFailure`, `markRetrySuccess`) were extracted into a dedicated `NotificationPersistenceService` bean rather than kept as private methods on `NotificationService`. This cleanly enforces the transaction boundary at the bean level — `NotificationService` is never `@Transactional`, `NotificationPersistenceService` always is — avoiding any Spring-proxy ambiguity from mixing transactional and non-transactional methods in the same class.
+
 ## Critical Implementation Details
 
 **Transaction boundary for send + log:** The `JavaMailSender.send()` call must happen outside any `@Transactional` context. A send success followed by a DB timeout must leave the obligation in a retriable state (no SENT row → daily scheduler retries next day). If send and DB write were one transaction, the inverse is also dangerous.
@@ -440,10 +442,10 @@ Unit tests for business day logic and `NotificationService`, plus an integration
 
 #### Automated
 
-- [x] 4.1 `./mvnw test -Dtest=BusinessDayCalculatorTest` passes
-- [x] 4.2 `./mvnw test -Dtest=NotificationServiceTest` passes
-- [x] 4.3 `./mvnw test -Dtest=NotificationLogRepositoryTest` passes
-- [x] 4.4 `./mvnw test` — full suite passes with no regressions
+- [x] 4.1 `./mvnw test -Dtest=BusinessDayCalculatorTest` passes — f30ed9a
+- [x] 4.2 `./mvnw test -Dtest=NotificationServiceTest` passes — f30ed9a
+- [x] 4.3 `./mvnw test -Dtest=NotificationLogRepositoryTest` passes — f30ed9a
+- [x] 4.4 `./mvnw test` — full suite passes with no regressions — f30ed9a
 
 #### Manual
 

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 import static jakarta.persistence.EnumType.STRING;
@@ -40,10 +41,16 @@ public class NotificationLog {
         this.obligation = obligation;
         this.dueDate = dueDate;
         this.status = status;
-        this.createdAt = LocalDateTime.now();
     }
 
     protected NotificationLog() {}
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now(ZoneId.of("Europe/Warsaw"));
+        }
+    }
 
     public UUID getId() { return id; }
     public Obligation getObligation() { return obligation; }

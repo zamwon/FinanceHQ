@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -24,7 +25,7 @@ public class NotificationPersistenceService {
 
     @Transactional
     public void recordSuccess(List<ObligationService.SchedulerTarget> targets) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Warsaw"));
         for (ObligationService.SchedulerTarget t : targets) {
             NotificationLog entry = new NotificationLog(t.obligation(), t.nextDueDate(), NotificationStatus.SENT);
             entry.setSentAt(now);
@@ -41,9 +42,11 @@ public class NotificationPersistenceService {
         }
     }
 
+    // Only called for FAILED rows; UNIQUE(obligation_id, due_date) prevents a SENT row coexisting,
+    // so double-decrement of remainingPayments is impossible.
     @Transactional
     public void markRetrySuccess(List<NotificationLog> logs) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Warsaw"));
         for (NotificationLog nl : logs) {
             nl.setStatus(NotificationStatus.SENT);
             nl.setSentAt(now);

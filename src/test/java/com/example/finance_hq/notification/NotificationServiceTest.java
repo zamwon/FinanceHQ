@@ -18,11 +18,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,8 +65,8 @@ class NotificationServiceTest {
         Obligation o = obligation(user("a@a.com"), ObligationPeriod.RECURRING, null);
         when(obligationService.findAllSchedulerTargets(TODAY))
                 .thenReturn(List.of(new ObligationService.SchedulerTarget(o, DUE_TOMORROW)));
-        when(notificationLogRepository.existsByObligationIdAndDueDate(o.getId(), DUE_TOMORROW))
-                .thenReturn(true);
+        when(notificationLogRepository.findAlreadyLoggedObligationIds(anyCollection()))
+                .thenReturn(Set.of(o.getId()));
 
         service.runDailyNotifications(TODAY);
 
@@ -76,8 +78,8 @@ class NotificationServiceTest {
         Obligation o = obligation(user("a@a.com"), ObligationPeriod.RECURRING, null);
         ObligationService.SchedulerTarget target = new ObligationService.SchedulerTarget(o, DUE_TOMORROW);
         when(obligationService.findAllSchedulerTargets(TODAY)).thenReturn(List.of(target));
-        when(notificationLogRepository.existsByObligationIdAndDueDate(o.getId(), DUE_TOMORROW))
-                .thenReturn(false);
+        when(notificationLogRepository.findAlreadyLoggedObligationIds(anyCollection()))
+                .thenReturn(Set.of());
 
         service.runDailyNotifications(TODAY);
 
@@ -94,7 +96,8 @@ class NotificationServiceTest {
         ObligationService.SchedulerTarget t1 = new ObligationService.SchedulerTarget(o1, DUE_TOMORROW);
         ObligationService.SchedulerTarget t2 = new ObligationService.SchedulerTarget(o2, DUE_TOMORROW);
         when(obligationService.findAllSchedulerTargets(TODAY)).thenReturn(List.of(t1, t2));
-        when(notificationLogRepository.existsByObligationIdAndDueDate(any(), any())).thenReturn(false);
+        when(notificationLogRepository.findAlreadyLoggedObligationIds(anyCollection()))
+                .thenReturn(Set.of());
 
         service.runDailyNotifications(TODAY);
 
@@ -106,8 +109,8 @@ class NotificationServiceTest {
         Obligation o = obligation(user("a@a.com"), ObligationPeriod.RECURRING, null);
         ObligationService.SchedulerTarget target = new ObligationService.SchedulerTarget(o, DUE_TOMORROW);
         when(obligationService.findAllSchedulerTargets(TODAY)).thenReturn(List.of(target));
-        when(notificationLogRepository.existsByObligationIdAndDueDate(o.getId(), DUE_TOMORROW))
-                .thenReturn(false);
+        when(notificationLogRepository.findAlreadyLoggedObligationIds(anyCollection()))
+                .thenReturn(Set.of());
         doThrow(new MailSendException("SMTP down")).when(mailSender).send(any(SimpleMailMessage.class));
 
         assertThatNoException().isThrownBy(() -> service.runDailyNotifications(TODAY));
@@ -121,8 +124,8 @@ class NotificationServiceTest {
         Obligation o = obligation(user("a@a.com"), ObligationPeriod.FIXED_TERM, 3);
         ObligationService.SchedulerTarget target = new ObligationService.SchedulerTarget(o, DUE_TOMORROW);
         when(obligationService.findAllSchedulerTargets(TODAY)).thenReturn(List.of(target));
-        when(notificationLogRepository.existsByObligationIdAndDueDate(o.getId(), DUE_TOMORROW))
-                .thenReturn(false);
+        when(notificationLogRepository.findAlreadyLoggedObligationIds(anyCollection()))
+                .thenReturn(Set.of());
 
         service.runDailyNotifications(TODAY);
 
@@ -135,7 +138,8 @@ class NotificationServiceTest {
         Obligation o = obligation(user("a@a.com"), ObligationPeriod.RECURRING, null);
         when(obligationService.findAllSchedulerTargets(TODAY))
                 .thenReturn(List.of(new ObligationService.SchedulerTarget(o, DUE_TOMORROW)));
-        when(notificationLogRepository.existsByObligationIdAndDueDate(any(), any())).thenReturn(false);
+        when(notificationLogRepository.findAlreadyLoggedObligationIds(anyCollection()))
+                .thenReturn(Set.of());
 
         service.runDailyNotifications(TODAY);
 
