@@ -1,5 +1,6 @@
 package com.example.finance_hq.obligation;
 
+import com.example.finance_hq.notification.BusinessDayCalculator;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -35,6 +36,15 @@ class NextDueDateComputerTest {
         // February 2026 has 28 days
         assertThat(NextDueDateComputer.compute(31, today, ObligationPeriod.RECURRING, null))
                 .isEqualTo(LocalDate.of(2026, 2, 28));
+    }
+
+    @Test
+    void recurring_paymentDay31_inFebruary_notifyDateIsFebruary27() {
+        // Feb 28, 2026 is a Saturday; previousBusinessDay must skip it and land on Friday Feb 27
+        LocalDate today = LocalDate.of(2026, 2, 1);
+        LocalDate dueDate = NextDueDateComputer.compute(31, today, ObligationPeriod.RECURRING, null);
+        assertThat(dueDate).isEqualTo(LocalDate.of(2026, 2, 28));
+        assertThat(BusinessDayCalculator.previousBusinessDay(dueDate)).isEqualTo(LocalDate.of(2026, 2, 27));
     }
 
     @Test
