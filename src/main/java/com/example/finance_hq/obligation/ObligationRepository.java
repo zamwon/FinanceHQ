@@ -12,6 +12,12 @@ import java.util.UUID;
 
 public interface ObligationRepository extends JpaRepository<Obligation, UUID> {
 
+    @Override
+    default Optional<Obligation> findById(UUID id) {
+        throw new UnsupportedOperationException(
+                "Direct ID lookup bypasses ownership. Use findByIdAndUser(UUID, User) instead.");
+    }
+
     Page<Obligation> findAllByUser(User user, Pageable pageable);
 
     Optional<Obligation> findByIdAndUser(UUID id, User user);
