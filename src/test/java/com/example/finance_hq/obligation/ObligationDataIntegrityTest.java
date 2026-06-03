@@ -49,6 +49,8 @@ class ObligationDataIntegrityTest {
     @Autowired UserRepository userRepository;
     @Autowired ObligationRepository obligationRepository;
 
+    // USE_BIG_DECIMAL_FOR_FLOATS is required: the BigDecimal cast assertions (amount compareTo)
+    // depend on numeric JSON fields deserializing as BigDecimal, not Double. Do not remove.
     private final ObjectMapper objectMapper = new ObjectMapper()
             .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
 
@@ -129,7 +131,8 @@ class ObligationDataIntegrityTest {
 
         LocalDateTime repoCreatedAt = obligationRepository
                 .findByIdAndUser(UUID.fromString(id), user).orElseThrow().getCreatedAt();
-        assertThat(repoCreatedAt).isNotNull();
+        assertThat(repoCreatedAt).isEqualToIgnoringNanos(
+                LocalDateTime.parse((String) before.get("createdAt")));
     }
 
     @Test

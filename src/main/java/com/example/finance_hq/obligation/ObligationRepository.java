@@ -10,8 +10,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * All obligation lookups by ID must be scoped to the authenticated user.
+ * {@link #findById(UUID)} is intentionally disabled — use {@link #findByIdAndUser(UUID, User)} instead.
+ */
 public interface ObligationRepository extends JpaRepository<Obligation, UUID> {
 
+    // NOTE: deleteById() also delegates through findById() internally — it will throw here too.
+    // Always call repository.delete(entity) after fetching via findByIdAndUser(); never deleteById().
     @Override
     default Optional<Obligation> findById(UUID id) {
         throw new UnsupportedOperationException(
