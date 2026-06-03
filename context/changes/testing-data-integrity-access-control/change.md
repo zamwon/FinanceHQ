@@ -3,7 +3,7 @@ change_id: testing-data-integrity-access-control
 title: Phase 2 — Test data integrity and access control
 status: implementing
 created: 2026-06-02
-updated: 2026-06-02
+updated: 2026-06-03
 archived_at: null
 ---
 

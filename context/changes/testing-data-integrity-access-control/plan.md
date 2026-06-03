@@ -294,26 +294,26 @@ Fill the TBD cookbook entry for IDOR boundary tests and advance the phase tracki
 
 #### Automated
 
-- [x] 1.1 `./mvnw test` passes with no regressions after findById() override
+- [x] 1.1 `./mvnw test` passes with no regressions after findById() override — 2b60b92
 
 #### Manual
 
-- [x] 1.2 Override message names `findByIdAndUser` as the correct replacement
-- [x] 1.3 No existing test or production class broken (test suite passing is the evidence)
+- [x] 1.2 Override message names `findByIdAndUser` as the correct replacement — 2b60b92
+- [x] 1.3 No existing test or production class broken (test suite passing is the evidence) — 2b60b92
 
 ### Phase 2: Integration Tests — Risk #3 + Risk #4
 
 #### Automated
 
-- [ ] 2.1 `./mvnw test -Dtest=ObligationDataIntegrityTest` passes all three tests
-- [ ] 2.2 `./mvnw test -Dtest=ObligationControllerIntegrationTest` passes including `update_404_notFound`
-- [ ] 2.3 `./mvnw test` passes (full suite)
+- [x] 2.1 `./mvnw test -Dtest=ObligationDataIntegrityTest` passes all three tests
+- [x] 2.2 `./mvnw test -Dtest=ObligationControllerIntegrationTest` passes including `update_404_notFound`
+- [x] 2.3 `./mvnw test` passes (full suite)
 
 #### Manual
 
-- [ ] 2.4 Test 1 amount assertion uses `BigDecimal.compareTo()` (not `doubleValue()`)
-- [ ] 2.5 Test 2 repository-level createdAt check uses `findByIdAndUser()` (not `findById()`)
-- [ ] 2.6 Test 3 invokes the Spring-proxied repository bean (autowired, not mocked)
+- [x] 2.4 Test 1 amount assertion uses `BigDecimal.compareTo()` (not `doubleValue()`)
+- [x] 2.5 Test 2 repository-level createdAt check uses `findByIdAndUser()` (not `findById()`)
+- [x] 2.6 Test 3 invokes the Spring-proxied repository bean (autowired, not mocked)
 
 ### Phase 3: Cookbook §6.3 + Phase 2 Plan Sync
 

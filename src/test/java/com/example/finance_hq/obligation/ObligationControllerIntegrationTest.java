@@ -348,6 +348,16 @@ class ObligationControllerIntegrationTest {
     }
 
     @Test
+    void update_404_notFound() throws Exception {
+        String token = registerAndLogin("update_not_found@test.com", "Test1234!");
+        mvc.perform(patch(API_OBLIGATIONS + "/" + UUID.randomUUID())
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .content(json(Map.of("amount", 1.00))))
+           .andExpect(status().isNotFound());
+    }
+
+    @Test
     void delete_404_notFound() throws Exception {
         String token = registerAndLogin("delete_not_found@test.com", "Test1234!");
 
