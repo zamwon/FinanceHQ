@@ -319,10 +319,10 @@ Fill the TBD cookbook entry for IDOR boundary tests and advance the phase tracki
 
 #### Automated
 
-- [x] 3.1 `./mvnw test` passes (final full suite)
+- [x] 3.1 `./mvnw test` passes (final full suite) — b5e08ab
 
 #### Manual
 
-- [x] 3.2 `test-plan.md §6.3` contains actionable guidance (not TBD)
-- [x] 3.3 `test-plan.md §3` Phase 2 row reads `complete`
-- [x] 3.4 `change.md` status reads `implemented`
+- [x] 3.2 `test-plan.md §6.3` contains actionable guidance (not TBD) — b5e08ab
+- [x] 3.3 `test-plan.md §3` Phase 2 row reads `complete` — b5e08ab
+- [x] 3.4 `change.md` status reads `implemented` — b5e08ab
