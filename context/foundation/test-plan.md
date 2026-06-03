@@ -68,7 +68,7 @@ orchestrator updates Status as artifacts appear on disk.
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
 | 1 | Notification pipeline reliability | Prove notification path works: right date, right delivery, no duplicates, correct retry | #1, #2, #6 | unit + integration | complete | testing-notification-pipeline-reliability |
-| 2 | Data integrity and access control | Prove obligations persist correctly and are never leaked cross-user | #3, #4 | integration | not started | — |
+| 2 | Data integrity and access control | Prove obligations persist correctly and are never leaked cross-user | #3, #4 | integration | complete | testing-data-integrity-access-control |
 | 3 | Frontend production parity | Prove Angular prod build served by Spring Boot works: auth flow, routing, critical UI, token refresh | #5, #7 | e2e (Playwright) + unit (interceptor) | not started | — |
 | 4 | Quality gates wiring | Lock the test floor so regressions cannot merge | cross-cutting | CI gates | not started | — |
 
@@ -150,7 +150,56 @@ Reference implementation: `NotificationServiceIntegrationTest` — covers daily 
 
 ### 6.3 Adding an IDOR boundary test for an API endpoint
 
-TBD — see §3 Phase 2 for per-endpoint ownership enforcement pattern.
+Every mutating endpoint that accepts an obligation ID needs two boundary tests: one for a valid ID owned by another user, and one for a nonexistent UUID. Both must return 404 — the same response regardless of whether the ID never existed or belongs to another user (no enumeration leakage).
+
+**Two-user setup:**
+
+```java
+String tokenA = registerAndLogin("user_a@test.com", "Test1234!");
+String tokenB = registerAndLogin("user_b@test.com", "Test1234!");
+```
+
+**User A creates the obligation:**
+
+```java
+MvcResult created = mvc.perform(post(API_OBLIGATIONS)
+        .contentType(APPLICATION_JSON)
+        .header("Authorization", "Bearer " + tokenA)
+        .content(json(obligationBody())))
+    .andExpect(status().isCreated())
+    .andReturn();
+String obligationId = (String) parseBody(created).get("id");
+```
+
+**User B targets user A's obligation ID — expect 404 for PATCH and DELETE:**
+
+```java
+mvc.perform(patch(API_OBLIGATIONS + "/" + obligationId)
+        .contentType(APPLICATION_JSON)
+        .header("Authorization", "Bearer " + tokenB)
+        .content(json(Map.of("amount", 1.00))))
+    .andExpect(status().isNotFound());
+
+mvc.perform(delete(API_OBLIGATIONS + "/" + obligationId)
+        .header("Authorization", "Bearer " + tokenB))
+    .andExpect(status().isNotFound());
+```
+
+**Nonexistent UUID — same 404, proving no enumeration leakage:**
+
+```java
+mvc.perform(patch(API_OBLIGATIONS + "/" + UUID.randomUUID())
+        .contentType(APPLICATION_JSON)
+        .header("Authorization", "Bearer " + tokenA)
+        .content(json(Map.of("amount", 1.00))))
+    .andExpect(status().isNotFound());
+```
+
+**Key invariant:** `ObligationRepository` must never expose an unscoped `findById()`. Use only `findByIdAndUser(UUID, User)` in all production and test paths. The `findById()` override in `ObligationRepository` throws `UnsupportedOperationException` to catch any accidental bypass at the call site.
+
+**Do not test:** that the 404 body differs between "not found" and "wrong user" — the `GlobalExceptionHandler` intentionally returns the same body for both; distinguishing them would be an information leak.
+
+Reference implementation: `ObligationControllerIntegrationTest` — see `update_404_wrongUser`, `delete_404_wrongUser`, `list_200_doesNotReturnOtherUsersObligations`, and `update_404_notFound`.
 
 ### 6.4 Adding an e2e smoke test for the prod build
 

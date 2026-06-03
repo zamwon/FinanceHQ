@@ -305,24 +305,24 @@ Fill the TBD cookbook entry for IDOR boundary tests and advance the phase tracki
 
 #### Automated
 
-- [x] 2.1 `./mvnw test -Dtest=ObligationDataIntegrityTest` passes all three tests
-- [x] 2.2 `./mvnw test -Dtest=ObligationControllerIntegrationTest` passes including `update_404_notFound`
-- [x] 2.3 `./mvnw test` passes (full suite)
+- [x] 2.1 `./mvnw test -Dtest=ObligationDataIntegrityTest` passes all three tests — 97ef7aa
+- [x] 2.2 `./mvnw test -Dtest=ObligationControllerIntegrationTest` passes including `update_404_notFound` — 97ef7aa
+- [x] 2.3 `./mvnw test` passes (full suite) — 97ef7aa
 
 #### Manual
 
-- [x] 2.4 Test 1 amount assertion uses `BigDecimal.compareTo()` (not `doubleValue()`)
-- [x] 2.5 Test 2 repository-level createdAt check uses `findByIdAndUser()` (not `findById()`)
-- [x] 2.6 Test 3 invokes the Spring-proxied repository bean (autowired, not mocked)
+- [x] 2.4 Test 1 amount assertion uses `BigDecimal.compareTo()` (not `doubleValue()`) — 97ef7aa
+- [x] 2.5 Test 2 repository-level createdAt check uses `findByIdAndUser()` (not `findById()`) — 97ef7aa
+- [x] 2.6 Test 3 invokes the Spring-proxied repository bean (autowired, not mocked) — 97ef7aa
 
 ### Phase 3: Cookbook §6.3 + Phase 2 Plan Sync
 
 #### Automated
 
-- [ ] 3.1 `./mvnw test` passes (final full suite)
+- [x] 3.1 `./mvnw test` passes (final full suite)
 
 #### Manual
 
-- [ ] 3.2 `test-plan.md §6.3` contains actionable guidance (not TBD)
-- [ ] 3.3 `test-plan.md §3` Phase 2 row reads `complete`
-- [ ] 3.4 `change.md` status reads `implemented`
+- [x] 3.2 `test-plan.md §6.3` contains actionable guidance (not TBD)
+- [x] 3.3 `test-plan.md §3` Phase 2 row reads `complete`
+- [x] 3.4 `change.md` status reads `implemented`
