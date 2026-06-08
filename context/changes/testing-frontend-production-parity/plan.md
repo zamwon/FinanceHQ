@@ -482,23 +482,23 @@ Also update the Phase 3 row in §3 Phased Rollout: set `Status: complete` and `C
 
 #### Automated
 
-- [x] 2.1 `npm test` runs all 3 scenarios
-- [x] 2.2 Scenario 1 exits green
-- [x] 2.3 Scenario 2 exits green
-- [x] 2.4 Scenario 3 exits RED (expected)
+- [x] 2.1 `npm test` runs all 3 scenarios — 652c05d
+- [x] 2.2 Scenario 1 exits green — 652c05d
+- [x] 2.3 Scenario 2 exits green — 652c05d
+- [x] 2.4 Scenario 3 exits RED (expected) — 652c05d
 
 #### Manual
 
-- [x] 2.5 Jest output clearly identifies scenario 3 as failing
-- [x] 2.6 Test names are descriptive and match documented scenario names
+- [x] 2.5 Jest output clearly identifies scenario 3 as failing — 652c05d
+- [x] 2.6 Test names are descriptive and match documented scenario names — 652c05d
 
 ### Phase 3: Fix Interceptor Bug — TDD GREEN Phase
 
 #### Automated
 
-- [ ] 3.1 `npm test` exits 0
-- [ ] 3.2 All 3 interceptor scenarios green
-- [ ] 3.3 `auth.guard.spec.ts` still passes (no regression)
+- [x] 3.1 `npm test` exits 0
+- [x] 3.2 All 3 interceptor scenarios green
+- [x] 3.3 `auth.guard.spec.ts` still passes (no regression)
 
 #### Manual
 

@@ -2,7 +2,7 @@ import { HttpInterceptorFn, HttpErrorResponse, HttpRequest, HttpHandlerFn } from
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, throwError } from 'rxjs';
-import { catchError, switchMap, take } from 'rxjs/operators';
+import { catchError, switchMap, take, timeout } from 'rxjs/operators';
 import { TokenStorageService } from './token-storage.service';
 import { AuthService } from './auth.service';
 
@@ -55,6 +55,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       return authService.refresh(storedRefresh).pipe(
+        timeout(10_000),
         switchMap(res => {
           refreshInFlight = false;
           refresh$.next(res.accessToken);
@@ -62,6 +63,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         }),
         catchError(refreshErr => {
           refreshInFlight = false;
+          refresh$.error(refreshErr);
           tokenStorage.clear();
           router.navigate(['/login']);
           return throwError(() => refreshErr);
