@@ -42,7 +42,12 @@ public class SentryTunnelController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> tunnel(@RequestBody String body) {
+	public ResponseEntity<Void> tunnel(@RequestBody(required = false) String body) {
+		if (body == null || body.trim().isEmpty()) {
+			log.warn("Invalid Sentry envelope: empty body");
+			return ResponseEntity.badRequest().build();
+		}
+
 		// Check rate limit
 		long now = System.currentTimeMillis();
 		long currentWindowStart = windowStart.get();
@@ -98,6 +103,11 @@ public class SentryTunnelController {
 			log.warn("Failed to proxy envelope to Sentry", e);
 			return ResponseEntity.ok().build();
 		}
+	}
+
+	public void resetRateLimiter() {
+		requestCount.set(0);
+		windowStart.set(System.currentTimeMillis());
 	}
 
 	private String extractDsnFromEnvelope(String body) {

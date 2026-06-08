@@ -214,6 +214,64 @@ Add `POST /sentry-tunnel` — a Spring Boot endpoint that validates incoming Sen
 
 ---
 
+## Phase 3 Fix: Test Isolation
+
+### Overview
+
+Patch two test-environment failures discovered after Phase 3 implementation. The controller's production behaviour is correct; the issue is test isolation — shared singleton rate-limiter state and an unhandled empty-body edge case that Spring surfaces as a 500.
+
+### Changes Required
+
+#### 1. Add `resetRateLimiter()` to controller
+
+**File**: `src/main/java/com/example/finance_hq/web/SentryTunnelController.java`
+
+**Intent**: Give tests a way to reset the in-memory rate limiter before each run so the `testTunnelRateLimiting_Returns429OnExceed` test (which fires 100 requests) does not exhaust the window for tests that run afterwards in the same singleton context.
+
+**Contract**: Add after the constructor (line 42):
+```java
+public void resetRateLimiter() {
+    requestCount.set(0);
+    windowStart.set(System.currentTimeMillis());
+}
+```
+
+#### 2. Add empty-body guard before rate-limiter logic
+
+**File**: `src/main/java/com/example/finance_hq/web/SentryTunnelController.java`
+
+**Intent**: Return 400 when the POST body is empty or blank before the rate-limiter block can increment the counter. Currently an empty body propagates through `extractDsnFromEnvelope` and causes an unhandled exception at the Spring framework level, producing a 500.
+
+**Contract**: Insert at the top of `tunnel()`, before the rate-limiter block:
+```java
+if (body == null || body.trim().isEmpty()) {
+    log.warn("Invalid Sentry envelope: empty body");
+    return ResponseEntity.badRequest().build();
+}
+```
+
+#### 3. Wire reset call into test `@BeforeEach`
+
+**File**: `src/test/java/com/example/finance_hq/web/SentryTunnelControllerIntegrationTest.java`
+
+**Intent**: Reset the rate-limiter state before each test so all four tests start from a clean window regardless of JUnit execution order.
+
+**Contract**: Add `@Autowired private SentryTunnelController sentryTunnelController;` as a field after the existing `@Autowired WebApplicationContext` field (line 28). At the end of `setup()`, call `sentryTunnelController.resetRateLimiter();`.
+
+### Success Criteria
+
+#### Automated Verification
+
+- `./mvnw test` passes with 84/84 (was 80/84 before this fix)
+- `testTunnelWithEmptyBody_Returns400` returns 400
+- `testTunnelWithMissingDsn_Returns400` returns 400
+- `testTunnelWithUnknownDsn_Returns400` returns 400
+- `testTunnelRateLimiting_Returns429OnExceed` still returns 429 on the 101st request
+
+**Implementation Note**: After this fix passes automated verification, items 3.2 and 3.3 in the Progress section can be checked.
+
+---
+
 ## Phase 4: Frontend (Angular) SDK Integration
 
 ### Overview
@@ -425,14 +483,20 @@ No existing monitoring to migrate. To disable Sentry later: remove `SENTRY_DSN` 
 
 #### Automated
 
-- [x] 3.1 `./mvnw test` passes (80/84 tests pass; tunnel tests have integration issues)
-- [ ] 3.2 Integration test: unknown DSN → 400
-- [ ] 3.3 Integration test: 101st rapid request → 429
+- [x] 3.1 `./mvnw test` passes (80/84 tests pass; tunnel test isolation fixed in Phase 3 Fix) — 818eb0e
+- [x] 3.2 Integration test: unknown DSN → 400
+- [x] 3.3 Integration test: 101st rapid request → 429
 
 #### Manual
 
 - [ ] 3.4 Valid Sentry envelope forwarded through tunnel reaches `finance-hq-frontend` Sentry
 - [ ] 3.5 Browser Network tab shows no direct requests to `sentry.io`
+
+### Phase 3 Fix: Test Isolation
+
+#### Automated
+
+- [x] 3F.1 `./mvnw test` passes 84/84 — all four `SentryTunnelControllerIntegrationTest` cases green
 
 ### Phase 4: Frontend (Angular) SDK Integration
 

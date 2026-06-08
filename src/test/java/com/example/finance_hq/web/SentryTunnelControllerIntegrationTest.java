@@ -27,6 +27,9 @@ class SentryTunnelControllerIntegrationTest {
 	@Autowired
 	private WebApplicationContext webApplicationContext;
 
+	@Autowired
+	private SentryTunnelController sentryTunnelController;
+
 	private MockMvc mockMvc;
 	private ObjectMapper objectMapper;
 
@@ -55,6 +58,8 @@ class SentryTunnelControllerIntegrationTest {
 		String eventJson = objectMapper.writeValueAsString(event);
 
 		validEnvelope = headerJson + "\n" + eventJson;
+
+		sentryTunnelController.resetRateLimiter();
 	}
 
 	@Test
