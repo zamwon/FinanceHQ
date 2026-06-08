@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+	<appender name="sentry" class="io.sentry.logback.SentryAppender">
+		<minimumEventLevel>WARN</minimumEventLevel>
+		<minimumBreadcrumbLevel>INFO</minimumBreadcrumbLevel>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="sentry"/>
+	</root>
+</configuration>
