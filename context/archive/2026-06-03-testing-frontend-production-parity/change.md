@@ -1,9 +1,10 @@
 ---
 change_id: testing-frontend-production-parity
 title: Phase 3 — Test frontend production parity
-status: implemented
+status: archived
 created: 2026-06-03
 updated: 2026-06-08
+archived_at: 2026-06-08T12:28:08Z
 
 ---
 
