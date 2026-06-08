@@ -42,6 +42,7 @@ src/main/resources/application-local.yml
 ### Claude Code local directories ###
 .agents/
 .claude/
+.superpowers/
 
 ### Build artifacts ###
 META-INF/
@@ -51,3 +52,15 @@ src/main/frontend/node_modules/
 src/main/frontend/.angular/
 src/main/frontend/dist/
 src/main/frontend/coverage/
+
+### Playwright E2E ###
+node_modules/
+package-lock.json
+playwright/.auth
+test-results/
+playwright-report/
+.playwright-cli/
+.playwright-mcp/
+
+### Loose screenshots (manual smoke run artefacts) ###
+*.png

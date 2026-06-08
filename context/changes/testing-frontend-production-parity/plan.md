@@ -469,14 +469,14 @@ Also update the Phase 3 row in §3 Phased Rollout: set `Status: complete` and `C
 
 #### Automated
 
-- [x] 1.1 `npm install` exits 0
-- [x] 1.2 `npm test` exits 0
-- [x] 1.3 `auth.guard.spec.ts` passes (2 tests)
+- [x] 1.1 `npm install` exits 0 — ffce779
+- [x] 1.2 `npm test` exits 0 — ffce779
+- [x] 1.3 `auth.guard.spec.ts` passes (2 tests) — ffce779
 
 #### Manual
 
-- [x] 1.4 No TypeScript errors in `tsconfig.spec.json`
-- [x] 1.5 Test output names each test case clearly
+- [x] 1.4 No TypeScript errors in `tsconfig.spec.json` — ffce779
+- [x] 1.5 Test output names each test case clearly — ffce779
 
 ### Phase 2: Interceptor Unit Tests — TDD RED Phase
 
