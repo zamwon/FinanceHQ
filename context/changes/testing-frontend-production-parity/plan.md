@@ -482,15 +482,15 @@ Also update the Phase 3 row in §3 Phased Rollout: set `Status: complete` and `C
 
 #### Automated
 
-- [ ] 2.1 `npm test` runs all 3 scenarios
-- [ ] 2.2 Scenario 1 exits green
-- [ ] 2.3 Scenario 2 exits green
-- [ ] 2.4 Scenario 3 exits RED (expected)
+- [x] 2.1 `npm test` runs all 3 scenarios
+- [x] 2.2 Scenario 1 exits green
+- [x] 2.3 Scenario 2 exits green
+- [x] 2.4 Scenario 3 exits RED (expected)
 
 #### Manual
 
-- [ ] 2.5 Jest output clearly identifies scenario 3 as failing
-- [ ] 2.6 Test names are descriptive and match documented scenario names
+- [x] 2.5 Jest output clearly identifies scenario 3 as failing
+- [x] 2.6 Test names are descriptive and match documented scenario names
 
 ### Phase 3: Fix Interceptor Bug — TDD GREEN Phase
 
