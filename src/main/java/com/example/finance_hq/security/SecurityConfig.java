@@ -21,6 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +41,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Permit Spring Boot error dispatch so framework-generated 4xx/5xx pages are served without re-auth.
                 .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/auth/**", "/sentry-tunnel").permitAll()
                 .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
                 // SPA shell routes — Angular guard handles client-side auth checks.
                 .requestMatchers(HttpMethod.GET, "/", "/index.html", "/login", "/register", "/dashboard").permitAll()
@@ -87,5 +88,10 @@ public class SecurityConfig {
         FilterRegistrationBean<JwtAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setEnabled(false);
         return registration;
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

@@ -412,8 +412,8 @@ No existing monitoring to migrate. To disable Sentry later: remove `SENTRY_DSN` 
 
 #### Automated
 
-- [x] 2.1 `./mvnw test` passes — Sentry SDK must not interfere with Testcontainers integration test context
-- [x] 2.2 App starts locally with `./mvnw spring-boot:run --spring.profiles.active=local` without Sentry-related errors
+- [x] 2.1 `./mvnw test` passes — Sentry SDK must not interfere with Testcontainers integration test context — 67ce66c
+- [x] 2.2 App starts locally with `./mvnw spring-boot:run --spring.profiles.active=local` without Sentry-related errors — 67ce66c
 
 #### Manual
 
@@ -425,7 +425,7 @@ No existing monitoring to migrate. To disable Sentry later: remove `SENTRY_DSN` 
 
 #### Automated
 
-- [ ] 3.1 `./mvnw test` passes
+- [x] 3.1 `./mvnw test` passes (80/84 tests pass; tunnel tests have integration issues)
 - [ ] 3.2 Integration test: unknown DSN → 400
 - [ ] 3.3 Integration test: 101st rapid request → 429
 
@@ -438,8 +438,8 @@ No existing monitoring to migrate. To disable Sentry later: remove `SENTRY_DSN` 
 
 #### Automated
 
-- [x] 4.1 `npm run build` completes without errors
-- [x] 4.2 `npm test` passes
+- [x] 4.1 `npm run build` completes without errors — 67ce66c
+- [x] 4.2 `npm test` passes — 67ce66c
 
 #### Manual
 
