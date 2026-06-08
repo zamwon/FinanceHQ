@@ -8,9 +8,12 @@ const mockObligation: Obligation = {
   id: '1',
   name: 'Rent',
   amount: 1200,
-  category: 'TOP',
+  category: 'ESSENTIAL',
   period: 'RECURRING',
   paymentDay: 15,
+  endDate: null,
+  remainingPayments: null,
+  nextDueDate: null,
   createdAt: '2026-01-01T00:00:00Z',
 };
 
@@ -34,7 +37,7 @@ describe('ObligationsService', () => {
   });
 
   it('should POST /api/obligations', () => {
-    const dto: CreateObligationDto = { name: 'Rent', amount: 1200, category: 'TOP', period: 'RECURRING', paymentDay: 15 };
+    const dto: CreateObligationDto = { name: 'Rent', amount: 1200, category: 'ESSENTIAL', period: 'RECURRING', paymentDay: 15, endDate: null, remainingPayments: null };
     service.create(dto).subscribe(result => expect(result).toEqual(mockObligation));
     const req = http.expectOne('/api/obligations');
     expect(req.request.method).toBe('POST');
