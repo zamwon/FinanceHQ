@@ -69,7 +69,7 @@ orchestrator updates Status as artifacts appear on disk.
 |---|------------|-----------------|---------------|------------|--------|---------------|
 | 1 | Notification pipeline reliability | Prove notification path works: right date, right delivery, no duplicates, correct retry | #1, #2, #6 | unit + integration | complete | testing-notification-pipeline-reliability |
 | 2 | Data integrity and access control | Prove obligations persist correctly and are never leaked cross-user | #3, #4 | integration | complete | testing-data-integrity-access-control |
-| 3 | Frontend production parity | Prove Angular prod build served by Spring Boot works: auth flow, routing, critical UI, token refresh | #5, #7 | e2e (Playwright) + unit (interceptor) | not started | — |
+| 3 | Frontend production parity | Prove Angular prod build served by Spring Boot works: auth flow, routing, critical UI, token refresh | #5, #7 | e2e (Playwright) + unit (interceptor) | complete | testing-frontend-production-parity |
 | 4 | Quality gates wiring | Lock the test floor so regressions cannot merge | cross-cutting | CI gates | not started | — |
 
 ## 4. Stack
@@ -78,8 +78,8 @@ orchestrator updates Status as artifacts appear on disk.
 |-------|------|---------|-------|
 | unit + integration | JUnit Jupiter + Spring Boot Test + Testcontainers | Spring Boot 4.0.6 | `@SpringBootTest` with `@ServiceConnection` PostgreSQL; `./mvnw test` |
 | API mocking | Mockito | (bundled with Spring Boot) | Service-layer mocks; email transport mock for notification tests |
-| e2e | none yet — see §3 Phase 3 | — | Playwright MCP available in session; wire during Phase 3 |
-| frontend unit | none yet — see §3 Phase 3 | — | Angular 21 has no test runner configured; zero spec files |
+| e2e | Playwright | ^1.x (root install) | `tests/e2e/prod-build-smoke.spec.ts`; run `npx playwright test` from project root against running JAR |
+| frontend unit | Vitest + @analogjs/vite-plugin-angular | 4.0.x | `cd src/main/frontend && npm test`; jsdom environment, Angular AOT via analogjs plugin |
 | (optional) browser automation | Playwright MCP — checked: 2026-06-01 | n/a | When NOT to use: deterministic assertions already catch the regression; use only for prod-build smoke where DOM interaction is required |
 
 **Stack grounding tools (current session):**
@@ -203,7 +203,33 @@ Reference implementation: `ObligationControllerIntegrationTest` — see `update_
 
 ### 6.4 Adding an e2e smoke test for the prod build
 
-TBD — see §3 Phase 3 for Playwright-based prod build smoke pattern.
+**When to use**: You've changed Angular routing, lazy-loaded bundles, auth flow, SPA forwarding config, or Tailwind/CSS build output and want to prove the prod JAR behaves the same as `ng serve`.
+
+**Precondition**: Spring Boot JAR built and running on port 8080.
+```bash
+./mvnw clean package -DskipTests
+java -jar target/finance-hq-*.jar --spring.profiles.active=local
+```
+
+**Run the smoke test**:
+```bash
+npx playwright test tests/e2e/prod-build-smoke.spec.ts
+```
+
+**What it proves** (from `prod-build-smoke.spec.ts`):
+1. Spring Boot serves `index.html`, Angular bootstraps, CSS renders — `LoginComponent` lazy bundle resolves
+2. Angular router + `RegisterComponent` lazy bundle loads; `POST /auth/register` routes without proxy
+3. `POST /auth/login` works; JWT stored; `AuthGuard` navigates to `/dashboard`
+4. `ObligationsComponent` lazy bundle resolves; `GET /api/obligations` returns; Tailwind CSS from prod styles bundle renders
+5. `POST /api/obligations` routes correctly without a dev-server proxy
+6. SPA deep-link: `GET /dashboard` (unauthenticated) served as `index.html` by `SpaForwardingConfig`, Angular re-bootstraps, `AuthGuard` redirects to `/login?returnUrl=...`
+
+**Design notes**:
+- Login through UI is intentional — the full auth flow is part of the risk oracle (Risk #5). `storageState` is deliberately not used here.
+- Password fields use `getByRole('textbox').nth(N)` because spartan-ng renders labels in sibling divs without `<label for>`. See `tests/e2e/e2e-quality-rules.md` for the accepted locator exception.
+- Cleanup (delete the test obligation) is part of the test body; timestamp-suffixed emails prevent collisions across runs.
+
+**Adding a new step**: Follow the step comment block pattern in the existing file (`// ── Step N: … ───`). Always assert the visible outcome, not just navigation.
 
 ### 6.5 Per-rollout-phase notes
 
