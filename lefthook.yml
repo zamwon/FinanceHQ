@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: false
+  commands:
+    checkstyle:
+      glob: "src/main/java/**/*.java"
+      run: ./mvnw checkstyle:check -q --no-transfer-progress
+      fail_text: "Checkstyle violations found — fix before committing"
+    typecheck:
+      glob: "src/main/java/**/*.java"
+      run: ./mvnw compile -q --no-transfer-progress
+      fail_text: "Compilation errors found — fix before committing"

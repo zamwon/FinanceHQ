@@ -3,11 +3,8 @@ package com.example.finance_hq.notification;
 import com.example.finance_hq.obligation.Obligation;
 import com.example.finance_hq.obligation.ObligationPeriod;
 import com.example.finance_hq.obligation.ObligationRepository;
-import com.example.finance_hq.obligation.ObligationService;
 import com.example.finance_hq.obligation.ObligationService.SchedulerTarget;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
