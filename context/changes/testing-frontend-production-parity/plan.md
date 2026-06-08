@@ -539,9 +539,9 @@ Also update the Phase 3 row in §3 Phased Rollout: set `Status: complete` and `C
 
 #### Automated
 
-- [x] 6.1 §6.4 section is non-empty (no "TBD" placeholder)
+- [x] 6.1 §6.4 section is non-empty (no "TBD" placeholder) — f3685d9
 
 #### Manual
 
-- [x] 6.2 Phase 3 row in §3 shows `complete`
-- [x] 6.3 §6.4 is self-contained for a new contributor
+- [x] 6.2 Phase 3 row in §3 shows `complete` — f3685d9
+- [x] 6.3 §6.4 is self-contained for a new contributor — f3685d9
