@@ -1,4 +1,6 @@
 export const environment = {
   production: false,
-  apiBaseUrl: ''
+  apiBaseUrl: '',
+  sentryDsn: '',
+  sentryRelease: ''
 };
