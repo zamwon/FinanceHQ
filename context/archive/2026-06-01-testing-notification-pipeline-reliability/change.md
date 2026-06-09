@@ -1,10 +1,10 @@
 ---
 change_id: testing-notification-pipeline-reliability
 title: Phase 1 — Test notification pipeline reliability
-status: impl_reviewed
+status: archived
 created: 2026-06-01
-updated: 2026-06-01
-archived_at: null
+updated: 2026-06-09
+archived_at: 2026-06-09T12:25:39Z
 ---
 
 ## Notes
