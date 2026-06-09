@@ -1,0 +1,115 @@
+### ──────────────────────────────────────────────────
+### FinanceHQ – Transactions flow: manual Phase 2 checks
+###   2.3 Create ONE_OFF EXPENSE (HOUSING) → 201
+###   2.4 GET list → entry present
+###   2.5 Create RECURRING INCOME → 201, nextExpectedDate computed
+###       PATCH amount → 200
+###       PATCH wrong user → 404
+###       DELETE → 204; GET confirms gone
+###       Create with wrong category for type → 400
+### ──────────────────────────────────────────────────
+### Prerequisites:
+###   1. Server running on localhost:8080
+###   2. Select "dev" environment (top-right in IntelliJ HTTP Client)
+###   3. Run auth-flow.http Steps 1–2 first to populate accessToken
+###   4. Run requests IN ORDER
+
+
+
+### ─── 2.3: POST ONE_OFF EXPENSE — expect 201, category=HOUSING, nextExpectedDate=null ─
+POST {{baseUrl}}/api/transactions
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "type": "EXPENSE",
+  "category": "HOUSING",
+  "amount": 500.00,
+  "description": "Monthly rent",
+  "date": "2026-06-09"
+}
+
+> {%
+  client.global.set("transactionId", response.body.id);
+%}
+
+
+### ─── 2.4: GET list — expect 200, list contains the created entry ─
+GET {{baseUrl}}/api/transactions
+Authorization: Bearer {{accessToken}}
+
+
+### ─── 2.5: POST RECURRING INCOME — expect 201, nextExpectedDate computed, date=null ─
+POST {{baseUrl}}/api/transactions
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "type": "INCOME",
+  "category": "SALARY",
+  "amount": 5000.00,
+  "period": "RECURRING",
+  "paymentDay": 25
+}
+
+> {%
+  client.global.set("recurringTransactionId", response.body.id);
+%}
+
+
+### ─── PATCH amount — expect 200, amount updated to 750.00 ───
+PATCH {{baseUrl}}/api/transactions/{{transactionId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "amount": 750.00,
+  "description": "Updated rent"
+}
+
+
+### ─── DELETE — expect 204 ───────────────────────────────────
+DELETE {{baseUrl}}/api/transactions/{{recurringTransactionId}}
+Authorization: Bearer {{accessToken}}
+
+
+### ─── GET after delete — expect 200, recurring entry gone ──
+GET {{baseUrl}}/api/transactions
+Authorization: Bearer {{accessToken}}
+
+
+### ─── POST wrong category for type — expect 400 ────────────
+### SALARY is an income category; using it with EXPENSE should return 400
+POST {{baseUrl}}/api/transactions
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "type": "EXPENSE",
+  "category": "SALARY",
+  "amount": 100.00,
+  "date": "2026-06-09"
+}
+
+
+### ─── PATCH all-null body — expect 400 ──────────────────────
+PATCH {{baseUrl}}/api/transactions/{{transactionId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{}
+
+
+### ─── POST FIXED_TERM missing endDate — expect 400 ─────────
+POST {{baseUrl}}/api/transactions
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "type": "EXPENSE",
+  "category": "FOOD",
+  "amount": 100.00,
+  "period": "FIXED_TERM",
+  "paymentDay": 10,
+  "remainingPayments": 6
+}

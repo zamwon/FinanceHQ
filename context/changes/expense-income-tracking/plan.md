@@ -766,26 +766,26 @@ No existing data to migrate. V7 and V8 apply to a live schema that already has o
 
 #### Automated
 
-- [x] 1.1 Migrations apply cleanly — no errors from `./mvnw flyway:migrate`
-- [x] 1.2 V7 and V8 rows present in `flyway_schema_history`
+- [x] 1.1 Migrations apply cleanly — no errors from `./mvnw flyway:migrate` — 82b7fb2
+- [x] 1.2 V7 and V8 rows present in `flyway_schema_history` — 82b7fb2
 
 #### Manual
 
-- [x] 1.3 `\d transactions` confirms all columns, constraints, and indexes
-- [x] 1.4 `\d obligations` shows `last_paid_date DATE` column added
+- [x] 1.3 `\d transactions` confirms all columns, constraints, and indexes — 82b7fb2
+- [x] 1.4 `\d obligations` shows `last_paid_date DATE` column added — 82b7fb2
 
 ### Phase 2: Transaction Domain — Backend CRUD
 
 #### Automated
 
-- [ ] 2.1 `TransactionControllerIntegrationTest` — all cases pass
-- [ ] 2.2 `./mvnw clean package` succeeds with no compilation errors
+- [x] 2.1 `TransactionControllerIntegrationTest` — all cases pass
+- [x] 2.2 `./mvnw clean package` succeeds with no compilation errors
 
 #### Manual
 
-- [ ] 2.3 `curl POST /api/transactions` creates a HOUSING expense → 201
-- [ ] 2.4 `curl GET /api/transactions` lists the created entry
-- [ ] 2.5 `nextExpectedDate` is computed correctly for a RECURRING INCOME
+- [x] 2.3 `curl POST /api/transactions` creates a HOUSING expense → 201
+- [x] 2.4 `curl GET /api/transactions` lists the created entry
+- [x] 2.5 `nextExpectedDate` is computed correctly for a RECURRING INCOME
 
 ### Phase 3: "Mark Paid" Obligation Integration
 

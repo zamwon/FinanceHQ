@@ -2,6 +2,8 @@ package com.example.finance_hq.auth.exception;
 
 import com.example.finance_hq.obligation.InvalidObligationException;
 import com.example.finance_hq.obligation.ObligationNotFoundException;
+import com.example.finance_hq.transaction.InvalidTransactionException;
+import com.example.finance_hq.transaction.TransactionNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -44,6 +47,13 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         problem.setTitle("Unauthorized");
         return ResponseEntity.status(401).body(problem);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ProblemDetail> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Malformed or unreadable request body");
+        problem.setTitle("Bad Request");
+        return ResponseEntity.status(400).body(problem);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -81,6 +91,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidObligationException.class)
     public ResponseEntity<ProblemDetail> handleInvalidObligation(InvalidObligationException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid obligation request");
+        problem.setTitle("Validation Failed");
+        return ResponseEntity.status(400).body(problem);
+    }
+
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleTransactionNotFound(TransactionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Transaction not found");
+        problem.setTitle("Not Found");
+        return ResponseEntity.status(404).body(problem);
+    }
+
+    @ExceptionHandler(InvalidTransactionException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidTransaction(InvalidTransactionException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problem.setTitle("Validation Failed");
         return ResponseEntity.status(400).body(problem);
     }

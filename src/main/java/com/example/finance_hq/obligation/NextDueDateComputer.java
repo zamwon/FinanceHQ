@@ -3,7 +3,7 @@ package com.example.finance_hq.obligation;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
-final class NextDueDateComputer {
+public final class NextDueDateComputer {
 
     private NextDueDateComputer() {}
 
