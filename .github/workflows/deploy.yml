@@ -14,7 +14,7 @@ jobs:
         run: |
           echo "Waiting for app to be ready..."
           for i in $(seq 1 20); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://${{ secrets.RAILWAY_PUBLIC_URL }}/actuator/health || echo "000")
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://$RAILWAY_PUBLIC_URL/actuator/health || echo "000")
             echo "Attempt $i: HTTP $STATUS"
             if [ "$STATUS" = "200" ]; then
               echo "Health check passed"
@@ -26,3 +26,36 @@ jobs:
           exit 1
         env:
           RAILWAY_PUBLIC_URL: ${{ secrets.RAILWAY_PUBLIC_URL }}
+
+  upload-sourcemaps:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install frontend dependencies
+        working-directory: src/main/frontend
+        run: npm ci
+      - name: Inject Sentry release SHA
+        env:
+          SENTRY_RELEASE: ${{ github.sha }}
+        run: |
+          sed -i "s/sentryRelease: ''/sentryRelease: '$SENTRY_RELEASE'/" src/main/frontend/src/environments/environment.ts
+      - name: Build Angular production bundle
+        working-directory: src/main/frontend
+        run: npm run build
+      - name: Inject Sentry metadata into source maps
+        run: npx @sentry/cli sourcemaps inject target/classes/static
+      - name: Upload source maps to Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_RELEASE: ${{ github.sha }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+        run: |
+          npx @sentry/cli sourcemaps upload \
+            --org "$SENTRY_ORG" \
+            --project finance-hq-frontend \
+            --release "$SENTRY_RELEASE" \
+            target/classes/static

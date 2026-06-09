@@ -517,7 +517,7 @@ No existing monitoring to migrate. To disable Sentry later: remove `SENTRY_DSN` 
 
 #### Automated
 
-- [ ] 5.1 `npm run build` generates `.js.map` files in `target/classes/static/`
+- [x] 5.1 `npm run build` generates `.js.map` files in `target/classes/static/`
 - [ ] 5.2 GitHub Actions `upload-sourcemaps` job exits 0 on push to master
 
 #### Manual

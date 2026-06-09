@@ -61,6 +61,10 @@
                   "minify": true,
                   "inlineCritical": false
                 }
+              },
+              "sourceMap": {
+                "scripts": true,
+                "hidden": true
               }
             },
             "development": {
