@@ -276,22 +276,22 @@ The `GMAIL_USERNAME` and `GMAIL_APP_PASSWORD` Railway variables become dead conf
 
 #### Automated
 
-- [x] 2.1 Full test suite green: `./mvnw test`
-- [x] 2.2 No `JavaMailSender` import in `src/`: `grep -r "JavaMailSender" src/` returns empty
+- [x] 2.1 Full test suite green: `./mvnw test` — fc45f7d
+- [x] 2.2 No `JavaMailSender` import in `src/`: `grep -r "JavaMailSender" src/` returns empty — fc45f7d
 
 #### Manual
 
-- [x] 2.3 All 5 notification test files shown as passed in Maven Surefire report
+- [x] 2.3 All 5 notification test files shown as passed in Maven Surefire report — fc45f7d
 
 ### Phase 3: Deploy & Verify
 
 #### Automated
 
-- [ ] 3.1 CI deploy pipeline passes after push to master
+- [x] 3.1 CI deploy pipeline passes after push to master
 
 #### Manual
 
-- [ ] 3.2 No `MailConnectException` or `Retry failed` in Railway logs after redeploy
-- [ ] 3.3 Resend dashboard shows delivery record as "Delivered"
-- [ ] 3.4 `blazej.karnecki@gmail.com` inbox receives email with subject `FinanceHQ: 1 payment(s) due 2026-06-10`
-- [ ] 3.5 `notification_log` row for June 10 obligation has `status = 'SENT'`
+- [x] 3.2 No `MailConnectException` or `Retry failed` in Railway logs after redeploy
+- [x] 3.3 Resend dashboard shows delivery record as "Delivered"
+- [x] 3.4 `blazej.karnecki@gmail.com` inbox receives email with subject `FinanceHQ: 1 payment(s) due 2026-06-10`
+- [x] 3.5 `notification_log` row for June 10 obligation has `status = 'SENT'`
