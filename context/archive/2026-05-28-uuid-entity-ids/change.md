@@ -1,10 +1,10 @@
 ---
 change_id: uuid-entity-ids
 title: Migrate entity IDs from BIGSERIAL/Long to UUID
-status: impl_reviewed
+status: archived
 created: 2026-05-28
-updated: 2026-05-28
-archived_at: null
+updated: 2026-06-09
+archived_at: 2026-06-09T12:25:39Z
 ---
 
 ## Notes
