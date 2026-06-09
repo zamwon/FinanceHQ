@@ -5,11 +5,8 @@ import com.example.finance_hq.obligation.ObligationService;
 import com.example.finance_hq.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,19 +24,16 @@ public class NotificationService {
     private final ObligationService obligationService;
     private final NotificationLogRepository notificationLogRepository;
     private final NotificationPersistenceService persistenceService;
-    private final JavaMailSender mailSender;
-    private final String fromAddress;
+    private final EmailSender emailSender;
 
     public NotificationService(ObligationService obligationService,
                                NotificationLogRepository notificationLogRepository,
                                NotificationPersistenceService persistenceService,
-                               JavaMailSender mailSender,
-                               @Value("${spring.mail.username}") String fromAddress) {
+                               EmailSender emailSender) {
         this.obligationService = obligationService;
         this.notificationLogRepository = notificationLogRepository;
         this.persistenceService = persistenceService;
-        this.mailSender = mailSender;
-        this.fromAddress = fromAddress;
+        this.emailSender = emailSender;
     }
 
     public void runDailyNotifications(LocalDate today) {
@@ -122,11 +116,7 @@ public class NotificationService {
         }
         body.append("\nThis is an automated reminder from FinanceHQ.");
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromAddress);
-        message.setTo(user.getEmail());
-        message.setSubject("FinanceHQ: " + n + " payment(s) due " + dueDate);
-        message.setText(body.toString());
-        mailSender.send(message);
+        String subject = "FinanceHQ: " + n + " payment(s) due " + dueDate;
+        emailSender.send(user.getEmail(), subject, body.toString());
     }
 }
