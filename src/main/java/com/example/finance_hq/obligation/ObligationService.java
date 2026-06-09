@@ -1,9 +1,15 @@
 package com.example.finance_hq.obligation;
 
 import com.example.finance_hq.obligation.dto.CreateObligationRequest;
+import com.example.finance_hq.obligation.dto.MarkObligationPaidRequest;
 import com.example.finance_hq.obligation.dto.ObligationResponse;
 import com.example.finance_hq.obligation.dto.UpdateObligationRequest;
+import com.example.finance_hq.transaction.TransactionService;
+import com.example.finance_hq.transaction.TransactionType;
+import com.example.finance_hq.transaction.dto.CreateTransactionRequest;
+import com.example.finance_hq.transaction.dto.TransactionResponse;
 import com.example.finance_hq.user.User;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -17,9 +23,11 @@ import java.util.UUID;
 public class ObligationService {
 
     private final ObligationRepository repository;
+    private final TransactionService transactionService;
 
-    public ObligationService(ObligationRepository repository) {
+    public ObligationService(ObligationRepository repository, @Lazy TransactionService transactionService) {
         this.repository = repository;
+        this.transactionService = transactionService;
     }
 
     @Transactional(readOnly = true)
@@ -68,6 +76,20 @@ public class ObligationService {
         Obligation obligation = repository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new ObligationNotFoundException("Obligation not found"));
         repository.delete(obligation);
+    }
+
+    @Transactional
+    public TransactionResponse markPaid(User user, UUID obligationId, MarkObligationPaidRequest req) {
+        Obligation obligation = repository.findByIdAndUser(obligationId, user)
+                .orElseThrow(() -> new ObligationNotFoundException("Obligation not found"));
+        CreateTransactionRequest txnReq = new CreateTransactionRequest(
+                TransactionType.EXPENSE, req.category(), req.amount(), req.description(),
+                null, req.date(), null, null, null, obligation.getId()
+        );
+        TransactionResponse response = transactionService.create(user, txnReq);
+        obligation.setLastPaidDate(req.date());
+        repository.save(obligation);
+        return response;
     }
 
     public record SchedulerTarget(Obligation obligation, LocalDate nextDueDate) {}

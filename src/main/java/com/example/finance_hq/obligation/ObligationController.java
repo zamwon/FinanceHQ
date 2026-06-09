@@ -1,8 +1,10 @@
 package com.example.finance_hq.obligation;
 
 import com.example.finance_hq.obligation.dto.CreateObligationRequest;
+import com.example.finance_hq.obligation.dto.MarkObligationPaidRequest;
 import com.example.finance_hq.obligation.dto.ObligationResponse;
 import com.example.finance_hq.obligation.dto.UpdateObligationRequest;
+import com.example.finance_hq.transaction.dto.TransactionResponse;
 import com.example.finance_hq.user.User;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -48,5 +50,13 @@ public class ObligationController {
             @PathVariable UUID id) {
         service.delete(user, id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/pay")
+    public ResponseEntity<TransactionResponse> pay(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id,
+            @Valid @RequestBody MarkObligationPaidRequest req) {
+        return ResponseEntity.status(201).body(service.markPaid(user, id, req));
     }
 }

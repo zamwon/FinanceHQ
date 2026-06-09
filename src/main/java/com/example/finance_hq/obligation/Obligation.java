@@ -47,6 +47,9 @@ public class Obligation {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "last_paid_date")
+    private LocalDate lastPaidDate;
+
     public Obligation() {}
 
     @PrePersist
@@ -78,8 +81,10 @@ public class Obligation {
     public LocalDate getEndDate() { return endDate; }
     public Integer getRemainingPayments() { return remainingPayments; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDate getLastPaidDate() { return lastPaidDate; }
 
     public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public void setLastPaidDate(LocalDate lastPaidDate) { this.lastPaidDate = lastPaidDate; }
     public void setCategory(ObligationCategory category) { this.category = category; }
     public void setPaymentDay(Integer paymentDay) { this.paymentDay = paymentDay; }
     public void setRemainingPayments(Integer remainingPayments) { this.remainingPayments = remainingPayments; }

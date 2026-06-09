@@ -778,25 +778,25 @@ No existing data to migrate. V7 and V8 apply to a live schema that already has o
 
 #### Automated
 
-- [x] 2.1 `TransactionControllerIntegrationTest` — all cases pass
-- [x] 2.2 `./mvnw clean package` succeeds with no compilation errors
+- [x] 2.1 `TransactionControllerIntegrationTest` — all cases pass — ca303c7
+- [x] 2.2 `./mvnw clean package` succeeds with no compilation errors — ca303c7
 
 #### Manual
 
-- [x] 2.3 `curl POST /api/transactions` creates a HOUSING expense → 201
-- [x] 2.4 `curl GET /api/transactions` lists the created entry
-- [x] 2.5 `nextExpectedDate` is computed correctly for a RECURRING INCOME
+- [x] 2.3 `curl POST /api/transactions` creates a HOUSING expense → 201 — ca303c7
+- [x] 2.4 `curl GET /api/transactions` lists the created entry — ca303c7
+- [x] 2.5 `nextExpectedDate` is computed correctly for a RECURRING INCOME — ca303c7
 
 ### Phase 3: "Mark Paid" Obligation Integration
 
 #### Automated
 
-- [ ] 3.1 `ObligationPayIntegrationTest` — all cases pass
-- [ ] 3.2 Full `./mvnw test` suite passes (no obligation or auth regressions)
+- [x] 3.1 `ObligationPayIntegrationTest` — all cases pass
+- [x] 3.2 Full `./mvnw test` suite passes (no obligation or auth regressions)
 
 #### Manual
 
-- [ ] 3.3 `curl POST /api/obligations/{id}/pay` creates a linked transaction and updates `last_paid_date`
+- [x] 3.3 `curl POST /api/obligations/{id}/pay` creates a linked transaction and updates `last_paid_date`
 
 ### Phase 4: Transaction Frontend — CRUD
 
@@ -818,8 +818,8 @@ No existing data to migrate. V7 and V8 apply to a live schema that already has o
 
 #### Automated
 
-- [ ] 5.1 `DashboardControllerIntegrationTest` — all cases pass
-- [ ] 5.2 Full `./mvnw test` suite passes
+- [x] 5.1 `DashboardControllerIntegrationTest` — all cases pass
+- [x] 5.2 Full `./mvnw test` suite passes
 
 #### Manual
 

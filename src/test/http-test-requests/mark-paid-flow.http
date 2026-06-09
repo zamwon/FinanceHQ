@@ -1,0 +1,97 @@
+### ──────────────────────────────────────────────────
+### FinanceHQ – Mark Paid flow: manual Phase 3 checks
+###   3.3a POST /pay — expect 201 with linked transaction
+###   3.3b GET /api/transactions — linked transaction present
+###   3.3c POST /pay on wrong obligation — expect 404
+###   3.3d (DB check) obligation.last_paid_date updated
+### ──────────────────────────────────────────────────
+### Prerequisites:
+###   1. Server running on localhost:8080
+###   2. Select "dev" environment (top-right in IntelliJ HTTP Client)
+###   3. Run auth-flow.http Steps 1–2 first to populate accessToken
+###   4. Run requests IN ORDER
+
+
+### ─── Setup: create an obligation to pay against ────
+POST {{baseUrl}}/api/obligations
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Rent",
+  "amount": 1500.00,
+  "category": "ESSENTIAL",
+  "period": "RECURRING",
+  "paymentDay": 15
+}
+
+> {%
+  client.global.set("payObligationId", response.body.id);
+%}
+
+
+### ─── 3.3a: POST /pay — expect 201, obligationId set in response ─
+POST {{baseUrl}}/api/obligations/{{payObligationId}}/pay
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "amount": 1500.00,
+  "category": "HOUSING",
+  "description": "June rent",
+  "date": "2026-06-09"
+}
+
+> {%
+  client.test("status is 201", function() {
+    client.assert(response.status === 201, "Expected 201, got " + response.status);
+  });
+  client.test("type is EXPENSE", function() {
+    client.assert(response.body.type === "EXPENSE", "Expected EXPENSE");
+  });
+  client.test("obligationId matches", function() {
+    client.assert(response.body.obligationId === client.global.get("payObligationId"),
+      "obligationId mismatch");
+  });
+  client.global.set("linkedTransactionId", response.body.id);
+%}
+
+
+### ─── 3.3b: GET /api/transactions — linked transaction in list ──
+GET {{baseUrl}}/api/transactions
+Authorization: Bearer {{accessToken}}
+
+> {%
+  client.test("status is 200", function() {
+    client.assert(response.status === 200, "Expected 200");
+  });
+  client.test("linked transaction present", function() {
+    var found = response.body.some(function(t) {
+      return t.id === client.global.get("linkedTransactionId");
+    });
+    client.assert(found, "Linked transaction not found in list");
+  });
+%}
+
+
+### ─── 3.3c: POST /pay on non-existent obligation — expect 404 ──
+POST {{baseUrl}}/api/obligations/00000000-0000-0000-0000-000000000000/pay
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "amount": 100.00,
+  "category": "HOUSING",
+  "date": "2026-06-09"
+}
+
+> {%
+  client.test("status is 404", function() {
+    client.assert(response.status === 404, "Expected 404, got " + response.status);
+  });
+%}
+
+
+### ─── 3.3d: DB check (run in psql) ─────────────────────────────
+### SELECT id, last_paid_date FROM obligations WHERE id = '<payObligationId>';
+### Expected: last_paid_date = 2026-06-09

@@ -41,6 +41,8 @@ public class NotificationService {
 
         List<ObligationService.SchedulerTarget> dateDue = targets.stream()
                 .filter(t -> BusinessDayCalculator.previousBusinessDay(t.nextDueDate()).equals(today))
+                .filter(t -> t.obligation().getLastPaidDate() == null ||
+                        t.obligation().getLastPaidDate().isBefore(t.nextDueDate().minusMonths(1)))
                 .toList();
 
         Set<LocalDate> dueDates = dateDue.stream().map(ObligationService.SchedulerTarget::nextDueDate)
