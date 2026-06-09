@@ -49,9 +49,8 @@ export class ObligationDialogComponent implements OnInit {
       // lock read-only fields in edit mode — patchValue must run before disable()
       // so that isFixedTerm getter reads the correct value from the disabled control
       this.form.controls.name.disable();
-      this.form.controls.category.disable();
       this.form.controls.period.disable();
-      // disabled controls are excluded from form.invalid — submit guard only checks amount + paymentDay in edit mode
+      // disabled controls are excluded from form.invalid — submit guard only checks amount + paymentDay + category in edit mode
       this.form.controls.endDate.disable();
       this.form.controls.remainingPayments.disable();
     }
@@ -83,7 +82,7 @@ export class ObligationDialogComponent implements OnInit {
     const v = this.form.getRawValue();
 
     const call = this.isEdit
-      ? this.svc.update(this.obligation!.id, { amount: v.amount!, paymentDay: v.paymentDay! })
+      ? this.svc.update(this.obligation!.id, { amount: v.amount!, paymentDay: v.paymentDay!, category: v.category! })
       : this.svc.create({
           name: v.name!,
           amount: v.amount!,

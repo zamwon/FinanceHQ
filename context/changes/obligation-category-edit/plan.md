@@ -161,21 +161,21 @@ Remove the `category.disable()` lock, include category in the update payload, an
 
 #### Automated
 
-- [x] 1.1 `./mvnw test` passes including `update_200_categoryChanged`
+- [x] 1.1 `./mvnw test` passes including `update_200_categoryChanged` — 43711ba
 
 #### Manual
 
-- [x] 1.2 PATCH with `{"category":"OPTIONAL"}` returns 200 with updated category
-- [x] 1.3 PATCH with `{}` still returns 400
+- [x] 1.2 PATCH with `{"category":"OPTIONAL"}` returns 200 with updated category — 43711ba
+- [x] 1.3 PATCH with `{}` still returns 400 — 43711ba
 
 ### Phase 2: Frontend — enable category in edit dialog
 
 #### Automated
 
-- [ ] 2.1 `./mvnw test` passes (no frontend compilation errors)
+- [x] 2.1 `./mvnw test` passes (no frontend compilation errors)
 
 #### Manual
 
-- [ ] 2.2 Category dropdown is enabled in edit dialog
-- [ ] 2.3 Changing category persists and is reflected in the list
-- [ ] 2.4 Category-only save (amount/paymentDay unchanged) succeeds
+- [x] 2.2 Category dropdown is enabled in edit dialog
+- [x] 2.3 Changing category persists and is reflected in the list
+- [x] 2.4 Category-only save (amount/paymentDay unchanged) succeeds

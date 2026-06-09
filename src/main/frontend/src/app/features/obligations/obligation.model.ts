@@ -12,4 +12,4 @@ export interface Obligation {
 }
 
 export type CreateObligationDto = Omit<Obligation, 'id' | 'createdAt' | 'nextDueDate'>;
-export type UpdateObligationDto = Partial<Pick<Obligation, 'amount' | 'paymentDay'>>;
+export type UpdateObligationDto = Partial<Pick<Obligation, 'amount' | 'paymentDay' | 'category'>>;
