@@ -172,10 +172,10 @@ Remove the `category.disable()` lock, include category in the update payload, an
 
 #### Automated
 
-- [x] 2.1 `./mvnw test` passes (no frontend compilation errors)
+- [x] 2.1 `./mvnw test` passes (no frontend compilation errors) — e392066
 
 #### Manual
 
-- [x] 2.2 Category dropdown is enabled in edit dialog
-- [x] 2.3 Changing category persists and is reflected in the list
-- [x] 2.4 Category-only save (amount/paymentDay unchanged) succeeds
+- [x] 2.2 Category dropdown is enabled in edit dialog — e392066
+- [x] 2.3 Changing category persists and is reflected in the list — e392066
+- [x] 2.4 Category-only save (amount/paymentDay unchanged) succeeds — e392066
