@@ -265,23 +265,23 @@ The `GMAIL_USERNAME` and `GMAIL_APP_PASSWORD` Railway variables become dead conf
 
 #### Automated
 
-- [x] 1.1 Persistence and repo tests still pass: `./mvnw test -Dtest=NotificationPersistenceServiceTest,NotificationLogRepositoryTest`
-- [x] 1.2 App context loads without errors: `./mvnw spring-boot:run`
+- [x] 1.1 Persistence and repo tests still pass: `./mvnw test -Dtest=NotificationPersistenceServiceTest,NotificationLogRepositoryTest` — bcf82cf
+- [x] 1.2 App context loads without errors: `./mvnw spring-boot:run` — bcf82cf
 
 #### Manual
 
-- [x] 1.3 App starts locally with `--spring.profiles.active=local` and Resend key set — no `ClassNotFoundException` or `NoSuchBeanDefinitionException`
+- [x] 1.3 App starts locally with `--spring.profiles.active=local` and Resend key set — no `ClassNotFoundException` or `NoSuchBeanDefinitionException` — bcf82cf
 
 ### Phase 2: Test Updates
 
 #### Automated
 
-- [ ] 2.1 Full test suite green: `./mvnw test`
-- [ ] 2.2 No `JavaMailSender` import in `src/`: `grep -r "JavaMailSender" src/` returns empty
+- [x] 2.1 Full test suite green: `./mvnw test`
+- [x] 2.2 No `JavaMailSender` import in `src/`: `grep -r "JavaMailSender" src/` returns empty
 
 #### Manual
 
-- [ ] 2.3 All 5 notification test files shown as passed in Maven Surefire report
+- [x] 2.3 All 5 notification test files shown as passed in Maven Surefire report
 
 ### Phase 3: Deploy & Verify
 

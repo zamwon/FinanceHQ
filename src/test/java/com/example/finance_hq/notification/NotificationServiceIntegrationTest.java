@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,7 +36,7 @@ class NotificationServiceIntegrationTest {
     @Autowired NotificationLogRepository notificationLogRepository;
     @Autowired UserRepository userRepository;
     @Autowired ObligationRepository obligationRepository;
-    @MockitoBean JavaMailSender mailSender;
+    @MockitoBean EmailSender emailSender;
 
     // TODAY = Monday 2026-06-02; previousBusinessDay(June 3) = June 2
     static final LocalDate TODAY = LocalDate.of(2026, 6, 2);
@@ -58,7 +56,7 @@ class NotificationServiceIntegrationTest {
 
         notificationService.runDailyNotifications(TODAY);
 
-        verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
+        verify(emailSender, times(1)).send(anyString(), anyString(), anyString());
         List<NotificationLog> logs = notificationLogRepository.findAll();
         assertThat(logs).hasSize(1);
         assertThat(logs.getFirst().getStatus()).isEqualTo(NotificationStatus.SENT);
@@ -73,7 +71,7 @@ class NotificationServiceIntegrationTest {
 
         notificationService.runDailyNotifications(TODAY);
 
-        verify(mailSender, never()).send(any(SimpleMailMessage.class));
+        verify(emailSender, never()).send(anyString(), anyString(), anyString());
         assertThat(notificationLogRepository.count()).isZero();
     }
 
@@ -87,7 +85,7 @@ class NotificationServiceIntegrationTest {
 
         notificationService.retryFailedNotifications();
 
-        verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
+        verify(emailSender, times(1)).send(anyString(), anyString(), anyString());
         NotificationLog updated = notificationLogRepository.findById(failedLog.getId()).orElseThrow();
         assertThat(updated.getStatus()).isEqualTo(NotificationStatus.SENT);
         assertThat(updated.getSentAt()).isNotNull();

@@ -12,8 +12,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.MailSendException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,9 +22,9 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,7 +33,7 @@ class NotificationServiceTest {
     @Mock ObligationService obligationService;
     @Mock NotificationLogRepository notificationLogRepository;
     @Mock NotificationPersistenceService persistenceService;
-    @Mock JavaMailSender mailSender;
+    @Mock EmailSender emailSender;
 
     NotificationService service;
 
@@ -46,7 +44,7 @@ class NotificationServiceTest {
     @BeforeEach
     void setUp() {
         service = new NotificationService(obligationService, notificationLogRepository,
-                persistenceService, mailSender, "from@example.com");
+                persistenceService, emailSender);
     }
 
     @Test
@@ -59,7 +57,7 @@ class NotificationServiceTest {
 
         service.runDailyNotifications(TODAY);
 
-        verify(mailSender, never()).send(any(SimpleMailMessage.class));
+        verify(emailSender, never()).send(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -72,7 +70,7 @@ class NotificationServiceTest {
 
         service.runDailyNotifications(TODAY);
 
-        verify(mailSender, never()).send(any(SimpleMailMessage.class));
+        verify(emailSender, never()).send(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -85,7 +83,7 @@ class NotificationServiceTest {
 
         service.runDailyNotifications(TODAY);
 
-        verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
+        verify(emailSender, times(1)).send(anyString(), anyString(), anyString());
         verify(persistenceService, times(1)).recordSuccess(List.of(target));
         verify(persistenceService, never()).recordFailure(any());
     }
@@ -103,7 +101,7 @@ class NotificationServiceTest {
 
         service.runDailyNotifications(TODAY);
 
-        verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
+        verify(emailSender, times(1)).send(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -113,7 +111,7 @@ class NotificationServiceTest {
         when(obligationService.findAllSchedulerTargets(TODAY)).thenReturn(List.of(target));
         when(notificationLogRepository.findAlreadyLoggedObligationIds(anyCollection()))
                 .thenReturn(Set.of());
-        doThrow(new MailSendException("SMTP down")).when(mailSender).send(any(SimpleMailMessage.class));
+        doThrow(new MailSendException("SMTP down")).when(emailSender).send(anyString(), anyString(), anyString());
 
         assertThatNoException().isThrownBy(() -> service.runDailyNotifications(TODAY));
 
@@ -131,7 +129,7 @@ class NotificationServiceTest {
 
         service.runDailyNotifications(TODAY);
 
-        verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
+        verify(emailSender, times(1)).send(anyString(), anyString(), anyString());
         verify(persistenceService, times(1)).recordSuccess(List.of(target));
     }
 
@@ -145,9 +143,9 @@ class NotificationServiceTest {
 
         service.runDailyNotifications(TODAY);
 
-        ArgumentCaptor<SimpleMailMessage> captor = ArgumentCaptor.forClass(SimpleMailMessage.class);
-        verify(mailSender).send(captor.capture());
-        assertThat(captor.getValue().getSubject())
+        ArgumentCaptor<String> subjectCaptor = ArgumentCaptor.forClass(String.class);
+        verify(emailSender).send(anyString(), subjectCaptor.capture(), anyString());
+        assertThat(subjectCaptor.getValue())
                 .contains("1 payment(s) due")
                 .contains(DUE_TOMORROW.toString());
     }
@@ -177,7 +175,7 @@ class NotificationServiceTest {
         // run 2: PENDING row detected by dedup check → obligation filtered out → no send
         service.runDailyNotifications(TODAY);
 
-        verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
+        verify(emailSender, times(1)).send(anyString(), anyString(), anyString());
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────────

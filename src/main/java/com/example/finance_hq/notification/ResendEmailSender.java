@@ -3,6 +3,7 @@ package com.example.finance_hq.notification;
 import com.resend.Resend;
 import com.resend.core.exception.ResendException;
 import com.resend.services.emails.model.CreateEmailOptions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSendException;
@@ -14,9 +15,16 @@ public class ResendEmailSender implements EmailSender {
     private final Resend resend;
     private final String fromAddress;
 
+    @Autowired
     public ResendEmailSender(@Value("${resend.api-key}") String apiKey,
                              @Value("${resend.from-address}") String fromAddress) {
         this.resend = new Resend(apiKey);
+        this.fromAddress = fromAddress;
+    }
+
+    // package-private for unit testing
+    ResendEmailSender(Resend resend, String fromAddress) {
+        this.resend = resend;
         this.fromAddress = fromAddress;
     }
 
