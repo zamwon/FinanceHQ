@@ -3,6 +3,11 @@ WORKDIR /app
 COPY pom.xml .
 RUN mvn dependency:go-offline -q
 COPY src ./src
+ARG RAILWAY_GIT_COMMIT_SHA
+RUN if [ -n "$RAILWAY_GIT_COMMIT_SHA" ]; then \
+    sed -i "s/sentryRelease: ''/sentryRelease: '$RAILWAY_GIT_COMMIT_SHA'/" \
+    src/main/frontend/src/environments/environment.ts; \
+  fi
 RUN mvn clean package -DskipTests -q
 
 FROM eclipse-temurin:21-jre
