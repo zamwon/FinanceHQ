@@ -518,9 +518,9 @@ No existing monitoring to migrate. To disable Sentry later: remove `SENTRY_DSN` 
 #### Automated
 
 - [x] 5.1 `npm run build` generates `.js.map` files in `target/classes/static/`
-- [ ] 5.2 GitHub Actions `upload-sourcemaps` job exits 0 on push to master
+- [x] 5.2 GitHub Actions `upload-sourcemaps` job exits 0 on push to master
 
 #### Manual
 
-- [ ] 5.3 Release named with full git SHA appears in Sentry `finance-hq-frontend` Releases after next push
-- [ ] 5.4 Production Angular error stack trace shows `.ts` file paths and line numbers
+- [x] 5.3 Release named with full git SHA appears in Sentry `finance-hq-frontend` Releases after next push
+- [x] 5.4 Production Angular error stack trace shows `.ts` file paths and line numbers
