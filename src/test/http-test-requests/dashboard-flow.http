@@ -1,0 +1,107 @@
+### ──────────────────────────────────────────────────
+### FinanceHQ – Dashboard flow: manual Phase 5 checks
+###   5.3 GET /api/dashboard/summary → correct totals for seeded data
+###   5.4 GET /api/dashboard/trends?months=3 → 3-item array, ascending order
+### ──────────────────────────────────────────────────
+### Prerequisites:
+###   1. Server running on localhost:8080
+###   2. Select "dev" environment (top-right in IntelliJ HTTP Client)
+###   3. Run auth-flow.http Steps 1–2 first to populate accessToken
+###   4. Seed some ONE_OFF transactions first (steps below) then verify dashboard
+###   5. Run requests IN ORDER
+
+
+
+### ─── SEED: POST ONE_OFF EXPENSE (FOOD $150) — expect 201 ───
+POST {{baseUrl}}/api/transactions
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "type": "EXPENSE",
+  "category": "FOOD",
+  "amount": 150.00,
+  "description": "Groceries",
+  "date": "2026-06-10"
+}
+
+
+### ─── SEED: POST ONE_OFF EXPENSE (HOUSING $1200) — expect 201 ─
+POST {{baseUrl}}/api/transactions
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "type": "EXPENSE",
+  "category": "HOUSING",
+  "amount": 1200.00,
+  "description": "Rent",
+  "date": "2026-06-10"
+}
+
+
+### ─── SEED: POST ONE_OFF INCOME (SALARY $5000) — expect 201 ──
+POST {{baseUrl}}/api/transactions
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "type": "INCOME",
+  "category": "SALARY",
+  "amount": 5000.00,
+  "description": "Monthly salary",
+  "date": "2026-06-10"
+}
+
+
+### ─── SEED: POST RECURRING INCOME — expect 201, must NOT appear in summary totals ─
+POST {{baseUrl}}/api/transactions
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "type": "INCOME",
+  "category": "SALARY",
+  "amount": 9999.00,
+  "period": "RECURRING",
+  "paymentDay": 25
+}
+
+
+### ─── 5.3: GET summary (current month) — expect:
+###   totalExpenses=1350.00, totalIncome=5000.00, netBalance=3650.00
+###   expensesByCategory: [{FOOD, 150.00, 1}, {HOUSING, 1200.00, 1}]
+###   recurring entry does NOT appear in totals ───────────────────
+GET {{baseUrl}}/api/dashboard/summary
+Authorization: Bearer {{accessToken}}
+
+
+### ─── 5.3b: GET summary with explicit month param ───────────────
+GET {{baseUrl}}/api/dashboard/summary?month=2026-06
+Authorization: Bearer {{accessToken}}
+
+
+### ─── 5.3c: GET summary for a past month (expect zeros if no data) ─
+GET {{baseUrl}}/api/dashboard/summary?month=2025-01
+Authorization: Bearer {{accessToken}}
+
+
+### ─── 5.4: GET trends (3 months) — expect:
+###   3-item array in ascending month order (e.g. 2026-04, 2026-05, 2026-06)
+###   current month totals match summary above ──────────────────────
+GET {{baseUrl}}/api/dashboard/trends?months=3
+Authorization: Bearer {{accessToken}}
+
+
+### ─── GET trends (1 month) — expect 1-item array, current month only ─
+GET {{baseUrl}}/api/dashboard/trends?months=1
+Authorization: Bearer {{accessToken}}
+
+
+### ─── GET trends (default=6 months) — expect 6-item array ────────
+GET {{baseUrl}}/api/dashboard/trends
+Authorization: Bearer {{accessToken}}
+
+
+### ─── AUTH BOUNDARY: GET summary without token — expect 401 ───────
+GET {{baseUrl}}/api/dashboard/summary

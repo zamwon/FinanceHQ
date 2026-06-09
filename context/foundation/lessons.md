@@ -152,3 +152,12 @@ Also: Railway does not auto-transform `DATABASE_URL` for external Supabase conne
 - **Problem**: Test data accumulates across runs; unique-constraint violations appear on re-run; tests depend on insertion order or leftover state from prior tests.
 - **Rule**: Annotate every @SpringBootTest integration test class with @Transactional. Spring rolls back each test's writes automatically, preventing data accumulation and unique-constraint failures on re-run. When a test asserts on a DB unique-constraint violation (e.g. duplicate email → 409), the service must use saveAndFlush() rather than save() — otherwise Hibernate defers the INSERT until after MockMvc returns the response, the constraint is never checked, and the test unexpectedly gets 201.
 - **Applies to**: implement, impl-review
+
+---
+
+## Always create .http request files for every new endpoint group
+
+- **Context**: Any phase that adds new API endpoints, or modifies existing ones — also update the relevant .http file when an existing endpoint changes. Files live in `src/test/http-test-requests/`.
+- **Problem**: Manual testing is harder without .http files — the developer has to reconstruct curl commands from scratch each time, and the manual verification gate message has no concrete test script to point to.
+- **Rule**: Always create a `.http` request file in `src/test/http-test-requests/` covering every new endpoint group (happy paths + key error cases) and point to it explicitly in the manual verification gate message.
+- **Applies to**: all

@@ -791,12 +791,12 @@ No existing data to migrate. V7 and V8 apply to a live schema that already has o
 
 #### Automated
 
-- [x] 3.1 `ObligationPayIntegrationTest` — all cases pass
-- [x] 3.2 Full `./mvnw test` suite passes (no obligation or auth regressions)
+- [x] 3.1 `ObligationPayIntegrationTest` — all cases pass — 44e09d5
+- [x] 3.2 Full `./mvnw test` suite passes (no obligation or auth regressions) — 44e09d5
 
 #### Manual
 
-- [x] 3.3 `curl POST /api/obligations/{id}/pay` creates a linked transaction and updates `last_paid_date`
+- [x] 3.3 `curl POST /api/obligations/{id}/pay` creates a linked transaction and updates `last_paid_date` — 44e09d5
 
 ### Phase 4: Transaction Frontend — CRUD
 
@@ -823,8 +823,8 @@ No existing data to migrate. V7 and V8 apply to a live schema that already has o
 
 #### Manual
 
-- [ ] 5.3 `curl GET /api/dashboard/summary` returns correct totals for seeded data
-- [ ] 5.4 `curl GET /api/dashboard/trends?months=3` returns 3-item array in ascending order
+- [x] 5.3 `curl GET /api/dashboard/summary` returns correct totals for seeded data
+- [x] 5.4 `curl GET /api/dashboard/trends?months=3` returns 3-item array in ascending order
 
 ### Phase 6: Dashboard Frontend
 
