@@ -475,28 +475,28 @@ No existing monitoring to migrate. To disable Sentry later: remove `SENTRY_DSN` 
 
 #### Manual
 
-- [ ] 2.3 In Railway logs confirm `SentryOptions` initialises after deploy
-- [ ] 2.4 Trigger a deliberate `log.warn` call; verify event appears in `finance-hq-backend` Sentry within 60 seconds
-- [ ] 2.5 Confirm no `@` email addresses appear in the Sentry event detail
+- [x] 2.3 In Railway logs confirm `SentryOptions` initialises after deploy
+- [x] 2.4 Trigger a deliberate `log.warn` call; verify event appears in `finance-hq-backend` Sentry within 60 seconds
+- [x] 2.5 Confirm no `@` email addresses appear in the Sentry event detail
 
 ### Phase 3: Sentry Tunnel Endpoint
 
 #### Automated
 
 - [x] 3.1 `./mvnw test` passes (80/84 tests pass; tunnel test isolation fixed in Phase 3 Fix) — 818eb0e
-- [x] 3.2 Integration test: unknown DSN → 400
-- [x] 3.3 Integration test: 101st rapid request → 429
+- [x] 3.2 Integration test: unknown DSN → 400 — 2556c45
+- [x] 3.3 Integration test: 101st rapid request → 429 — 2556c45
 
 #### Manual
 
-- [ ] 3.4 Valid Sentry envelope forwarded through tunnel reaches `finance-hq-frontend` Sentry
-- [ ] 3.5 Browser Network tab shows no direct requests to `sentry.io`
+- [x] 3.4 Valid Sentry envelope forwarded through tunnel reaches `finance-hq-frontend` Sentry
+- [x] 3.5 Browser Network tab shows no direct requests to `sentry.io`
 
 ### Phase 3 Fix: Test Isolation
 
 #### Automated
 
-- [x] 3F.1 `./mvnw test` passes 84/84 — all four `SentryTunnelControllerIntegrationTest` cases green
+- [x] 3F.1 `./mvnw test` passes 84/84 — all four `SentryTunnelControllerIntegrationTest` cases green — 2556c45
 
 ### Phase 4: Frontend (Angular) SDK Integration
 
@@ -507,11 +507,11 @@ No existing monitoring to migrate. To disable Sentry later: remove `SENTRY_DSN` 
 
 #### Manual
 
-- [ ] 4.3 `POST /sentry-tunnel` fires in Network tab on Angular errors (no direct `sentry.io` calls)
-- [ ] 4.4 Unhandled Angular error appears in `finance-hq-frontend` Sentry within 60 seconds
-- [ ] 4.5 `console.warn('sentry-test-warning')` produces a warning-level Sentry event
-- [ ] 4.6 User email is absent from Sentry event payloads
-- [ ] 4.7 `ng serve` locally generates zero Sentry network requests
+- [x] 4.3 `POST /sentry-tunnel` fires in Network tab on Angular errors (no direct `sentry.io` calls)
+- [x] 4.4 Unhandled Angular error appears in `finance-hq-frontend` Sentry within 60 seconds
+- [x] 4.5 `console.warn('sentry-test-warning')` produces a warning-level Sentry event
+- [x] 4.6 User email is absent from Sentry event payloads
+- [x] 4.7 `ng serve` locally generates zero Sentry network requests
 
 ### Phase 5: Source Maps + CI/CD
 
