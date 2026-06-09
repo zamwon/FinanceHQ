@@ -162,6 +162,29 @@ class ObligationControllerIntegrationTest {
     }
 
     @Test
+    void update_200_categoryChanged() throws Exception {
+        String token = registerAndLogin("update_category@test.com", "Test1234!");
+
+        MvcResult created = mvc.perform(post(API_OBLIGATIONS)
+                                                .contentType(APPLICATION_JSON)
+                                                .header("Authorization", "Bearer " + token)
+                                                .content(json(recurringBody())))
+                               .andExpect(status().isCreated())
+                               .andReturn();
+
+        String id = (String) parseBody(created).get("id");
+
+        MvcResult result = mvc.perform(patch(API_OBLIGATIONS + "/" + id)
+                                               .contentType(APPLICATION_JSON)
+                                               .header("Authorization", "Bearer " + token)
+                                               .content(json(Map.of("category", "OPTIONAL"))))
+                              .andExpect(status().isOk())
+                              .andReturn();
+
+        assertThat(parseBody(result).get("category")).isEqualTo("OPTIONAL");
+    }
+
+    @Test
     void delete_204_obligationGone() throws Exception {
         String token = registerAndLogin("delete_obligation@test.com", "Test1234!");
 

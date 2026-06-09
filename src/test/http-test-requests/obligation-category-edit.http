@@ -1,0 +1,47 @@
+### ──────────────────────────────────────────────────
+### FinanceHQ – obligation-category-edit manual checks
+###   1.2 PATCH category only → 200 with updated category
+###   1.3 PATCH empty body → 400
+### ──────────────────────────────────────────────────
+### Prerequisites:
+###   1. Server running on localhost:8080
+###   2. Select "dev" environment (top-right in IntelliJ HTTP Client)
+###   3. Run auth-flow.http Steps 1–2 first to populate accessToken
+###   4. Run requests IN ORDER
+
+
+
+### ─── Setup: create a RECURRING obligation (ESSENTIAL) ────
+POST {{baseUrl}}/api/obligations
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Test Rent",
+  "amount": 1200.00,
+  "category": "ESSENTIAL",
+  "period": "RECURRING",
+  "paymentDay": 10
+}
+
+> {%
+  client.global.set("categoryEditId", response.body.id);
+%}
+
+
+### ─── 1.2: PATCH category only — expect 200 + "category":"OPTIONAL" ─
+PATCH {{baseUrl}}/api/obligations/{{categoryEditId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "category": "OPTIONAL"
+}
+
+
+### ─── 1.3: PATCH empty body — expect 400 ─────────
+PATCH {{baseUrl}}/api/obligations/{{categoryEditId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{}

@@ -51,13 +51,14 @@ public class ObligationService {
 
     @Transactional
     public ObligationResponse update(User user, UUID id, UpdateObligationRequest req) {
-        if (req.amount() == null && req.paymentDay() == null) {
+        if (req.amount() == null && req.paymentDay() == null && req.category() == null) {
             throw new InvalidObligationException("At least one field must be provided for update");
         }
         Obligation obligation = repository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new ObligationNotFoundException("Obligation not found"));
         if (req.amount() != null) obligation.setAmount(req.amount());
         if (req.paymentDay() != null) obligation.setPaymentDay(req.paymentDay());
+        if (req.category() != null) obligation.setCategory(req.category());
         Obligation saved = repository.save(obligation);
         return ObligationResponse.from(saved, nextDueDate(saved));
     }

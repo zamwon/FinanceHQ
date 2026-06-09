@@ -80,6 +80,7 @@ public class Obligation {
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public void setCategory(ObligationCategory category) { this.category = category; }
     public void setPaymentDay(Integer paymentDay) { this.paymentDay = paymentDay; }
     public void setRemainingPayments(Integer remainingPayments) { this.remainingPayments = remainingPayments; }
 }
