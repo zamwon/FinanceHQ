@@ -9,7 +9,6 @@ import com.example.finance_hq.transaction.TransactionType;
 import com.example.finance_hq.transaction.dto.CreateTransactionRequest;
 import com.example.finance_hq.transaction.dto.TransactionResponse;
 import com.example.finance_hq.user.User;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ public class ObligationService {
     private final ObligationRepository repository;
     private final TransactionService transactionService;
 
-    public ObligationService(ObligationRepository repository, @Lazy TransactionService transactionService) {
+    public ObligationService(ObligationRepository repository, TransactionService transactionService) {
         this.repository = repository;
         this.transactionService = transactionService;
     }

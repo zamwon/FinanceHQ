@@ -18,6 +18,8 @@ import java.util.UUID;
 @RequestMapping("/api/obligations")
 public class ObligationController {
 
+    public static final String PAY_PATH = "/pay";
+
     private final ObligationService service;
 
     public ObligationController(ObligationService service) {
@@ -52,7 +54,7 @@ public class ObligationController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/pay")
+    @PostMapping("/{id}" + PAY_PATH)
     public ResponseEntity<TransactionResponse> pay(
             @AuthenticationPrincipal User user,
             @PathVariable UUID id,

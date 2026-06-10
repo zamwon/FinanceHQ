@@ -75,7 +75,7 @@ class ObligationPayIntegrationTest {
         String token = registerAndLogin("pay_create@test.com", "Test1234!");
         String obligationId = createObligation(token);
 
-        MvcResult result = mvc.perform(post(API_OBLIGATIONS + "/" + obligationId + "/pay")
+        MvcResult result = mvc.perform(post(payUrl(obligationId))
                                                .contentType(APPLICATION_JSON)
                                                .header("Authorization", "Bearer " + token)
                                                .content(json(payBody(LocalDate.now()))))
@@ -93,7 +93,7 @@ class ObligationPayIntegrationTest {
         String token = registerAndLogin("pay_list@test.com", "Test1234!");
         String obligationId = createObligation(token);
 
-        mvc.perform(post(API_OBLIGATIONS + "/" + obligationId + "/pay")
+        mvc.perform(post(payUrl(obligationId))
                             .contentType(APPLICATION_JSON)
                             .header("Authorization", "Bearer " + token)
                             .content(json(payBody(LocalDate.now()))))
@@ -115,7 +115,7 @@ class ObligationPayIntegrationTest {
         String obligationId = createObligation(token);
         LocalDate paidDate = LocalDate.now();
 
-        mvc.perform(post(API_OBLIGATIONS + "/" + obligationId + "/pay")
+        mvc.perform(post(payUrl(obligationId))
                             .contentType(APPLICATION_JSON)
                             .header("Authorization", "Bearer " + token)
                             .content(json(payBody(paidDate))))
@@ -137,7 +137,7 @@ class ObligationPayIntegrationTest {
         String tokenB = registerAndLogin("pay_owner_b@test.com", "Test1234!");
         String obligationId = createObligation(tokenA);
 
-        mvc.perform(post(API_OBLIGATIONS + "/" + obligationId + "/pay")
+        mvc.perform(post(payUrl(obligationId))
                             .contentType(APPLICATION_JSON)
                             .header("Authorization", "Bearer " + tokenB)
                             .content(json(payBody(LocalDate.now()))))
@@ -163,6 +163,10 @@ class ObligationPayIntegrationTest {
     }
 
     // ── Private helpers ────────────────────────────────────────────────────────
+
+    private String payUrl(String id) {
+        return API_OBLIGATIONS + "/" + id + ObligationController.PAY_PATH;
+    }
 
     private String registerAndLogin(String email, String password) throws Exception {
         mvc.perform(post(AUTH_REGISTER)
