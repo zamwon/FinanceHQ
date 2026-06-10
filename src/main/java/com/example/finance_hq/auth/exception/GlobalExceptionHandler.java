@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Slf4j
@@ -47,6 +48,13 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         problem.setTitle("Unauthorized");
         return ResponseEntity.status(401).body(problem);
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    public ResponseEntity<ProblemDetail> handleDateTimeParse(DateTimeParseException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid date/time format: " + ex.getParsedString());
+        problem.setTitle("Bad Request");
+        return ResponseEntity.status(400).body(problem);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -90,7 +98,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidObligationException.class)
     public ResponseEntity<ProblemDetail> handleInvalidObligation(InvalidObligationException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid obligation request");
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problem.setTitle("Validation Failed");
         return ResponseEntity.status(400).body(problem);
     }

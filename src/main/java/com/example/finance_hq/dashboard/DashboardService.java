@@ -3,6 +3,7 @@ package com.example.finance_hq.dashboard;
 import com.example.finance_hq.dashboard.dto.CategoryBreakdownItem;
 import com.example.finance_hq.dashboard.dto.MonthlyTrendItem;
 import com.example.finance_hq.dashboard.dto.MonthlySummaryResponse;
+import com.example.finance_hq.transaction.InvalidTransactionException;
 import com.example.finance_hq.transaction.TransactionType;
 import com.example.finance_hq.user.User;
 import org.springframework.stereotype.Service;
@@ -26,17 +27,17 @@ public class DashboardService {
 
     @Transactional(readOnly = true)
     public MonthlySummaryResponse getMonthlySummary(User user, YearMonth month) {
-        int year = month.getYear();
-        int monthNum = month.getMonthValue();
+        LocalDate startDate = month.atDay(1);
+        LocalDate endDate = month.atEndOfMonth().plusDays(1);
 
-        BigDecimal totalIncome = nullToZero(repository.sumByTypeAndMonth(user, TransactionType.INCOME, year, monthNum));
-        BigDecimal totalExpenses = nullToZero(repository.sumByTypeAndMonth(user, TransactionType.EXPENSE, year, monthNum));
+        BigDecimal totalIncome = nullToZero(repository.sumByTypeAndMonth(user, TransactionType.INCOME, startDate, endDate));
+        BigDecimal totalExpenses = nullToZero(repository.sumByTypeAndMonth(user, TransactionType.EXPENSE, startDate, endDate));
         BigDecimal netBalance = totalIncome.subtract(totalExpenses);
 
         List<CategoryBreakdownItem> expensesByCategory = toBreakdownItems(
-                repository.categoryBreakdown(user, TransactionType.EXPENSE, year, monthNum));
+                repository.categoryBreakdown(user, TransactionType.EXPENSE, startDate, endDate));
         List<CategoryBreakdownItem> incomeByCategory = toBreakdownItems(
-                repository.categoryBreakdown(user, TransactionType.INCOME, year, monthNum));
+                repository.categoryBreakdown(user, TransactionType.INCOME, startDate, endDate));
 
         return new MonthlySummaryResponse(month.toString(), totalIncome, totalExpenses, netBalance,
                 expensesByCategory, incomeByCategory);
@@ -44,6 +45,9 @@ public class DashboardService {
 
     @Transactional(readOnly = true)
     public List<MonthlyTrendItem> getMonthlyTrend(User user, int months) {
+        if (months < 1 || months > 120) {
+            throw new InvalidTransactionException("months must be between 1 and 120");
+        }
         YearMonth end = YearMonth.now();
         YearMonth start = end.minusMonths(months - 1);
 

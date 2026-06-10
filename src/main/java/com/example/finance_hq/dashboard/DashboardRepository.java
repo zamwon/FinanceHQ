@@ -14,11 +14,11 @@ import java.util.UUID;
 
 public interface DashboardRepository extends Repository<Transaction, UUID> {
 
-    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.user = :user AND t.period IS NULL AND t.type = :type AND YEAR(t.date) = :year AND MONTH(t.date) = :month")
-    BigDecimal sumByTypeAndMonth(@Param("user") User user, @Param("type") TransactionType type, @Param("year") int year, @Param("month") int month);
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.user = :user AND t.period IS NULL AND t.type = :type AND t.date >= :startDate AND t.date < :endDate")
+    BigDecimal sumByTypeAndMonth(@Param("user") User user, @Param("type") TransactionType type, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query("SELECT t.category, SUM(t.amount), COUNT(t) FROM Transaction t WHERE t.user = :user AND t.period IS NULL AND t.type = :type AND YEAR(t.date) = :year AND MONTH(t.date) = :month GROUP BY t.category")
-    List<Object[]> categoryBreakdown(@Param("user") User user, @Param("type") TransactionType type, @Param("year") int year, @Param("month") int month);
+    @Query("SELECT t.category, SUM(t.amount), COUNT(t) FROM Transaction t WHERE t.user = :user AND t.period IS NULL AND t.type = :type AND t.date >= :startDate AND t.date < :endDate GROUP BY t.category")
+    List<Object[]> categoryBreakdown(@Param("user") User user, @Param("type") TransactionType type, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @Query("SELECT YEAR(t.date), MONTH(t.date), t.type, SUM(t.amount) FROM Transaction t WHERE t.user = :user AND t.period IS NULL AND t.date >= :startDate AND t.date < :endDate GROUP BY YEAR(t.date), MONTH(t.date), t.type ORDER BY YEAR(t.date), MONTH(t.date)")
     List<Object[]> trendData(@Param("user") User user, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
