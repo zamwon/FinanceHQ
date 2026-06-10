@@ -802,17 +802,17 @@ No existing data to migrate. V7 and V8 apply to a live schema that already has o
 
 #### Automated
 
-- [ ] 4.1 `ng build` completes with no TypeScript errors
-- [ ] 4.2 `./mvnw test` (backend suite) still passes
+- [x] 4.1 `ng build` completes with no TypeScript errors
+- [x] 4.2 `./mvnw test` (backend suite) still passes
 
 #### Manual
 
-- [ ] 4.3 `/transactions` shows empty state for new user
-- [ ] 4.4 Add FOOD expense → appears in list with correct category label
-- [ ] 4.5 Add RECURRING SALARY → shows computed nextExpectedDate
-- [ ] 4.6 Edit expense → all fields editable; update succeeds
-- [ ] 4.7 Delete entry → confirmation dialog; entry removed
-- [ ] 4.8 "Mark Paid" on obligation → mini-form; confirm → linked transaction in `/transactions`
+- [x] 4.3 `/transactions` shows empty state for new user
+- [x] 4.4 Add FOOD expense → appears in list with correct category label
+- [x] 4.5 Add RECURRING SALARY → shows computed nextExpectedDate
+- [x] 4.6 Edit expense → all fields editable; update succeeds
+- [x] 4.7 Delete entry → confirmation dialog; entry removed
+- [x] 4.8 "Mark Paid" on obligation → mini-form; confirm → linked transaction in `/transactions`
 
 ### Phase 5: Dashboard Backend
 
@@ -830,8 +830,8 @@ No existing data to migrate. V7 and V8 apply to a live schema that already has o
 
 #### Automated
 
-- [ ] 6.1 `ng build` passes with no TypeScript errors (including ng2-charts types)
-- [ ] 6.2 `./mvnw test` (backend suite) still passes
+- [x] 6.1 `ng build` passes with no TypeScript errors (including ng2-charts types)
+- [x] 6.2 `./mvnw test` (backend suite) still passes
 
 #### Manual
 

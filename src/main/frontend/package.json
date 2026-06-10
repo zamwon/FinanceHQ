@@ -23,8 +23,10 @@
     "@sentry/angular": "^10.52.0",
     "@sentry/browser": "^10.52.0",
     "@spartan-ng/brain": "^0.0.1-alpha.699",
+    "chart.js": "^4.5.1",
     "clsx": "^2.1.1",
     "luxon": "^3.7.2",
+    "ng2-charts": "^10.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

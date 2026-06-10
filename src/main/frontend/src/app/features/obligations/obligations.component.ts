@@ -4,11 +4,12 @@ import { Obligation } from './obligation.model';
 import { CategoryBadgeComponent } from '../../shared/ui/category-badge/category-badge.component';
 import { ObligationDialogComponent } from './obligation-dialog/obligation-dialog.component';
 import { DeleteDialogComponent } from './delete-dialog/delete-dialog.component';
+import { PaymentDialogComponent } from './payment-dialog/payment-dialog.component';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-obligations',
-  imports: [CategoryBadgeComponent, ObligationDialogComponent, DeleteDialogComponent],
+  imports: [CategoryBadgeComponent, ObligationDialogComponent, DeleteDialogComponent, PaymentDialogComponent],
   templateUrl: './obligations.component.html',
 })
 export class ObligationsComponent implements OnInit {
@@ -19,11 +20,12 @@ export class ObligationsComponent implements OnInit {
   loading = signal(true);
   error = signal('');
 
-  // Dialog state (dialogs added in Tasks 12 and 13)
   showAddEdit = signal(false);
   showDelete = signal(false);
+  showPayment = signal(false);
   editing = signal<Obligation | null>(null);
   deleting = signal<Obligation | null>(null);
+  payingObligation = signal<Obligation | null>(null);
 
   ngOnInit(): void {
     this.load();
@@ -62,6 +64,17 @@ export class ObligationsComponent implements OnInit {
   onDeleted(): void {
     this.showDelete.set(false);
     this.toast.show('Obligation deleted.');
+    this.load();
+  }
+
+  openPayment(o: Obligation): void {
+    this.payingObligation.set(o);
+    this.showPayment.set(true);
+  }
+
+  onPaid(): void {
+    this.showPayment.set(false);
+    this.toast.show('Payment logged.');
     this.load();
   }
 

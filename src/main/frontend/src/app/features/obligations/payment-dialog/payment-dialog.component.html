@@ -1,0 +1,75 @@
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+  <div class="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 w-full max-w-sm shadow-xl">
+
+    <h2 class="text-base font-bold text-zinc-900 dark:text-zinc-50 mb-1">Mark Paid</h2>
+    <p class="text-xs text-zinc-500 mb-5">Recording payment for: <span class="font-semibold text-zinc-700 dark:text-zinc-300">{{ obligation.name }}</span></p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+
+      <!-- Amount + Date -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Amount (PLN)</label>
+          <input formControlName="amount" type="number" step="0.01"
+                 class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                 [class.border-red-400]="form.controls.amount.invalid && form.controls.amount.touched" />
+          @if (form.controls.amount.invalid && form.controls.amount.touched) {
+            <p class="text-xs text-red-500">Required (min 0.01)</p>
+          }
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Payment date</label>
+          <input formControlName="date" type="date"
+                 class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                 [class.border-red-400]="form.controls.date.invalid && form.controls.date.touched" />
+          @if (form.controls.date.invalid && form.controls.date.touched) {
+            <p class="text-xs text-red-500">Required</p>
+          }
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Expense category</label>
+        <select formControlName="category"
+                class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                [class.border-red-400]="form.controls.category.invalid && form.controls.category.touched">
+          <option value="" disabled>Select category…</option>
+          @for (cat of expenseCategories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+        @if (form.controls.category.invalid && form.controls.category.touched) {
+          <p class="text-xs text-red-500">Required</p>
+        }
+      </div>
+
+      <!-- Description -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Description (optional)</label>
+        <input formControlName="description" type="text"
+               class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400" />
+      </div>
+
+      <!-- Error -->
+      @if (error()) {
+        <div class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md px-3 py-2 text-sm text-red-600 dark:text-red-400">
+          {{ error() }}
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-2 pt-1">
+        <button type="button" (click)="cancelled.emit()"
+                class="border border-zinc-200 dark:border-zinc-700 rounded-md px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+          Cancel
+        </button>
+        <button type="submit" [disabled]="loading() || form.invalid"
+                class="bg-emerald-600 text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          @if (loading()) { Recording… } @else { Confirm Payment }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

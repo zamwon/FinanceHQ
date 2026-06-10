@@ -1,0 +1,101 @@
+<div>
+  <!-- Header -->
+  <div class="flex items-start justify-between mb-6">
+    <div>
+      <h1 class="text-xl font-bold text-zinc-900 dark:text-zinc-50">Transactions</h1>
+      <p class="text-sm text-zinc-500">{{ transactions().length }} transaction{{ transactions().length === 1 ? '' : 's' }}</p>
+    </div>
+    <button (click)="openAdd()"
+            class="bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 font-semibold rounded-md px-4 py-2 text-sm hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors">
+      + Add Transaction
+    </button>
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <p class="text-sm text-zinc-500">Loading…</p>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md px-4 py-3 text-sm text-red-600 dark:text-red-400">
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading() && !error() && transactions().length === 0) {
+    <div class="flex flex-col items-center justify-center py-20 text-center">
+      <p class="text-zinc-500 mb-4">No transactions yet. Add your first one.</p>
+      <button (click)="openAdd()"
+              class="bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 font-semibold rounded-md px-4 py-2 text-sm">
+        + Add Transaction
+      </button>
+    </div>
+  }
+
+  <!-- Table -->
+  @if (!loading() && transactions().length > 0) {
+    <div class="border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden">
+      <!-- Header -->
+      <div class="grid grid-cols-[1fr_1fr_1fr_1fr_2fr_40px_80px] bg-zinc-50 dark:bg-zinc-900 border-b-2 border-zinc-200 dark:border-zinc-700 px-4 py-2.5">
+        @for (col of ['TYPE','CATEGORY','AMOUNT','DATE','DESCRIPTION','🔗','ACTIONS']; track col) {
+          <span class="text-[11px] font-bold text-zinc-500 tracking-wider">{{ col }}</span>
+        }
+      </div>
+      <!-- Rows -->
+      @for (t of transactions(); track t.id) {
+        <div class="grid grid-cols-[1fr_1fr_1fr_1fr_2fr_40px_80px] px-4 py-3 items-center border-b border-zinc-100 dark:border-zinc-800 last:border-0 bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+          <div>
+            <p class="text-sm font-semibold"
+               [class.text-red-600]="t.type === 'EXPENSE'"
+               [class.dark:text-red-400]="t.type === 'EXPENSE'"
+               [class.text-emerald-600]="t.type === 'INCOME'"
+               [class.dark:text-emerald-400]="t.type === 'INCOME'">
+              {{ t.type }}
+            </p>
+            @if (t.period) {
+              <p class="text-xs text-zinc-400">{{ t.period === 'RECURRING' ? 'Recurring' : 'Fixed term' }}</p>
+            }
+          </div>
+          <p class="text-sm text-zinc-700 dark:text-zinc-300">{{ t.category }}</p>
+          <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-50">{{ t.amount.toLocaleString('pl-PL') }} zł</p>
+          <div>
+            <p class="text-sm text-zinc-700 dark:text-zinc-300">{{ displayDate(t) }}</p>
+            @if (t.period) {
+              <p class="text-xs text-zinc-400">next expected</p>
+            }
+          </div>
+          <p class="text-sm text-zinc-500 truncate">{{ t.description ?? '—' }}</p>
+          <div class="flex items-center justify-center">
+            @if (t.obligationId) {
+              <span title="Linked to obligation" class="text-zinc-400 text-sm">📎</span>
+            }
+          </div>
+          <div class="flex gap-1.5">
+            <button (click)="openEdit(t)"
+                    class="bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded px-2 py-1 text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                    title="Edit">✏️</button>
+            <button (click)="openDelete(t)"
+                    class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 rounded px-2 py-1 text-xs text-red-500 hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+                    title="Delete">🗑</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (showAddEdit()) {
+    <app-transaction-dialog
+      [transaction]="editingTransaction()"
+      (saved)="onSaved()"
+      (cancelled)="showAddEdit.set(false)" />
+  }
+
+  @if (showDelete() && deletingTransaction()) {
+    <app-transaction-delete-dialog
+      [transaction]="deletingTransaction()!"
+      (deleted)="onDeleted()"
+      (cancelled)="showDelete.set(false)" />
+  }
+</div>

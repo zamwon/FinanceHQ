@@ -1,0 +1,137 @@
+<div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+  <div class="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 w-full max-w-md shadow-xl">
+
+    <h2 class="text-base font-bold text-zinc-900 dark:text-zinc-50 mb-1">
+      {{ isEdit ? 'Edit Transaction' : 'Add Transaction' }}
+    </h2>
+    <p class="text-xs text-zinc-500 mb-5">Fill in the transaction details</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+
+      <!-- Row 1: Type + Amount -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Type</label>
+          <select formControlName="type"
+                  class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400">
+            <option value="EXPENSE">Expense</option>
+            <option value="INCOME">Income</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Amount (PLN)</label>
+          <input formControlName="amount" type="number" step="0.01" placeholder="0.00"
+                 class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                 [class.border-red-400]="form.controls.amount.invalid && form.controls.amount.touched" />
+          @if (form.controls.amount.invalid && form.controls.amount.touched) {
+            <p class="text-xs text-red-500">Enter amount (min 0.01)</p>
+          }
+        </div>
+      </div>
+
+      <!-- Row 2: Category + Period -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Category</label>
+          <select formControlName="category"
+                  class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  [class.border-red-400]="form.controls.category.invalid && form.controls.category.touched">
+            <option value="" disabled>Select…</option>
+            @for (cat of categoryOptions(); track cat) {
+              <option [value]="cat">{{ cat }}</option>
+            }
+          </select>
+          @if (form.controls.category.invalid && form.controls.category.touched) {
+            <p class="text-xs text-red-500">Required</p>
+          }
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Period</label>
+          <select formControlName="period"
+                  class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400">
+            <option [ngValue]="null">One-off</option>
+            <option value="RECURRING">Recurring</option>
+            <option value="FIXED_TERM">Fixed term</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ONE_OFF: date -->
+      @if (!isRecurring) {
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Date</label>
+          <input formControlName="date" type="date"
+                 class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                 [class.border-red-400]="form.controls.date.invalid && form.controls.date.touched" />
+          @if (form.controls.date.invalid && form.controls.date.touched) {
+            <p class="text-xs text-red-500">Required for one-off transactions</p>
+          }
+        </div>
+      }
+
+      <!-- RECURRING: paymentDay -->
+      @if (isRecurring) {
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Payment day of month</label>
+          <input formControlName="paymentDay" type="number" min="1" max="31" placeholder="1–31"
+                 class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                 [class.border-red-400]="form.controls.paymentDay.invalid && form.controls.paymentDay.touched" />
+          @if (form.controls.paymentDay.invalid && form.controls.paymentDay.touched) {
+            <p class="text-xs text-red-500">Enter a day between 1 and 31</p>
+          }
+        </div>
+      }
+
+      <!-- FIXED_TERM: endDate + remainingPayments -->
+      @if (isFixedTerm) {
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">End date</label>
+            <input formControlName="endDate" type="date"
+                   class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                   [class.border-red-400]="form.controls.endDate.invalid && form.controls.endDate.touched" />
+            @if (form.controls.endDate.invalid && form.controls.endDate.touched) {
+              <p class="text-xs text-red-500">Required for fixed-term</p>
+            }
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Remaining payments</label>
+            <input formControlName="remainingPayments" type="number" min="1" placeholder="e.g. 12"
+                   class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                   [class.border-red-400]="form.controls.remainingPayments.invalid && form.controls.remainingPayments.touched" />
+            @if (form.controls.remainingPayments.invalid && form.controls.remainingPayments.touched) {
+              <p class="text-xs text-red-500">Required, must be ≥ 1</p>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Description -->
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Description (optional)</label>
+        <input formControlName="description" type="text" placeholder="Notes…"
+               class="border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400" />
+      </div>
+
+      <!-- Error -->
+      @if (error()) {
+        <div class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md px-3 py-2 text-sm text-red-600 dark:text-red-400">
+          {{ error() }}
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-2 pt-1">
+        <button type="button" (click)="cancelled.emit()"
+                class="border border-zinc-200 dark:border-zinc-700 rounded-md px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+          Cancel
+        </button>
+        <button type="submit" [disabled]="loading() || form.invalid"
+                class="bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 font-semibold rounded-md px-4 py-2 text-sm hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          @if (loading()) { Saving… } @else { Save }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

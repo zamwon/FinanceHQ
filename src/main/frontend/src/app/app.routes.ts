@@ -22,9 +22,17 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./features/obligations/obligations.component').then(
-            m => m.ObligationsComponent,
-          ),
+          import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
+      },
+      {
+        path: 'obligations',
+        loadComponent: () =>
+          import('./features/obligations/obligations.component').then(m => m.ObligationsComponent),
+      },
+      {
+        path: 'transactions',
+        loadComponent: () =>
+          import('./features/transactions/transactions.component').then(m => m.TransactionsComponent),
       },
     ],
   },
