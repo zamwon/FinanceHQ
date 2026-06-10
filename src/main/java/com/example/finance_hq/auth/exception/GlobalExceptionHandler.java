@@ -4,6 +4,7 @@ import com.example.finance_hq.obligation.InvalidObligationException;
 import com.example.finance_hq.obligation.ObligationNotFoundException;
 import com.example.finance_hq.portfolio.InvalidPortfolioAssetException;
 import com.example.finance_hq.portfolio.PortfolioAssetNotFoundException;
+import com.example.finance_hq.portfolio.PortfolioAssetValidationException;
 import com.example.finance_hq.transaction.InvalidTransactionException;
 import com.example.finance_hq.transaction.TransactionNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -121,7 +122,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PortfolioAssetNotFoundException.class)
     public ResponseEntity<ProblemDetail> handlePortfolioAssetNotFound(PortfolioAssetNotFoundException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Portfolio asset not found");
         problem.setTitle("Not Found");
         return ResponseEntity.status(404).body(problem);
     }
@@ -131,6 +132,13 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setTitle("Conflict");
         return ResponseEntity.status(409).body(problem);
+    }
+
+    @ExceptionHandler(PortfolioAssetValidationException.class)
+    public ResponseEntity<ProblemDetail> handlePortfolioAssetValidation(PortfolioAssetValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Validation Failed");
+        return ResponseEntity.status(400).body(problem);
     }
 
     @ExceptionHandler(Exception.class)

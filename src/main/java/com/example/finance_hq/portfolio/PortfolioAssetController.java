@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequestMapping(PortfolioAssetController.BASE_PATH)
 public class PortfolioAssetController {
 
-    static final String BASE_PATH = "/api/portfolio";
+    public static final String BASE_PATH = "/api/portfolio";
 
     private final PortfolioAssetService service;
 

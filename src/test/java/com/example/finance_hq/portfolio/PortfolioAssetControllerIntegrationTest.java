@@ -165,8 +165,63 @@ class PortfolioAssetControllerIntegrationTest {
                               .andReturn();
 
         Map<String, Object> body = parseBody(result);
-        assertThat(((Number) body.get("shares")).doubleValue()).isEqualTo(2.5);
+        assertThat(body.get("shares").toString()).isEqualTo("2.5");
         assertThat(body.get("assetGroup")).isEqualTo("Digital Assets");
+    }
+
+    @Test
+    void update_400_emptyBody() throws Exception {
+        String token = registerAndLogin("portfolio_update_empty@test.com", "Test1234!");
+
+        MvcResult created = mvc.perform(post(BASE_PATH)
+                                                .contentType(APPLICATION_JSON)
+                                                .header("Authorization", "Bearer " + token)
+                                                .content(json(btcRequest())))
+                               .andExpect(status().isCreated())
+                               .andReturn();
+
+        String id = (String) parseBody(created).get("id");
+
+        mvc.perform(patch(BASE_PATH + "/" + id)
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .content("{}"))
+           .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void update_409_duplicateTicker() throws Exception {
+        String token = registerAndLogin("portfolio_update_dup_ticker@test.com", "Test1234!");
+
+        mvc.perform(post(BASE_PATH)
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .content(json(btcRequest())))
+           .andExpect(status().isCreated());
+
+        Map<String, Object> ethBody = new HashMap<>();
+        ethBody.put("ticker", "ETH");
+        ethBody.put("assetGroup", "Crypto");
+        ethBody.put("shares", 1.0);
+        ethBody.put("avgBuyPricePln", 8000.00);
+        ethBody.put("avgBuyPriceAssetCurrency", 2000.00);
+        ethBody.put("purchaseValuePln", 8000.00);
+        ethBody.put("purchaseValueAssetCurrency", 2000.00);
+
+        MvcResult created = mvc.perform(post(BASE_PATH)
+                                                .contentType(APPLICATION_JSON)
+                                                .header("Authorization", "Bearer " + token)
+                                                .content(json(ethBody)))
+                               .andExpect(status().isCreated())
+                               .andReturn();
+
+        String ethId = (String) parseBody(created).get("id");
+
+        mvc.perform(patch(BASE_PATH + "/" + ethId)
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .content(json(Map.of("ticker", "BTC"))))
+           .andExpect(status().isConflict());
     }
 
     @Test

@@ -4,6 +4,8 @@ import com.example.finance_hq.portfolio.dto.CreatePortfolioAssetRequest;
 import com.example.finance_hq.portfolio.dto.PortfolioAssetResponse;
 import com.example.finance_hq.portfolio.dto.UpdatePortfolioAssetRequest;
 import com.example.finance_hq.user.User;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,8 @@ public class PortfolioAssetService {
 
     @Transactional(readOnly = true)
     public List<PortfolioAssetResponse> findAll(User user) {
-        return repository.findAllByUserOrderByCreatedAtDesc(user).stream()
+        PageRequest page = PageRequest.of(0, 500, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return repository.findAllByUserOrderByCreatedAtDesc(user, page).getContent().stream()
                 .map(PortfolioAssetResponse::from)
                 .toList();
     }
@@ -53,13 +56,21 @@ public class PortfolioAssetService {
                 && req.avgBuyPricePln() == null && req.avgBuyPriceAssetCurrency() == null
                 && req.purchaseValuePln() == null && req.purchaseValueAssetCurrency() == null
                 && req.purchaseSharePercent() == null) {
-            throw new InvalidPortfolioAssetException("At least one field must be provided for update");
+            throw new PortfolioAssetValidationException("At least one field must be provided for update");
         }
 
         PortfolioAsset asset = repository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new PortfolioAssetNotFoundException(id));
 
-        if (req.ticker() != null) asset.setTicker(req.ticker());
+        if (req.ticker() != null) {
+            if (!req.ticker().equals(asset.getTicker())) {
+                repository.findByUserAndTicker(user, req.ticker()).ifPresent(existing -> {
+                    throw new InvalidPortfolioAssetException(
+                            "Position for " + req.ticker() + " already exists. Use PATCH to update.");
+                });
+            }
+            asset.setTicker(req.ticker());
+        }
         if (req.assetGroup() != null) asset.setAssetGroup(req.assetGroup());
         if (req.shares() != null) asset.setShares(req.shares());
         if (req.avgBuyPricePln() != null) asset.setAvgBuyPricePln(req.avgBuyPricePln());

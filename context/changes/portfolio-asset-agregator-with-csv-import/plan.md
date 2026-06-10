@@ -642,19 +642,19 @@ V10 is purely additive. No existing data is modified. Flyway baseline (`baseline
 
 #### Automated
 
-- [x] 2.1 `./mvnw test` — all tests pass including `PortfolioAssetControllerIntegrationTest`
+- [x] 2.1 `./mvnw test` — all tests pass including `PortfolioAssetControllerIntegrationTest` — 6be104f
 
 #### Manual
 
-- [x] 2.2 All CRUD scenarios in `portfolio.http` return expected status codes
-- [x] 2.3 Duplicate ticker POST returns 409 ProblemDetail with descriptive message
-- [x] 2.4 Cross-user isolation confirmed
+- [x] 2.2 All CRUD scenarios in `portfolio.http` return expected status codes — 6be104f
+- [x] 2.3 Duplicate ticker POST returns 409 ProblemDetail with descriptive message — 6be104f
+- [x] 2.4 Cross-user isolation confirmed — 6be104f
 
 ### Phase 3: Price Refresh Service
 
 #### Automated
 
-- [ ] 3.1 `./mvnw test` — all tests pass including `PortfolioPriceServiceTest`
+- [x] 3.1 `./mvnw test` — all tests pass including `PortfolioPriceServiceTest`
 
 #### Manual
 

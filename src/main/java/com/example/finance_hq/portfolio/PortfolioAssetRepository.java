@@ -1,6 +1,8 @@
 package com.example.finance_hq.portfolio;
 
 import com.example.finance_hq.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +21,8 @@ public interface PortfolioAssetRepository extends JpaRepository<PortfolioAsset, 
     }
 
     List<PortfolioAsset> findAllByUserOrderByCreatedAtDesc(User user);
+
+    Page<PortfolioAsset> findAllByUserOrderByCreatedAtDesc(User user, Pageable pageable);
 
     Optional<PortfolioAsset> findByIdAndUser(UUID id, User user);
 
