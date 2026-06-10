@@ -818,13 +818,13 @@ No existing data to migrate. V7 and V8 apply to a live schema that already has o
 
 #### Automated
 
-- [x] 5.1 `DashboardControllerIntegrationTest` — all cases pass
-- [x] 5.2 Full `./mvnw test` suite passes
+- [x] 5.1 `DashboardControllerIntegrationTest` — all cases pass — 811a983
+- [x] 5.2 Full `./mvnw test` suite passes — 811a983
 
 #### Manual
 
-- [x] 5.3 `curl GET /api/dashboard/summary` returns correct totals for seeded data
-- [x] 5.4 `curl GET /api/dashboard/trends?months=3` returns 3-item array in ascending order
+- [x] 5.3 `curl GET /api/dashboard/summary` returns correct totals for seeded data — 811a983
+- [x] 5.4 `curl GET /api/dashboard/trends?months=3` returns 3-item array in ascending order — 811a983
 
 ### Phase 6: Dashboard Frontend
 

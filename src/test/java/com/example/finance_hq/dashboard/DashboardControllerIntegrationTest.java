@@ -56,9 +56,30 @@ class DashboardControllerIntegrationTest {
     }
 
     @Test
-    void summary_400_noToken() throws Exception {
+    void summary_401_noToken() throws Exception {
         mvc.perform(get(API_DASHBOARD_SUMMARY))
            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void summary_200_doesNotShowOtherUsersTransactions() throws Exception {
+        String tokenA = registerAndLogin("dash_iso_a@test.com", "Test1234!");
+        String tokenB = registerAndLogin("dash_iso_b@test.com", "Test1234!");
+        String today = LocalDate.now().toString();
+
+        postTransaction(tokenA, expenseBody("FOOD", 500.0, today));
+        postTransaction(tokenA, incomeBody("SALARY", 2000.0, today));
+
+        MvcResult result = mvc.perform(get(API_DASHBOARD_SUMMARY)
+                                               .param("month", YearMonth.now().toString())
+                                               .header("Authorization", "Bearer " + tokenB))
+                              .andExpect(status().isOk())
+                              .andReturn();
+
+        Map<String, Object> body = parseBody(result);
+        assertThat(((Number) body.get("totalIncome")).doubleValue()).isEqualTo(0.0);
+        assertThat(((Number) body.get("totalExpenses")).doubleValue()).isEqualTo(0.0);
+        assertThat(((Number) body.get("netBalance")).doubleValue()).isEqualTo(0.0);
     }
 
     @Test
