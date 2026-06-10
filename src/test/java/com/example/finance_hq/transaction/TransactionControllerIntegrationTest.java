@@ -52,6 +52,22 @@ class TransactionControllerIntegrationTest {
                              .build();
     }
 
+    // ── Auth boundary ──────────────────────────────────────────────────────────
+
+    @Test
+    void list_401_noToken() throws Exception {
+        mvc.perform(get(API_TRANSACTIONS))
+           .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void create_401_noToken() throws Exception {
+        mvc.perform(post(API_TRANSACTIONS)
+                            .contentType(APPLICATION_JSON)
+                            .content(json(oneOffExpenseBody())))
+           .andExpect(status().isUnauthorized());
+    }
+
     // ── CRUD happy paths ───────────────────────────────────────────────────────
 
     @Test
@@ -249,6 +265,25 @@ class TransactionControllerIntegrationTest {
         mvc.perform(delete(API_TRANSACTIONS + "/" + id)
                             .header("Authorization", "Bearer " + tokenB))
            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void list_200_doesNotReturnOtherUsersTransactions() throws Exception {
+        String tokenA = registerAndLogin("txn_iso_a@test.com", "Test1234!");
+        String tokenB = registerAndLogin("txn_iso_b@test.com", "Test1234!");
+
+        mvc.perform(post(API_TRANSACTIONS)
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + tokenA)
+                            .content(json(oneOffExpenseBody())))
+           .andExpect(status().isCreated());
+
+        MvcResult result = mvc.perform(get(API_TRANSACTIONS)
+                                               .header("Authorization", "Bearer " + tokenB))
+                              .andExpect(status().isOk())
+                              .andReturn();
+
+        assertThat(parseBodyAsList(result)).isEmpty();
     }
 
     // ── Private helpers ────────────────────────────────────────────────────────

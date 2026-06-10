@@ -44,6 +44,9 @@ public class TransactionService {
         if (req.period() == null && req.date() == null) {
             throw new InvalidTransactionException("ONE_OFF transactions require a date");
         }
+        if (req.period() != null && req.paymentDay() == null) {
+            throw new InvalidTransactionException("Recurring/fixed-term transactions require a paymentDay");
+        }
         if (req.period() == ObligationPeriod.FIXED_TERM) {
             if (req.endDate() == null || req.remainingPayments() == null) {
                 throw new InvalidTransactionException("FIXED_TERM transactions require both endDate and remainingPayments");
