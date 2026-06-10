@@ -29,6 +29,8 @@ public class ObligationService {
         this.transactionService = transactionService;
     }
 
+    public record SchedulerTarget(Obligation obligation, LocalDate nextDueDate) {}
+
     @Transactional(readOnly = true)
     public List<ObligationResponse> findAll(User user) {
         LocalDate today = LocalDate.now();
@@ -81,6 +83,7 @@ public class ObligationService {
     public TransactionResponse markPaid(User user, UUID obligationId, MarkObligationPaidRequest req) {
         Obligation obligation = repository.findByIdAndUser(obligationId, user)
                 .orElseThrow(() -> new ObligationNotFoundException("Obligation not found"));
+        // ONE_OFF expense: period/paymentDay/endDate/remainingPayments are null; date is @NotNull in MarkObligationPaidRequest so validation passes.
         CreateTransactionRequest txnReq = new CreateTransactionRequest(
                 TransactionType.EXPENSE, req.category(), req.amount(), req.description(),
                 null, req.date(), null, null, null, obligation.getId()
@@ -90,8 +93,6 @@ public class ObligationService {
         repository.save(obligation);
         return response;
     }
-
-    public record SchedulerTarget(Obligation obligation, LocalDate nextDueDate) {}
 
     @Transactional(readOnly = true)
     public List<SchedulerTarget> findAllSchedulerTargets(LocalDate today) {
