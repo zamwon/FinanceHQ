@@ -802,17 +802,17 @@ No existing data to migrate. V7 and V8 apply to a live schema that already has o
 
 #### Automated
 
-- [x] 4.1 `ng build` completes with no TypeScript errors
-- [x] 4.2 `./mvnw test` (backend suite) still passes
+- [x] 4.1 `ng build` completes with no TypeScript errors — 94514bd
+- [x] 4.2 `./mvnw test` (backend suite) still passes — 94514bd
 
 #### Manual
 
-- [x] 4.3 `/transactions` shows empty state for new user
-- [x] 4.4 Add FOOD expense → appears in list with correct category label
-- [x] 4.5 Add RECURRING SALARY → shows computed nextExpectedDate
-- [x] 4.6 Edit expense → all fields editable; update succeeds
-- [x] 4.7 Delete entry → confirmation dialog; entry removed
-- [x] 4.8 "Mark Paid" on obligation → mini-form; confirm → linked transaction in `/transactions`
+- [x] 4.3 `/transactions` shows empty state for new user — 94514bd
+- [x] 4.4 Add FOOD expense → appears in list with correct category label — 94514bd
+- [x] 4.5 Add RECURRING SALARY → shows computed nextExpectedDate — 94514bd
+- [x] 4.6 Edit expense → all fields editable; update succeeds — 94514bd
+- [x] 4.7 Delete entry → confirmation dialog; entry removed — 94514bd
+- [x] 4.8 "Mark Paid" on obligation → mini-form; confirm → linked transaction in `/transactions` — 94514bd
 
 ### Phase 5: Dashboard Backend
 
@@ -835,7 +835,7 @@ No existing data to migrate. V7 and V8 apply to a live schema that already has o
 
 #### Manual
 
-- [ ] 6.3 Dashboard KPI tiles reflect seeded transaction data
-- [ ] 6.4 Month picker change re-fetches summary
-- [ ] 6.5 "Show Trends" renders 6-month bar chart; "Hide Trends" collapses it
-- [ ] 6.6 No console errors; no regressions on `/transactions` or `/obligations`
+- [x] 6.3 Dashboard KPI tiles reflect seeded transaction data
+- [x] 6.4 Month picker change re-fetches summary
+- [x] 6.5 "Show Trends" renders 6-month bar chart; "Hide Trends" collapses it
+- [x] 6.6 No console errors; no regressions on `/transactions` or `/obligations`
