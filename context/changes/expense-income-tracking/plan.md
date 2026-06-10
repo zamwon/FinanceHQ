@@ -830,12 +830,12 @@ No existing data to migrate. V7 and V8 apply to a live schema that already has o
 
 #### Automated
 
-- [x] 6.1 `ng build` passes with no TypeScript errors (including ng2-charts types)
-- [x] 6.2 `./mvnw test` (backend suite) still passes
+- [x] 6.1 `ng build` passes with no TypeScript errors (including ng2-charts types) — 17183c2
+- [x] 6.2 `./mvnw test` (backend suite) still passes — 17183c2
 
 #### Manual
 
-- [x] 6.3 Dashboard KPI tiles reflect seeded transaction data
-- [x] 6.4 Month picker change re-fetches summary
-- [x] 6.5 "Show Trends" renders 6-month bar chart; "Hide Trends" collapses it
-- [x] 6.6 No console errors; no regressions on `/transactions` or `/obligations`
+- [x] 6.3 Dashboard KPI tiles reflect seeded transaction data — 17183c2
+- [x] 6.4 Month picker change re-fetches summary — 17183c2
+- [x] 6.5 "Show Trends" renders 6-month bar chart; "Hide Trends" collapses it — 17183c2
+- [x] 6.6 No console errors; no regressions on `/transactions` or `/obligations` — 17183c2
