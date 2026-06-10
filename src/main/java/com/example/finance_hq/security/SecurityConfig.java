@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**", "/sentry-tunnel").permitAll()
                 .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
                 // SPA shell routes — Angular guard handles client-side auth checks.
-                .requestMatchers(HttpMethod.GET, "/", "/index.html", "/login", "/register", "/dashboard").permitAll()
+                .requestMatchers(HttpMethod.GET, "/", "/index.html", "/login", "/register", "/dashboard", "/portfolio").permitAll()
                 // Static assets — explicit extensions are safer than dot-based matching.
                 .requestMatchers(HttpMethod.GET, "/*.js", "/*.js.map", "/*.css", "/*.css.map",
                     "/*.ico", "/*.png", "/*.svg", "/*.woff", "/*.woff2", "/*.ttf", "/assets/**").permitAll()

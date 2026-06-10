@@ -1,0 +1,105 @@
+### ──────────────────────────────────────────────────
+### FinanceHQ – Portfolio CRUD manual verification
+###   Phase 2 manual checks:
+###   2.2 All CRUD scenarios return expected status codes
+###   2.3 Duplicate ticker POST returns 409 ProblemDetail
+###   2.4 Cross-user isolation (asset created as user A is invisible to user B)
+### ──────────────────────────────────────────────────
+### Prerequisites:
+###   1. Server running on localhost:8080 with --spring.profiles.active=local
+###   2. Select "dev" environment (top-right in IntelliJ HTTP Client)
+###   3. Run auth-flow.http Steps 1–2 first to populate accessToken
+###   4. Run requests IN ORDER
+
+### ─── List — expect 200 with [] for a fresh user ───────────────
+GET {{baseUrl}}/api/portfolio
+Authorization: Bearer {{accessToken}}
+
+
+### ─── Create (BTC) — expect 201; captures portfolioAssetId ─────
+POST {{baseUrl}}/api/portfolio
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ticker": "BTC",
+  "assetGroup": "Crypto",
+  "shares": 0.5,
+  "avgBuyPricePln": 150000.00,
+  "avgBuyPriceAssetCurrency": 37500.00,
+  "purchaseValuePln": 75000.00,
+  "purchaseValueAssetCurrency": 18750.00,
+  "purchaseSharePercent": 30.00
+}
+
+> {%
+  client.global.set("portfolioAssetId", response.body.id);
+%}
+
+
+### ─── List — expect 200, contains BTC ──────────────────────────
+GET {{baseUrl}}/api/portfolio
+Authorization: Bearer {{accessToken}}
+
+
+### ─── Update (PATCH shares + assetGroup) — expect 200 ──────────
+PATCH {{baseUrl}}/api/portfolio/{{portfolioAssetId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "shares": 0.75,
+  "assetGroup": "Digital Assets"
+}
+
+
+### ─── Delete — expect 204 ───────────────────────────────────────
+DELETE {{baseUrl}}/api/portfolio/{{portfolioAssetId}}
+Authorization: Bearer {{accessToken}}
+
+
+### ─── List after delete — expect 200 with [] ───────────────────
+GET {{baseUrl}}/api/portfolio
+Authorization: Bearer {{accessToken}}
+
+
+### ─── Duplicate ticker (expect 409) ────────────────────────────
+### First create AAPL, then try to create AAPL again
+POST {{baseUrl}}/api/portfolio
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ticker": "AAPL",
+  "assetGroup": "US Stocks",
+  "shares": 10.0,
+  "avgBuyPricePln": 750.00,
+  "avgBuyPriceAssetCurrency": 190.00,
+  "purchaseValuePln": 7500.00,
+  "purchaseValueAssetCurrency": 1900.00
+}
+
+> {%
+  client.global.set("aaplId", response.body.id);
+%}
+
+
+### ─── Second AAPL — expect 409 Conflict with ProblemDetail ─────
+POST {{baseUrl}}/api/portfolio
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ticker": "AAPL",
+  "assetGroup": "US Stocks",
+  "shares": 5.0,
+  "avgBuyPricePln": 800.00,
+  "avgBuyPriceAssetCurrency": 200.00,
+  "purchaseValuePln": 4000.00,
+  "purchaseValueAssetCurrency": 1000.00
+}
+
+
+### ─── Cleanup AAPL ───────────────────────────────────────────────
+DELETE {{baseUrl}}/api/portfolio/{{aaplId}}
+Authorization: Bearer {{accessToken}}

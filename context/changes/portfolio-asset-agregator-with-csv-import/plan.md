@@ -632,23 +632,23 @@ V10 is purely additive. No existing data is modified. Flyway baseline (`baseline
 
 #### Automated
 
-- [x] 1.1 `./mvnw test` — all existing tests pass; @SpringBootTest context loads confirming V10 migration applied
+- [x] 1.1 `./mvnw test` — all existing tests pass; @SpringBootTest context loads confirming V10 migration applied — 92d02ad
 
 #### Manual
 
-- [x] 1.2 Connect to local PostgreSQL; confirm `portfolio_assets` table schema, UNIQUE constraint, and index exist
+- [x] 1.2 Connect to local PostgreSQL; confirm `portfolio_assets` table schema, UNIQUE constraint, and index exist — 92d02ad
 
 ### Phase 2: Backend CRUD
 
 #### Automated
 
-- [ ] 2.1 `./mvnw test` — all tests pass including `PortfolioAssetControllerIntegrationTest`
+- [x] 2.1 `./mvnw test` — all tests pass including `PortfolioAssetControllerIntegrationTest`
 
 #### Manual
 
-- [ ] 2.2 All CRUD scenarios in `portfolio.http` return expected status codes
-- [ ] 2.3 Duplicate ticker POST returns 409 ProblemDetail with descriptive message
-- [ ] 2.4 Cross-user isolation confirmed
+- [x] 2.2 All CRUD scenarios in `portfolio.http` return expected status codes
+- [x] 2.3 Duplicate ticker POST returns 409 ProblemDetail with descriptive message
+- [x] 2.4 Cross-user isolation confirmed
 
 ### Phase 3: Price Refresh Service
 
