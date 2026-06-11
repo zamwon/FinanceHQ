@@ -658,9 +658,9 @@ V10 is purely additive. No existing data is modified. Flyway baseline (`baseline
 
 #### Manual
 
-- [ ] 3.2 Refresh with real API keys populates prices for AAPL (Twelve Data) and BTC (CoinGecko)
-- [ ] 3.3 Second refresh within 15 min returns `"refreshed": false`
-- [ ] 3.4 PKN/XWAR asset receives a price from Twelve Data (GPW freshness verified)
+- [x] 3.2 Refresh with real API keys populates prices for AAPL (Twelve Data) and BTC (CoinGecko)
+- [x] 3.3 Second refresh within 15 min returns `"refreshed": false`
+- [x] 3.4 PKN/XWAR asset receives a price from Twelve Data (GPW freshness verified)
 
 ### Phase 4: CSV Import
 

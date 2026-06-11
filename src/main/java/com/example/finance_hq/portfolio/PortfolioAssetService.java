@@ -21,6 +21,7 @@ public class PortfolioAssetService {
         this.repository = repository;
     }
 
+    /** Returns up to 500 assets for the given user, ordered by creation date (newest first). */
     @Transactional(readOnly = true)
     public List<PortfolioAssetResponse> findAll(User user) {
         PageRequest page = PageRequest.of(0, 500, Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -29,6 +30,7 @@ public class PortfolioAssetService {
                 .toList();
     }
 
+    /** Creates a new portfolio asset; throws if a position for the same ticker already exists. */
     @Transactional
     public PortfolioAssetResponse create(User user, CreatePortfolioAssetRequest req) {
         repository.findByUserAndTicker(user, req.ticker()).ifPresent(existing -> {
@@ -50,6 +52,10 @@ public class PortfolioAssetService {
         return PortfolioAssetResponse.from(repository.save(asset));
     }
 
+    /**
+     * Patches an existing asset; at least one field must be non-null.
+     * Rejects a ticker change that would collide with an existing position.
+     */
     @Transactional
     public PortfolioAssetResponse update(User user, UUID id, UpdatePortfolioAssetRequest req) {
         if (req.ticker() == null && req.assetGroup() == null && req.shares() == null
@@ -82,6 +88,7 @@ public class PortfolioAssetService {
         return PortfolioAssetResponse.from(repository.save(asset));
     }
 
+    /** Removes the asset; throws if the asset does not belong to the given user. */
     @Transactional
     public void delete(User user, UUID id) {
         PortfolioAsset asset = repository.findByIdAndUser(id, user)

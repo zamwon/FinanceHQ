@@ -103,3 +103,95 @@ Content-Type: application/json
 ### ─── Cleanup AAPL ───────────────────────────────────────────────
 DELETE {{baseUrl}}/api/portfolio/{{aaplId}}
 Authorization: Bearer {{accessToken}}
+
+
+### ──────────────────────────────────────────────────
+### Phase 3 manual checks:
+###   3.2 Refresh with real API keys populates prices for AAPL and BTC
+###   3.3 Second refresh within 15 min returns "refreshed": false
+###   3.4 PKN/XWAR asset receives a price from Twelve Data
+### ──────────────────────────────────────────────────
+### Prerequisites:
+###   Set TWELVEDATA_API_KEY in application-local.properties
+
+### ─── Create AAPL (security) ─────────────────────────────────────
+POST {{baseUrl}}/api/portfolio
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ticker": "AAPL",
+  "assetGroup": "US Stocks",
+  "shares": 10.0,
+  "avgBuyPricePln": 750.00,
+  "avgBuyPriceAssetCurrency": 190.00,
+  "purchaseValuePln": 7500.00,
+  "purchaseValueAssetCurrency": 1900.00
+}
+
+> {%
+  client.global.set("aaplId2", response.body.id);
+%}
+
+
+### ─── Create BTC (crypto) ────────────────────────────────────────
+POST {{baseUrl}}/api/portfolio
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ticker": "BTC",
+  "assetGroup": "Crypto",
+  "shares": 0.5,
+  "avgBuyPricePln": 150000.00,
+  "avgBuyPriceAssetCurrency": 37500.00,
+  "purchaseValuePln": 75000.00,
+  "purchaseValueAssetCurrency": 18750.00
+}
+
+> {%
+  client.global.set("btcId", response.body.id);
+%}
+
+
+### ─── Create PKN/XWAR (GPW security) ────────────────────────────
+POST {{baseUrl}}/api/portfolio
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ticker": "PKN/XWAR",
+  "assetGroup": "PL Stocks",
+  "shares": 50.0,
+  "avgBuyPricePln": 50.00,
+  "avgBuyPriceAssetCurrency": 50.00,
+  "purchaseValuePln": 2500.00,
+  "purchaseValueAssetCurrency": 2500.00
+}
+
+> {%
+  client.global.set("pknId", response.body.id);
+%}
+
+
+### ─── Refresh prices — expect "refreshed": true, prices populated ─
+POST {{baseUrl}}/api/portfolio/refresh-prices
+Authorization: Bearer {{accessToken}}
+
+
+### ─── Refresh again immediately — expect "refreshed": false ──────
+POST {{baseUrl}}/api/portfolio/refresh-prices
+Authorization: Bearer {{accessToken}}
+
+
+### ─── Cleanup ────────────────────────────────────────────────────
+DELETE {{baseUrl}}/api/portfolio/{{aaplId2}}
+Authorization: Bearer {{accessToken}}
+
+###
+DELETE {{baseUrl}}/api/portfolio/{{btcId}}
+Authorization: Bearer {{accessToken}}
+
+###
+DELETE {{baseUrl}}/api/portfolio/{{pknId}}
+Authorization: Bearer {{accessToken}}
