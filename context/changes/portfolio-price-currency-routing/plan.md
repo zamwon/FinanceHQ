@@ -244,12 +244,12 @@ before committing.
 
 #### Automated
 
-- [x] 1.1 All backend tests pass: `./mvnw test -Dfrontend.skip=true`
-- [x] 1.2 Checkstyle passes (no unused imports)
+- [x] 1.1 All backend tests pass: `./mvnw test -Dfrontend.skip=true` — df8778e
+- [x] 1.2 Checkstyle passes (no unused imports) — df8778e
 
 #### Manual
 
-- [x] 1.3 AAPL + BTC refresh: `currentPriceUsd` ≠ `currentPricePln`; PLN ≈ USD × live rate
-- [x] 1.4 USD/PLN entry appears in Twelve Data batch response (forex accepted by batch endpoint)
-- [x] 1.5 PKN/XWAR: `currentPriceUsd` null, `currentPricePln` correct PLN value
-- [x] 1.6 Second refresh within 15 min returns `"refreshed": false`
+- [x] 1.3 AAPL + BTC refresh: `currentPriceUsd` ≠ `currentPricePln`; PLN ≈ USD × live rate — df8778e
+- [x] 1.4 USD/PLN entry appears in Twelve Data batch response (forex accepted by batch endpoint) — df8778e
+- [x] 1.5 PKN/XWAR: `currentPriceUsd` null, `currentPricePln` correct PLN value — df8778e
+- [x] 1.6 Second refresh within 15 min returns `"refreshed": false` — df8778e
