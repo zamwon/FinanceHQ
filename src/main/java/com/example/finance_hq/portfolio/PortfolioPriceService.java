@@ -151,7 +151,7 @@ public class PortfolioPriceService {
             if (usdPlnRate == null) {
                 log.warn("USD/PLN rate unavailable in Twelve Data batch; current_price_pln will be null for non-GPW assets");
             } else {
-                log.info("USD/PLN rate from Twelve Data batch: {}", usdPlnRate);
+                log.debug("USD/PLN rate from Twelve Data batch: {}", usdPlnRate);
             }
 
             for (PortfolioAsset asset : assets) {
@@ -167,7 +167,7 @@ public class PortfolioPriceService {
                 if (entry.get("response") instanceof Map<?, ?> priceObj) {
                     final BigDecimal rate = usdPlnRate;
                     parseTwelveDataPrice(priceObj.get("price")).ifPresent(p -> {
-                        usdPrices.put(ticker, p);
+                        usdPrices.put(ticker, p.setScale(8, RoundingMode.HALF_UP));
                         if (rate != null) {
                             plnPrices.put(ticker, p.multiply(rate).setScale(4, RoundingMode.HALF_UP));
                         }
@@ -175,7 +175,7 @@ public class PortfolioPriceService {
                 }
             }
         } catch (Exception e) {
-            log.warn("Twelve Data price fetch failed: {}", e.getMessage());
+            log.warn("Twelve Data price fetch failed", e);
         }
     }
 
@@ -203,7 +203,7 @@ public class PortfolioPriceService {
                         p -> plnPrices.put(ticker, p),
                         () -> log.warn("Yahoo Finance returned no price for ticker={}", ticker));
             } catch (Exception e) {
-                log.warn("Yahoo Finance price fetch failed for ticker={}: {}", ticker, e.getMessage());
+                log.warn("Yahoo Finance price fetch failed for ticker={}", ticker, e);
             }
         }
     }

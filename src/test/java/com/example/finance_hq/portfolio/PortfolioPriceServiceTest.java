@@ -78,6 +78,8 @@ class PortfolioPriceServiceTest {
         assertThat(result.assets()).hasSize(2);
         assertThat(findByTicker(result, "BTC").currentPriceUsd()).isEqualByComparingTo("65000.00");
         assertThat(findByTicker(result, "BTC").currentPricePln()).isEqualByComparingTo("260000.0000");
+        assertThat(findByTicker(result, "ETH").currentPriceUsd()).isEqualByComparingTo("3500.00");
+        assertThat(findByTicker(result, "ETH").currentPricePln()).isEqualByComparingTo("14000.0000");
     }
 
     @Test
