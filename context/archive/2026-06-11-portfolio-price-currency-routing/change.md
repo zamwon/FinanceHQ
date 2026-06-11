@@ -1,9 +1,10 @@
 ---
 id: portfolio-price-currency-routing
 title: Fix price currency routing — USD→PLN conversion for Twelve Data assets
-status: impl_reviewed
+status: archived
 created: 2026-06-11
 updated: 2026-06-11
+archived_at: 2026-06-11T20:59:20Z
 
 ---
 
