@@ -666,20 +666,20 @@ V10 is purely additive. No existing data is modified. Flyway baseline (`baseline
 
 #### Automated
 
-- [x] 4.1 `./mvnw test` — all tests pass including `PortfolioCsvImportServiceTest` and updated integration tests
+- [x] 4.1 `./mvnw test` — all tests pass including `PortfolioCsvImportServiceTest` and updated integration tests — 463f674
 
 #### Manual
 
-- [x] 4.2 Valid CSV import → correct asset count returned
-- [x] 4.3 Re-import same CSV → same count (UPSERT confirmed)
-- [x] 4.4 CSV with bad decimal → 422 with row number and column
+- [x] 4.2 Valid CSV import → correct asset count returned — 463f674
+- [x] 4.3 Re-import same CSV → same count (UPSERT confirmed) — 463f674
+- [x] 4.4 CSV with bad decimal → 422 with row number and column — 463f674
 - [ ] 4.5 File > 5 MB → 413 ProblemDetail
 
 ### Phase 5: Frontend — Portfolio Page
 
 #### Automated
 
-- [ ] 5.1 `ng build` completes without TypeScript errors
+- [x] 5.1 `ng build` completes without TypeScript errors
 
 #### Manual
 

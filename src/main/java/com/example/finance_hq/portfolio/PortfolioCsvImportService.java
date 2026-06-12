@@ -10,12 +10,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -23,13 +28,24 @@ public class PortfolioCsvImportService {
 
     private static final int ROW_LIMIT = 10_000;
 
-    private static final CSVFormat CSV_FORMAT = CSVFormat.DEFAULT.builder()
-            .setHeader()
-            .setSkipHeaderRecord(true)
-            .setIgnoreHeaderCase(true)
-            .setTrim(true)
-            .setIgnoreEmptyLines(true)
-            .build();
+    // Normalized form → canonical column name.
+    // Normalize: lowercase → strip [^a-z0-9 ] → collapse spaces → trim.
+    // Stripping all non-ASCII characters makes this encoding-agnostic: garbled Polish
+    // chars (CP1250 bytes read as UTF-8, or Latin-1 surrogates like æ, ³) all strip
+    // to the same ASCII skeleton, matching the same normalized key as correct UTF-8.
+    // Example: "Wartość" and "Wartoæ" both normalize to "warto zakupu pln".
+    private static final Map<String, String> NORMALIZED_ALIASES = Map.ofEntries(
+            Map.entry("walor", "asset"),
+            Map.entry("liczba jednostek", "shares"),
+            Map.entry("śr. cena zakupu pln", "avg_buy_price_pln"),
+            Map.entry("śr. cena zakupu w walucie waloru", "avg_buy_price_asset_currency"),
+            Map.entry("wartość zakupu pln", "purchase_value_pln"),
+            Map.entry("wartość zakupu w walucie waloru", "purchase_value_asset_currency"),
+            Map.entry("udział w wartości zakupu", "purchase_share_percent"),
+            Map.entry("cena aktualna pln", "current_price"),
+            Map.entry("grupa", "asset_group"),
+            Map.entry("group of asset", "asset_group")
+    );
 
     private final PortfolioAssetRepository repository;
 
@@ -39,19 +55,39 @@ public class PortfolioCsvImportService {
 
     @Transactional
     public CsvImportResult importCsv(User user, MultipartFile file) {
-        List<CSVRecord> records;
-        try (Reader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8)) {
-            records = CSV_FORMAT.parse(reader).getRecords();
+        byte[] bytes;
+        try {
+            bytes = file.getBytes();
         } catch (Exception e) {
             throw new InvalidCsvException("Could not read CSV file: " + e.getMessage());
+        }
+
+        String headerLine = readFirstLine(bytes);
+        char delimiter = headerLine.contains(";") ? ';' : ',';
+        String[] rawHeaders = headerLine.split(Pattern.quote(String.valueOf(delimiter)), -1);
+        String[] canonicalHeaders = remapHeaders(rawHeaders);
+
+        CSVFormat format = CSVFormat.DEFAULT.builder()
+                .setHeader(canonicalHeaders)
+                .setSkipHeaderRecord(true)
+                .setDelimiter(delimiter)
+                .setIgnoreHeaderCase(true)
+                .setTrim(true)
+                .setIgnoreEmptyLines(true)
+                .build();
+
+        List<CSVRecord> records;
+        try (Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.UTF_8)) {
+            records = format.parse(reader).getRecords();
+        } catch (Exception e) {
+            throw new InvalidCsvException("Could not parse CSV file: " + e.getMessage());
         }
 
         if (records.isEmpty()) {
             return new CsvImportResult(0, List.of());
         }
 
-        CSVRecord first = records.getFirst();
-        validateRequiredHeaders(first);
+        validateRequiredHeaders(records.getFirst());
 
         if (records.size() > ROW_LIMIT) {
             throw new InvalidCsvException("CSV exceeds the maximum of " + ROW_LIMIT + " rows");
@@ -75,6 +111,11 @@ public class PortfolioCsvImportService {
             }
 
             String assetGroup = resolveAssetGroup(record);
+            if (assetGroup.isBlank()) {
+                errors.add(new RowError(rowNum, "asset_group", "Asset group must not be blank"));
+                rowNum++;
+                continue;
+            }
 
             BigDecimal shares = parseBigDecimal(record, "shares", rowNum, errors);
             BigDecimal avgBuyPricePln = parseBigDecimal(record, "avg_buy_price_pln", rowNum, errors);
@@ -105,7 +146,9 @@ public class PortfolioCsvImportService {
                 entity.setAvgBuyPriceAssetCurrency(avgBuyPriceAssetCurrency);
                 entity.setPurchaseValuePln(purchaseValuePln);
                 entity.setPurchaseValueAssetCurrency(purchaseValueAssetCurrency);
-                entity.setPurchaseSharePercent(purchaseSharePercent);
+                if (record.isMapped("purchase_share_percent")) {
+                    entity.setPurchaseSharePercent(purchaseSharePercent);
+                }
                 entities.add(entity);
             }
 
@@ -118,6 +161,33 @@ public class PortfolioCsvImportService {
 
         repository.saveAll(entities);
         return new CsvImportResult(entities.size(), List.of());
+    }
+
+    private String readFirstLine(byte[] bytes) {
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.UTF_8))) {
+            String line = br.readLine();
+            return line != null ? line : "";
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    private String[] remapHeaders(String[] rawHeaders) {
+        String[] canonical = new String[rawHeaders.length];
+        for (int i = 0; i < rawHeaders.length; i++) {
+            String raw = rawHeaders[i].trim();
+            String key = normalize(raw);
+            canonical[i] = NORMALIZED_ALIASES.getOrDefault(key, raw.toLowerCase(Locale.ROOT));
+        }
+        return canonical;
+    }
+
+    private static String normalize(String s) {
+        return s.toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9 ]", "")
+                .replaceAll(" +", " ")
+                .trim();
     }
 
     private void validateRequiredHeaders(CSVRecord first) {
@@ -150,10 +220,20 @@ public class PortfolioCsvImportService {
 
     private BigDecimal parseBigDecimalRaw(String raw, String column, int rowNum, List<RowError> errors) {
         try {
-            return new BigDecimal(raw.replace(",", "."));
+            return new BigDecimal(normalizeNumber(raw));
         } catch (NumberFormatException e) {
             errors.add(new RowError(rowNum, column, "Invalid number: \"" + raw + "\""));
             return null;
         }
+    }
+
+    // Handles European number formats: "1 234,56", "1.234,56", "1,5", "1.5"
+    private static String normalizeNumber(String raw) {
+        raw = raw.replace(" ", "").replace(" ", ""); // strip space thousand separators
+        if (raw.contains(".") && raw.contains(",")) {
+            // European format: dot = thousand sep, comma = decimal sep
+            return raw.replace(".", "").replace(",", ".");
+        }
+        return raw.replace(",", ".");
     }
 }

@@ -64,10 +64,12 @@ public class PortfolioAssetController {
     public ResponseEntity<?> importCsv(
             @AuthenticationPrincipal User user,
             @RequestParam("file") MultipartFile file) {
+        // UX guard only — client-declared content-type is not a security boundary;
+        // Commons CSV is the real gate (non-text content will fail to parse → 400).
         String contentType = file.getContentType();
-        if (contentType != null && !contentType.equals("text/csv")
+        if (contentType == null || (!contentType.equals("text/csv")
                 && !contentType.equals("text/plain")
-                && !contentType.equals("application/csv")) {
+                && !contentType.equals("application/csv"))) {
             ProblemDetail problem = ProblemDetail.forStatus(400);
             problem.setTitle("Bad Request");
             problem.setDetail("Only CSV files are accepted (text/csv, text/plain, application/csv)");

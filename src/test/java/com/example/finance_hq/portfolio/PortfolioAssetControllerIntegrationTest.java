@@ -380,6 +380,23 @@ class PortfolioAssetControllerIntegrationTest {
     }
 
     @Test
+    void import_200_doesNotExposeOtherUsersAssets() throws Exception {
+        String tokenA = registerAndLogin("portfolio_import_iso_a@test.com", "Test1234!");
+        String tokenB = registerAndLogin("portfolio_import_iso_b@test.com", "Test1234!");
+        String csv = VALID_CSV_HEADER + "SOL,5.0,500.00,125.00,2500.00,625.00,Crypto\n";
+        MockMultipartFile file = csvFile("portfolio.csv", csv);
+
+        mvc.perform(multipart(BASE_PATH + "/import").file(file).header("Authorization", "Bearer " + tokenA))
+           .andExpect(status().isOk());
+
+        MvcResult result = mvc.perform(get(BASE_PATH).header("Authorization", "Bearer " + tokenB))
+                              .andExpect(status().isOk())
+                              .andReturn();
+
+        assertThat(parseBodyAsList(result)).isEmpty();
+    }
+
+    @Test
     void import_422_badDecimalRow() throws Exception {
         String token = registerAndLogin("portfolio_csv_bad_decimal@test.com", "Test1234!");
         String csv = VALID_CSV_HEADER + "BTC,abc,150000.00,37500.00,75000.00,18750.00,Crypto\n";
