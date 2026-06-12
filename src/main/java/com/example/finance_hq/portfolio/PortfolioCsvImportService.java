@@ -15,7 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -77,7 +77,7 @@ public class PortfolioCsvImportService {
                 .build();
 
         List<CSVRecord> records;
-        try (Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.UTF_8)) {
+        try (Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes), Charset.forName("windows-1252"))) {
             records = format.parse(reader).getRecords();
         } catch (Exception e) {
             throw new InvalidCsvException("Could not parse CSV file: " + e.getMessage());
@@ -105,16 +105,13 @@ public class PortfolioCsvImportService {
 
             String ticker = record.get("asset").trim();
             if (ticker.isBlank()) {
-                errors.add(new RowError(rowNum, "asset", "Asset ticker must not be blank"));
                 rowNum++;
-                continue;
+                continue; // skip summary/total rows with no ticker
             }
 
             String assetGroup = resolveAssetGroup(record);
             if (assetGroup.isBlank()) {
-                errors.add(new RowError(rowNum, "asset_group", "Asset group must not be blank"));
-                rowNum++;
-                continue;
+                assetGroup = "Other";
             }
 
             BigDecimal shares = parseBigDecimal(record, "shares", rowNum, errors);
@@ -165,7 +162,7 @@ public class PortfolioCsvImportService {
 
     private String readFirstLine(byte[] bytes) {
         try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.UTF_8))) {
+                new InputStreamReader(new ByteArrayInputStream(bytes), Charset.forName("windows-1250")))) {
             String line = br.readLine();
             return line != null ? line : "";
         } catch (Exception e) {
@@ -174,11 +171,19 @@ public class PortfolioCsvImportService {
     }
 
     private String[] remapHeaders(String[] rawHeaders) {
+        // Pre-normalize the alias map keys so they match regardless of encoding
+        Map<String, String> normalizedLookup = new java.util.HashMap<>();
+        NORMALIZED_ALIASES.forEach((k, v) -> normalizedLookup.put(normalize(k), v));
+
         String[] canonical = new String[rawHeaders.length];
         for (int i = 0; i < rawHeaders.length; i++) {
             String raw = rawHeaders[i].trim();
+            if (raw.isEmpty()) {
+                canonical[i] = "_col_" + i + "_";
+                continue;
+            }
             String key = normalize(raw);
-            canonical[i] = NORMALIZED_ALIASES.getOrDefault(key, raw.toLowerCase(Locale.ROOT));
+            canonical[i] = normalizedLookup.getOrDefault(key, raw.toLowerCase(Locale.ROOT));
         }
         return canonical;
     }
@@ -219,6 +224,9 @@ public class PortfolioCsvImportService {
     }
 
     private BigDecimal parseBigDecimalRaw(String raw, String column, int rowNum, List<RowError> errors) {
+        if (raw.isEmpty() || raw.equals("-") || raw.equals("---") || raw.equalsIgnoreCase("n/a")) {
+            return null; // placeholder value — silently skip, no error
+        }
         try {
             return new BigDecimal(normalizeNumber(raw));
         } catch (NumberFormatException e) {

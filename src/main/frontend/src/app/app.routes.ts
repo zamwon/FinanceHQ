@@ -34,6 +34,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/transactions/transactions.component').then(m => m.TransactionsComponent),
       },
+      {
+        path: 'portfolio',
+        loadComponent: () =>
+          import('./features/portfolio/portfolio.component').then(m => m.PortfolioComponent),
+      },
     ],
   },
   {

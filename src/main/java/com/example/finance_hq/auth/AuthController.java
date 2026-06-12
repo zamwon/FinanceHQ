@@ -6,12 +6,16 @@ import com.example.finance_hq.auth.dto.RefreshRequest;
 import com.example.finance_hq.auth.dto.RegisterRequest;
 import com.example.finance_hq.auth.dto.TokenResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.example.finance_hq.util.LogMaskingUtils.maskEmail;
+
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -24,22 +28,26 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest req) {
+        log.info("Started register call as {}", maskEmail(req.email()));
         authService.register(req);
         return ResponseEntity.status(201).build();
     }
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest req) {
+        log.info("Started login call as {}", maskEmail(req.email()));
         return ResponseEntity.ok(authService.login(req));
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refresh(@Valid @RequestBody RefreshRequest req) {
+        log.info("Started refresh call");
         return ResponseEntity.ok(authService.refresh(req.refreshToken()));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@Valid @RequestBody LogoutRequest req) {
+        log.info("Started logout call");
         authService.logout(req.refreshToken());
         return ResponseEntity.noContent().build();
     }

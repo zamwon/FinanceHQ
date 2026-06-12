@@ -226,24 +226,24 @@ Add `@Slf4j` annotation and one `log.info()` call at the top of every mapped met
 
 #### Automated
 
-- [x] 1.1 Build passes after creating LogMaskingUtils: `./mvnw test -pl . -q`
+- [x] 1.1 Build passes after creating LogMaskingUtils: `./mvnw test -pl . -q` — 4f7e844
 
 #### Manual
 
-- [ ] 1.2 `maskEmail("blazej@gmail.com")` returns `"b***@gmail.com"`
-- [ ] 1.3 `maskEmail(null)` returns `"[masked]"`
-- [ ] 1.4 `maskEmail("@gmail.com")` returns `"[masked]"`
+- [x] 1.2 `maskEmail("blazej@gmail.com")` returns `"b***@gmail.com"` — 4f7e844
+- [x] 1.3 `maskEmail(null)` returns `"[masked]"` — 4f7e844
+- [x] 1.4 `maskEmail("@gmail.com")` returns `"[masked]"` — 4f7e844
 
 ### Phase 2: Wire Logging Into All Six Controllers
 
 #### Automated
 
-- [ ] 2.1 Build and full test suite pass: `./mvnw test`
+- [x] 2.1 Build and full test suite pass: `./mvnw test`
 
 #### Manual
 
-- [ ] 2.2 POST /auth/login emits `Started login call as b***@gmail.com`
-- [ ] 2.3 POST /auth/refresh emits `Started refresh call` (no email)
-- [ ] 2.4 GET /api/obligations emits `Started list obligations as b***@gmail.com`
-- [ ] 2.5 PATCH /api/obligations/{id} log includes UUID and masked email
-- [ ] 2.6 POST /sentry-tunnel emits no new `Started …` line
+- [x] 2.2 POST /auth/login emits `Started login call as b***@gmail.com`
+- [x] 2.3 POST /auth/refresh emits `Started refresh call` (no email)
+- [x] 2.4 GET /api/obligations emits `Started list obligations as b***@gmail.com`
+- [x] 2.5 PATCH /api/obligations/{id} log includes UUID and masked email
+- [x] 2.6 POST /sentry-tunnel emits no new `Started …` line

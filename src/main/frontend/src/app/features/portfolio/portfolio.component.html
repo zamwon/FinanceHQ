@@ -1,0 +1,108 @@
+<div>
+  <!-- Header -->
+  <div class="flex items-start justify-between mb-6">
+    <div>
+      <h1 class="text-xl font-bold text-zinc-900 dark:text-zinc-50">Portfolio</h1>
+      <p class="text-sm text-zinc-500">{{ assets().length }} position{{ assets().length === 1 ? '' : 's' }}</p>
+    </div>
+    <div class="flex gap-2">
+      <input #csvInput type="file" accept=".csv" class="hidden" (change)="onFileSelected($event)" />
+      <button (click)="triggerCsvImport()"
+              class="border border-zinc-200 dark:border-zinc-700 rounded-md px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+        Import CSV
+      </button>
+      <button (click)="openAdd()"
+              class="bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 font-semibold rounded-md px-4 py-2 text-sm hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors">
+        + Add Position
+      </button>
+    </div>
+  </div>
+
+  <!-- CSV import errors -->
+  @if (importErrors().length > 0) {
+    <div class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md px-4 py-3 mb-4 text-sm text-red-600 dark:text-red-400">
+      <p class="font-semibold mb-1">CSV import failed — {{ importErrors().length }} row error{{ importErrors().length === 1 ? '' : 's' }}:</p>
+      <ul class="list-disc list-inside space-y-0.5">
+        @for (e of importErrors(); track e.rowNumber) {
+          <li>Row {{ e.rowNumber }}, column "{{ e.column }}": {{ e.message }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (loading()) {
+    <p class="text-sm text-zinc-500">Loading…</p>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md px-4 py-3 text-sm text-red-600 dark:text-red-400">
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading() && !error() && assets().length === 0) {
+    <div class="flex flex-col items-center justify-center py-20 text-center">
+      <p class="text-zinc-500 mb-4">No positions yet. Add your first one or import a CSV.</p>
+      <button (click)="openAdd()"
+              class="bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900 font-semibold rounded-md px-4 py-2 text-sm">
+        + Add Position
+      </button>
+    </div>
+  }
+
+  <!-- Table -->
+  @if (!loading() && assets().length > 0) {
+    <div class="border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-x-auto">
+      <!-- Header -->
+      <div class="grid grid-cols-[1.2fr_1fr_0.8fr_1fr_1fr_1fr_0.7fr_0.7fr_1fr_80px] min-w-[900px] bg-zinc-50 dark:bg-zinc-900 border-b-2 border-zinc-200 dark:border-zinc-700 px-4 py-2.5">
+        @for (col of ['TICKER','GROUP','SHARES','AVG BUY PLN','CURR PRICE PLN','CURR VALUE PLN','PURCH %','CURR %','LAST UPDATED','ACTIONS']; track col) {
+          <span class="text-[10px] font-bold text-zinc-500 tracking-wider">{{ col }}</span>
+        }
+      </div>
+      <!-- Rows -->
+      @for (a of assets(); track a.id) {
+        <div class="grid grid-cols-[1.2fr_1fr_0.8fr_1fr_1fr_1fr_0.7fr_0.7fr_1fr_80px] min-w-[900px] px-4 py-3 items-center border-b border-zinc-100 dark:border-zinc-800 last:border-0 bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
+          <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-50">{{ a.ticker }}</p>
+          <p class="text-sm text-zinc-600 dark:text-zinc-400">{{ a.assetGroup }}</p>
+          <p class="text-sm text-zinc-700 dark:text-zinc-300">{{ formatNumber(a.shares, 8) }}</p>
+          <p class="text-sm text-zinc-700 dark:text-zinc-300">{{ formatNumber(a.avgBuyPricePln, 4) }}</p>
+          <p class="text-sm text-zinc-700 dark:text-zinc-300">{{ formatNumber(a.currentPricePln, 4) }}</p>
+          <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-50">{{ formatNumber(a.currentValuePln) }}</p>
+          <p class="text-sm text-zinc-500">{{ a.purchaseSharePercent !== null ? formatNumber(a.purchaseSharePercent, 2) + '%' : '—' }}</p>
+          <p class="text-sm text-zinc-500">{{ a.currentSharePercent !== null ? formatNumber(a.currentSharePercent, 2) + '%' : '—' }}</p>
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs text-zinc-400">{{ formatRelativeTime(a.priceLastUpdatedAt) }}</span>
+            @if (isPriceStale(a)) {
+              <span title="Price is more than 25 hours old" class="text-amber-500 text-sm">⚠</span>
+            }
+          </div>
+          <div class="flex gap-1.5">
+            <button (click)="openEdit(a)"
+                    class="bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded px-2 py-1 text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                    title="Edit">✏️</button>
+            <button (click)="openDelete(a)"
+                    class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 rounded px-2 py-1 text-xs text-red-500 hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+                    title="Delete">🗑</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (showAddEdit()) {
+    <app-portfolio-dialog
+      [asset]="editingAsset()"
+      (saved)="onSaved()"
+      (cancelled)="showAddEdit.set(false)" />
+  }
+
+  @if (showDelete() && deletingAsset()) {
+    <app-portfolio-delete-dialog
+      [asset]="deletingAsset()!"
+      (confirmed)="onDeleted()"
+      (cancelled)="showDelete.set(false)" />
+  }
+</div>

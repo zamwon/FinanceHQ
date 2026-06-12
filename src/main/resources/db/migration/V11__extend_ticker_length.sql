@@ -1,0 +1,1 @@
+ALTER TABLE portfolio_assets ALTER COLUMN ticker TYPE VARCHAR(200);

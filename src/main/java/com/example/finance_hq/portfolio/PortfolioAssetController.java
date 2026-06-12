@@ -6,6 +6,7 @@ import com.example.finance_hq.portfolio.dto.PortfolioAssetResponse;
 import com.example.finance_hq.portfolio.dto.UpdatePortfolioAssetRequest;
 import com.example.finance_hq.user.User;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,8 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.example.finance_hq.util.LogMaskingUtils.maskEmail;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
+@Slf4j
 @RestController
 @RequestMapping(PortfolioAssetController.BASE_PATH)
 public class PortfolioAssetController {
@@ -34,6 +37,7 @@ public class PortfolioAssetController {
 
     @GetMapping
     public ResponseEntity<List<PortfolioAssetResponse>> list(@AuthenticationPrincipal User user) {
+        log.info("Started list portfolio assets as {}", maskEmail(user.getEmail()));
         return ResponseEntity.ok(service.findAll(user));
     }
 
@@ -41,6 +45,7 @@ public class PortfolioAssetController {
     public ResponseEntity<PortfolioAssetResponse> create(
             @AuthenticationPrincipal User user,
             @Valid @RequestBody CreatePortfolioAssetRequest req) {
+        log.info("Started create portfolio asset as {}", maskEmail(user.getEmail()));
         return ResponseEntity.status(201).body(service.create(user, req));
     }
 
@@ -49,6 +54,7 @@ public class PortfolioAssetController {
             @AuthenticationPrincipal User user,
             @PathVariable UUID id,
             @Valid @RequestBody UpdatePortfolioAssetRequest req) {
+        log.info("Started update portfolio asset {} as {}", id, maskEmail(user.getEmail()));
         return ResponseEntity.ok(service.update(user, id, req));
     }
 
@@ -56,6 +62,7 @@ public class PortfolioAssetController {
     public ResponseEntity<Void> delete(
             @AuthenticationPrincipal User user,
             @PathVariable UUID id) {
+        log.info("Started delete portfolio asset {} as {}", id, maskEmail(user.getEmail()));
         service.delete(user, id);
         return ResponseEntity.noContent().build();
     }
@@ -64,6 +71,7 @@ public class PortfolioAssetController {
     public ResponseEntity<?> importCsv(
             @AuthenticationPrincipal User user,
             @RequestParam("file") MultipartFile file) {
+        log.info("Started import CSV as {}", maskEmail(user.getEmail()));
         // UX guard only — client-declared content-type is not a security boundary;
         // Commons CSV is the real gate (non-text content will fail to parse → 400).
         String contentType = file.getContentType();
