@@ -1,9 +1,9 @@
 ---
 change_id: portfolio-asset-agregator-with-csv-import
 title: Portfolio asset tracker with manual entry and CSV import
-status: implementing
+status: implemented
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-06-12
 archived_at: null
 ---
 

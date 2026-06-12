@@ -673,19 +673,19 @@ V10 is purely additive. No existing data is modified. Flyway baseline (`baseline
 - [x] 4.2 Valid CSV import → correct asset count returned — 463f674
 - [x] 4.3 Re-import same CSV → same count (UPSERT confirmed) — 463f674
 - [x] 4.4 CSV with bad decimal → 422 with row number and column — 463f674
-- [x] 4.5 File > 5 MB → 413 ProblemDetail
+- [x] 4.5 File > 5 MB → 413 ProblemDetail — ce327a1
 
 ### Phase 5: Frontend — Portfolio Page
 
 #### Automated
 
-- [x] 5.1 `ng build` completes without TypeScript errors
+- [x] 5.1 `ng build` completes without TypeScript errors — ce327a1
 
 #### Manual
 
-- [x] 5.2 Add/edit/delete positions work end-to-end
-- [x] 5.3 CSV import and re-import work correctly from the UI
-- [x] 5.4 Price refresh triggers on navigation to portfolio page; toast shown on fresh refresh
-- [x] 5.5 Within-15-min navigation does not re-fetch prices
-- [x] 5.6 Stale price indicator visible when prices > 25h old
-- [x] 5.7 No regressions on Dashboard, Obligations, Transactions pages
+- [x] 5.2 Add/edit/delete positions work end-to-end — ce327a1
+- [x] 5.3 CSV import and re-import work correctly from the UI — ce327a1
+- [x] 5.4 Price refresh triggers on navigation to portfolio page; toast shown on fresh refresh — ce327a1
+- [x] 5.5 Within-15-min navigation does not re-fetch prices — ce327a1
+- [x] 5.6 Stale price indicator visible when prices > 25h old — ce327a1
+- [x] 5.7 No regressions on Dashboard, Obligations, Transactions pages — ce327a1
