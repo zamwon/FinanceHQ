@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.mock.web.MockMultipartFile;
+
 import static com.example.finance_hq.portfolio.PortfolioAssetController.BASE_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -310,6 +312,89 @@ class PortfolioAssetControllerIntegrationTest {
            .andExpect(status().isNotFound());
     }
 
+    // ── CSV Import ─────────────────────────────────────────────────────────────
+
+    private static final String VALID_CSV_HEADER =
+            "asset,shares,avg_buy_price_pln,avg_buy_price_asset_currency,purchase_value_pln,purchase_value_asset_currency,asset_group\n";
+
+    @Test
+    void import_401_noToken() throws Exception {
+        MockMultipartFile file = csvFile("test.csv", VALID_CSV_HEADER + "BTC,0.5,150000,37500,75000,18750,Crypto\n");
+        mvc.perform(multipart(BASE_PATH + "/import").file(file))
+           .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void import_200_validCsv_importsAssets() throws Exception {
+        String token = registerAndLogin("portfolio_csv_import@test.com", "Test1234!");
+        String csv = VALID_CSV_HEADER
+                + "BTC,0.5,150000.00,37500.00,75000.00,18750.00,Crypto\n"
+                + "AAPL,10.0,750.00,190.00,7500.00,1900.00,US Stocks\n";
+        MockMultipartFile file = csvFile("portfolio.csv", csv);
+
+        MvcResult result = mvc.perform(multipart(BASE_PATH + "/import")
+                                               .file(file)
+                                               .header("Authorization", "Bearer " + token))
+                              .andExpect(status().isOk())
+                              .andReturn();
+
+        Map<String, Object> body = parseBody(result);
+        assertThat(body.get("importedCount")).isEqualTo(2);
+    }
+
+    @Test
+    void import_200_reimport_upserts_notDuplicates() throws Exception {
+        String token = registerAndLogin("portfolio_csv_upsert@test.com", "Test1234!");
+        String csv = VALID_CSV_HEADER + "ETH,1.0,8000.00,2000.00,8000.00,2000.00,Crypto\n";
+        MockMultipartFile file = csvFile("portfolio.csv", csv);
+
+        mvc.perform(multipart(BASE_PATH + "/import").file(file).header("Authorization", "Bearer " + token))
+           .andExpect(status().isOk());
+
+        MvcResult result = mvc.perform(multipart(BASE_PATH + "/import").file(file).header("Authorization", "Bearer " + token))
+                              .andExpect(status().isOk())
+                              .andReturn();
+
+        assertThat(parseBody(result).get("importedCount")).isEqualTo(1);
+
+        MvcResult listResult = mvc.perform(get(BASE_PATH).header("Authorization", "Bearer " + token))
+                                  .andExpect(status().isOk())
+                                  .andReturn();
+        assertThat(parseBodyAsList(listResult)).hasSize(1);
+    }
+
+    @Test
+    void import_400_missingRequiredHeader() throws Exception {
+        String token = registerAndLogin("portfolio_csv_missing_hdr@test.com", "Test1234!");
+        String csv = "asset,shares\nBTC,0.5\n";
+        MockMultipartFile file = csvFile("portfolio.csv", csv);
+
+        MvcResult result = mvc.perform(multipart(BASE_PATH + "/import")
+                                               .file(file)
+                                               .header("Authorization", "Bearer " + token))
+                              .andExpect(status().isBadRequest())
+                              .andReturn();
+
+        Map<String, Object> body = parseBody(result);
+        assertThat(body.get("detail").toString()).containsIgnoringCase("missing");
+    }
+
+    @Test
+    void import_422_badDecimalRow() throws Exception {
+        String token = registerAndLogin("portfolio_csv_bad_decimal@test.com", "Test1234!");
+        String csv = VALID_CSV_HEADER + "BTC,abc,150000.00,37500.00,75000.00,18750.00,Crypto\n";
+        MockMultipartFile file = csvFile("portfolio.csv", csv);
+
+        MvcResult result = mvc.perform(multipart(BASE_PATH + "/import")
+                                               .file(file)
+                                               .header("Authorization", "Bearer " + token))
+                              .andExpect(status().isUnprocessableEntity())
+                              .andReturn();
+
+        Map<String, Object> body = parseBody(result);
+        assertThat(body.get("rowErrors")).isNotNull();
+    }
+
     // ── Private helpers ────────────────────────────────────────────────────────
 
     private String json(Object obj) throws Exception {
@@ -351,5 +436,9 @@ class PortfolioAssetControllerIntegrationTest {
         body.put("purchaseValuePln", 75000.00);
         body.put("purchaseValueAssetCurrency", 18750.00);
         return body;
+    }
+
+    private MockMultipartFile csvFile(String filename, String content) {
+        return new MockMultipartFile("file", filename, "text/csv", content.getBytes());
     }
 }

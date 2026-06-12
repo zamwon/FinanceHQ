@@ -2,6 +2,7 @@ package com.example.finance_hq.auth.exception;
 
 import com.example.finance_hq.obligation.InvalidObligationException;
 import com.example.finance_hq.obligation.ObligationNotFoundException;
+import com.example.finance_hq.portfolio.InvalidCsvException;
 import com.example.finance_hq.portfolio.InvalidPortfolioAssetException;
 import com.example.finance_hq.portfolio.PortfolioAssetNotFoundException;
 import com.example.finance_hq.portfolio.PortfolioAssetValidationException;
@@ -20,6 +21,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.format.DateTimeParseException;
@@ -139,6 +141,20 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problem.setTitle("Validation Failed");
         return ResponseEntity.status(400).body(problem);
+    }
+
+    @ExceptionHandler(InvalidCsvException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidCsv(InvalidCsvException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Bad Request");
+        return ResponseEntity.status(400).body(problem);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ProblemDetail> handleMaxUploadSize(MaxUploadSizeExceededException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONTENT_TOO_LARGE, "File exceeds the maximum allowed size of 5 MB");
+        problem.setTitle("File Too Large");
+        return ResponseEntity.status(413).body(problem);
     }
 
     @ExceptionHandler(Exception.class)

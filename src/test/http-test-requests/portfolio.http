@@ -195,3 +195,70 @@ Authorization: Bearer {{accessToken}}
 ###
 DELETE {{baseUrl}}/api/portfolio/{{pknId}}
 Authorization: Bearer {{accessToken}}
+
+
+### ──────────────────────────────────────────────────
+### Phase 4 manual checks:
+###   4.2 Valid CSV import → correct asset count returned
+###   4.3 Re-import same CSV → same count (UPSERT confirmed)
+###   4.4 CSV with bad decimal → 422 with row number and column
+###   4.5 File > 5 MB → 413 ProblemDetail (test manually with a large file)
+### ──────────────────────────────────────────────────
+
+### ─── Import CSV (valid, 3 assets) — expect 200 {"importedCount": 3} ─
+POST {{baseUrl}}/api/portfolio/import
+Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=----PortfolioBoundary
+
+------PortfolioBoundary
+Content-Disposition: form-data; name="file"; filename="portfolio.csv"
+Content-Type: text/csv
+
+asset,shares,avg_buy_price_pln,avg_buy_price_asset_currency,purchase_value_pln,purchase_value_asset_currency,asset_group,purchase_share_percent
+BTC,0.5,150000.00,37500.00,75000.00,18750.00,Crypto,30.00
+ETH,2.0,8000.00,2000.00,16000.00,4000.00,Crypto,20.00
+AAPL,10.0,750.00,190.00,7500.00,1900.00,US Stocks,50.00
+------PortfolioBoundary--
+
+
+### ─── Re-import same CSV — expect 200 {"importedCount": 3} (UPSERT, not 6) ─
+POST {{baseUrl}}/api/portfolio/import
+Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=----PortfolioBoundary
+
+------PortfolioBoundary
+Content-Disposition: form-data; name="file"; filename="portfolio.csv"
+Content-Type: text/csv
+
+asset,shares,avg_buy_price_pln,avg_buy_price_asset_currency,purchase_value_pln,purchase_value_asset_currency,asset_group,purchase_share_percent
+BTC,0.5,150000.00,37500.00,75000.00,18750.00,Crypto,30.00
+ETH,2.0,8000.00,2000.00,16000.00,4000.00,Crypto,20.00
+AAPL,10.0,750.00,190.00,7500.00,1900.00,US Stocks,50.00
+------PortfolioBoundary--
+
+
+### ─── Import CSV with bad decimal — expect 422 with rowErrors ───────
+POST {{baseUrl}}/api/portfolio/import
+Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=----PortfolioBoundary
+
+------PortfolioBoundary
+Content-Disposition: form-data; name="file"; filename="bad.csv"
+Content-Type: text/csv
+
+asset,shares,avg_buy_price_pln,avg_buy_price_asset_currency,purchase_value_pln,purchase_value_asset_currency,asset_group
+BTC,abc,150000.00,37500.00,75000.00,18750.00,Crypto
+------PortfolioBoundary--
+
+
+### ─── Import wrong content type (JSON) — expect 400 ────────────────
+POST {{baseUrl}}/api/portfolio/import
+Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=----PortfolioBoundary
+
+------PortfolioBoundary
+Content-Disposition: form-data; name="file"; filename="data.json"
+Content-Type: application/json
+
+{"ticker": "BTC"}
+------PortfolioBoundary--

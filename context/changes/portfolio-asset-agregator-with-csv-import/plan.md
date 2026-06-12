@@ -654,25 +654,25 @@ V10 is purely additive. No existing data is modified. Flyway baseline (`baseline
 
 #### Automated
 
-- [x] 3.1 `./mvnw test` — all tests pass including `PortfolioPriceServiceTest`
+- [x] 3.1 `./mvnw test` — all tests pass including `PortfolioPriceServiceTest` — 81b2949
 
 #### Manual
 
-- [x] 3.2 Refresh with real API keys populates prices for AAPL (Twelve Data) and BTC (CoinGecko)
-- [x] 3.3 Second refresh within 15 min returns `"refreshed": false`
-- [x] 3.4 PKN/XWAR asset receives a price from Twelve Data (GPW freshness verified)
+- [x] 3.2 Refresh with real API keys populates prices for AAPL (Twelve Data) and BTC (CoinGecko) — 81b2949
+- [x] 3.3 Second refresh within 15 min returns `"refreshed": false` — 81b2949
+- [x] 3.4 PKN/XWAR asset receives a price from Twelve Data (GPW freshness verified) — 81b2949
 
 ### Phase 4: CSV Import
 
 #### Automated
 
-- [ ] 4.1 `./mvnw test` — all tests pass including `PortfolioCsvImportServiceTest` and updated integration tests
+- [x] 4.1 `./mvnw test` — all tests pass including `PortfolioCsvImportServiceTest` and updated integration tests
 
 #### Manual
 
-- [ ] 4.2 Valid CSV import → correct asset count returned
-- [ ] 4.3 Re-import same CSV → same count (UPSERT confirmed)
-- [ ] 4.4 CSV with bad decimal → 422 with row number and column
+- [x] 4.2 Valid CSV import → correct asset count returned
+- [x] 4.3 Re-import same CSV → same count (UPSERT confirmed)
+- [x] 4.4 CSV with bad decimal → 422 with row number and column
 - [ ] 4.5 File > 5 MB → 413 ProblemDetail
 
 ### Phase 5: Frontend — Portfolio Page
