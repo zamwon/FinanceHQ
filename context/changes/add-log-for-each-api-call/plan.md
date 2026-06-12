@@ -238,12 +238,12 @@ Add `@Slf4j` annotation and one `log.info()` call at the top of every mapped met
 
 #### Automated
 
-- [x] 2.1 Build and full test suite pass: `./mvnw test`
+- [x] 2.1 Build and full test suite pass: `./mvnw test` — ce327a1
 
 #### Manual
 
-- [x] 2.2 POST /auth/login emits `Started login call as b***@gmail.com`
-- [x] 2.3 POST /auth/refresh emits `Started refresh call` (no email)
-- [x] 2.4 GET /api/obligations emits `Started list obligations as b***@gmail.com`
-- [x] 2.5 PATCH /api/obligations/{id} log includes UUID and masked email
-- [x] 2.6 POST /sentry-tunnel emits no new `Started …` line
+- [x] 2.2 POST /auth/login emits `Started login call as b***@gmail.com` — ce327a1
+- [x] 2.3 POST /auth/refresh emits `Started refresh call` (no email) — ce327a1
+- [x] 2.4 GET /api/obligations emits `Started list obligations as b***@gmail.com` — ce327a1
+- [x] 2.5 PATCH /api/obligations/{id} log includes UUID and masked email — ce327a1
+- [x] 2.6 POST /sentry-tunnel emits no new `Started …` line — ce327a1

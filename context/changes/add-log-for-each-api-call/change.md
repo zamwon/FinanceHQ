@@ -1,7 +1,7 @@
 ---
 change_id: add-log-for-each-api-call
 title: Add SLF4J info log at the start of each controller method
-status: implementing
+status: implemented
 created: 2026-06-12
 updated: 2026-06-12
 archived_at: null
