@@ -1,4 +1,4 @@
-11package com.example.finance_hq.security;
+package com.example.finance_hq.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
