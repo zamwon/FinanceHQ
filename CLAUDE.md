@@ -17,7 +17,7 @@ FinanceHQ — a personal finance obligation tracker. See @context/foundation/prd
 
 ```bash
 ./mvnw spring-boot:run    # start backend dev server
-./mvnw test               # run all tests
+./mvnw test               # run all tests (Docker must be running — see Key notes)
 ./mvnw clean package      # build jar
 ```
 
@@ -41,6 +41,7 @@ Branch names: `feature/<name>` or `fix/<name>`.
 - No linting configured (no Checkstyle, SpotBugs). Run tests to validate changes.
 - Spring Security, JPA/Hibernate, and JavaMail are not yet in pom.xml — add them when implementing auth, persistence, and notifications.
 - Tests use JUnit Jupiter with `@SpringBootTest`.
+- **Docker Desktop must be running before `./mvnw test`.** Every `@SpringBootTest` integration test uses Testcontainers to spin up a real Postgres container (see `TestcontainersConfiguration`); without a running Docker daemon they all fail with `Could not find a valid Docker environment`, not a real assertion failure. Any new `@SpringBootTest` class must add `@Import(TestcontainersConfiguration.class)` or it silently falls back to the local dev datasource URL in `application.properties` instead of the test container.
 
 <!-- BEGIN @przeprogramowani/10x-cli -->
 

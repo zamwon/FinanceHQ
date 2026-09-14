@@ -34,3 +34,12 @@ If you manually switch to a different parent and actually want the inheritance, 
 - Full-stack with hot reload: in a separate terminal, `cd src/main/frontend && ng serve` — Vite dev server on `:4200` proxies `/auth/**` to the backend at `:8080`.
 - Production-style verification: `./mvnw clean package && java -jar target/finance-hq-*.jar` — single JAR serves the SPA at `http://localhost:8080/`.
 
+### Running tests
+
+`./mvnw test` requires **Docker Desktop to be running**. The `@SpringBootTest` integration
+tests use Testcontainers (`TestcontainersConfiguration`) to start a real PostgreSQL container
+per test run — if Docker isn't up, every integration test class fails at context-load time
+with `Could not find a valid Docker environment`, which looks like mass test breakage but is
+purely an environment issue, not a code regression. Plain unit tests (no `@SpringBootTest`)
+run fine without Docker.
+
