@@ -16,7 +16,6 @@ public class NotificationScheduler {
     }
 
     @Scheduled(cron = "0 0 8 * * *", zone = "Europe/Warsaw")
-    @Scheduled(cron = "0 40 12 * * *", zone = "Europe/Warsaw") // TEMP: manual verification run, remove after confirming
     public void runDailyNotifications() {
         notificationService.runDailyNotifications(LocalDate.now(ZoneId.of("Europe/Warsaw")));
     }
